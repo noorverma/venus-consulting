@@ -1,15 +1,17 @@
-"use client" //mark as a use client
+"use client"; // mark as a use client
 
 import { useState } from 'react';
 import { registerUser } from '../Lib/authUtilities';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router'; // Import useRouter for navigation
 
 export default function SignUp() {
   const [username, setUsername] = useState(''); // New state for username
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const router = useRouter(); // Initialize useRouter for redirection
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -17,9 +19,9 @@ export default function SignUp() {
     try {
       const user = await registerUser(username, email, password); // Pass username to registerUser
       console.log('User registered successfully:', user);
-      // Redirect to /Main or show success message
+      router.push('/SignIn'); // Redirect to /SignIn after successful registration
     } catch (err) {
-      setError(err.message); // Handle error
+      setError(err.message); // Display error message
     }
   };
 
@@ -80,13 +82,13 @@ export default function SignUp() {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p className="text-red-500 text-sm">{error}</p>} {/* Error message */}
               <div>
                 <button
                   type="submit"
                   className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md group hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 >
-                  <Link href="/SignIn"> Sign Up </Link>
+                  Sign Up
                 </button>
               </div>
             </form>

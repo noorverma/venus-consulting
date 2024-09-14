@@ -1,36 +1,48 @@
-"use server"
+"use server";
 
-import { loginUser, logOutUser, registerUser } from '@/app/Lib/authUtilities'
-import { redirect } from 'next/navigation'
+import { loginUser, logOutUser, registerUser } from '@/app/Lib/authUtilities';
+import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 
-const bcryptjs = require('bcryptjs')
+export async function Login({ email, password }) {
+    try {
+        if (!email || !password) {
+            return { error: "Email and password are required." };
+        }
 
-export async function Login(formData){
+        // Attempt to login the user
+        await loginUser(email, password);
 
-    const email = await formData.get('email')
-    const password = await formData.get('password')
-
-    const response = await loginUser(email,password)
-
-        redirect('/Main')
-
-    return true
-
+        // After successful login, return a success message
+        return { success: true };
+    } catch (error) {
+        console.error("Login Error:", error.message);
+        return { error: error.message || "Login failed. Please check your credentials and try again." };
+    }
 }
 
-export async function Register(formData){
+export async function Register({ username, email, password }) {
+    try {
+        if (!username || !email || !password) {
+            return { error: "Username, email, and password are required." };
+        }
 
-    const email = await formData.get('email')
-    const password = await formData.get('password')
-    await registerUser(email, password)
+        await registerUser(username, email, password);
 
-    redirect('/')
-
-    return true
+        // After successful registration, return a success message
+        return { success: true };
+    } catch (error) {
+        console.error("Registration Error:", error.message);
+        return { error: error.message || "Registration failed. Please try again." };
+    }
 }
 
-export async function Logout(){
-    await logOutUser()
-    redirect('/')
-    return true
+export async function Logout() {
+    try {
+        await logOutUser();
+        return { success: true };
+    } catch (error) {
+        console.error("Logout Error:", error.message);
+        return { error: error.message || "Logout failed. Please try again." };
+    }
 }

@@ -3,6 +3,7 @@ import { auth } from "./Lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/dist/server/api-utils";
 /* Page.js doesn't contain any code because when you open the website,
 it redirects to the page in sign-in folder. */
@@ -11,15 +12,19 @@ export default function Page() {
     <div>
       {/* <div className="bg-[url('/login-background.jpeg')] bg-cover bg-center min-h-screen flex items-center justify-center"> */}
         <div>
-          <img
+          <Image
             src="/logo.png"
             alt="Logo"
             className="h-14 absolute top-5 left-5"
+            width={32}
+            height={32}
           />
-          <img
+          <Image
             src="/name.png"
             alt="Electrical Consulting"
             className="h-8 absolute top-9 left-20"
+            width={32}
+            height={32}
           />
             {/* <Link
               className="absolute top-4 right-20 font-bold p-3 bg-gray-900 rounded-xl text-center transition-all duration-150 text-orange-500 hover:bg-slate-700"

@@ -1,29 +1,50 @@
 "use client";
 import React, { useState } from 'react';
 import Navbar from '../components/navbar';
+import { createAppointment } from '@/actions/appointments';
 
 export default function Appointment() {
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [reason, setReason] = useState('');
   const [date, setDate] = useState('');
-  const [time, setTime] = useState(''); 
-
+  const [time, setTime] = useState('');
+  const [message, setMessage] = useState('');
 
   const timeSlots = ['9:45 AM', '10:45 AM', '12:00 PM', '4:00 PM', '5:00 PM'];
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
-    console.log({
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
+
+    const formData = {
       name,
       email,
       phone,
       reason,
-      selectedDate: date,
-      selectedTime: time,
-    });
+      date,
+      time,
+      userId: 'USER_ID_HERE',  // Replace with the actual user ID logic if applicable
+    };
+
+    try {
+      const result = await createAppointment(formData);
+      if (result.success) {
+        setMessage('Appointment booked successfully!');
+        // Reset form fields
+        setName('');
+        setEmail('');
+        setPhone('');
+        setReason('');
+        setDate('');
+        setTime('');
+      } else {
+        setMessage('Failed to book appointment. Please try again.');
+      }
+    } catch (error) {
+      setMessage('An unexpected error occurred. Please try again.');
+    }
   };
 
   return (
@@ -158,6 +179,7 @@ export default function Appointment() {
                 Book Now
               </button>
             </form>
+            {message && <p>{message}</p>}
           </div>
 
           <div style={{
@@ -188,6 +210,7 @@ const inputStyle = {
   borderRadius: '5px',
   border: '1px solid #ccc',
 };
+
 const submitButtonStyle = {
   padding: '15px',
   backgroundColor: '#FB923C', 

@@ -2,24 +2,26 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Register } from '@/actions/authServer';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../Lib/firebase';
+import { auth, db } from '../Lib/firebase';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Register } from '@/actions/authServer';
 
 export default function SignUp() {
   const router = useRouter(); 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError(null);
+
     try {
-      const result = await Register({ username, email, password });
+      const result = await Register({ username, email, password, isAdmin });
       if (result.error) {
         setError(result.error);
       } else if (result.success) {
@@ -35,7 +37,16 @@ export default function SignUp() {
     e.preventDefault();
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Store Google user data in Firestore
+      await setDoc(doc(db, "Users", user.uid), {
+        email: user.email,
+        username: user.displayName,
+        isAdmin: false // Google signup default as user
+      });
+
       router.push('/Main');
     } catch (error) {
       console.error('Google sign-up error:', error);
@@ -88,6 +99,19 @@ export default function SignUp() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+
+                <div className="flex items-center">
+                  <input
+                    id="isAdmin"
+                    name="isAdmin"
+                    type="checkbox"
+                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                    onChange={(e) => setIsAdmin(e.target.checked)}
+                  />
+                  <label htmlFor="isAdmin" className="ml-2 block text-sm text-white">
+                    Register as Admin
+                  </label>
+                </div>
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}  
 

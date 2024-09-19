@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     try {
       const result = await resend.emails.send({
         from: `${fname} <admin@resend.dev>`, 
-        to: "vermanoor89@gmail.com",  // This is the destination email whenever the user submits the code, this email will receive the user's details 
+        to: "vermanoor89@gmail.com",  // This is the destination email so whenever the user submits the code, this email will receive the user's details 
         subject: `New message from ${email}`,
         html: `<p><strong>Message:</strong> ${message}</p>`,
       });

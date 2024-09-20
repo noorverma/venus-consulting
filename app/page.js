@@ -3,6 +3,7 @@ import { auth } from "./Lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/dist/server/api-utils";
 /* Page.js doesn't contain any code because when you open the website,
 it redirects to the page in sign-in folder. */

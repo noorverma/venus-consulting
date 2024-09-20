@@ -103,13 +103,13 @@ export default function About() {
               </p>
             </div>
 
-
+            {/* Second Value */}
             <div style={{
               width: '22%',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',  
-              justifyContent: 'center',  
+              alignItems: 'center',  // Center the icon and text
+              justifyContent: 'center',  // Vertical center
               marginBottom: '40px'
             }}>
               <img src="/Second.png" alt="Improving Continually" style={{ width: '100px', marginBottom: '20px' }} /> {/* Increased size */}
@@ -119,7 +119,7 @@ export default function About() {
               </p>
             </div>
 
-          
+            {/* Third Value */}
             <div style={{
               width: '22%',
               display: 'flex',
@@ -129,7 +129,7 @@ export default function About() {
               marginBottom: '40px'
             }}>
               <img src="/Third.png" alt="Enriching Environment" style={{ width: '100px',
-               marginBottom: '20px' }} /> 
+               marginBottom: '20px' }} /> {/* Increased size */}
               <h3 style={{ fontSize: '1.5rem',
                  fontWeight: 'bold' }}>Enriching Environment</h3>
               <p style={{ fontSize: '1rem', 
@@ -139,7 +139,7 @@ export default function About() {
               </p>
             </div>
 
-            
+            {/* Fourth Value */}
             <div style={{
               width: '22%',
               display: 'flex',
@@ -149,7 +149,7 @@ export default function About() {
               marginBottom: '40px'
             }}>
               <img src="/Fourth.png" alt="Quality Results" style={{ width: '100px',
-                 marginBottom: '20px' }} /> 
+                 marginBottom: '20px' }} /> {/* Increased size */}
               <h3 style={{ fontSize: '1.5rem', 
                 fontWeight: 'bold' }}>Quality Results</h3>
               <p style={{ fontSize: '1rem', 

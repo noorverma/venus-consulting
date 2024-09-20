@@ -89,7 +89,7 @@ export default function Appointment() {
              margin: '20px 0 0 20%' }}>{/* CSS Tailwind is used*/}
           Fill in your details
         </h2>
-
+        {/* Form layout and used CSS Tailwind for reference */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -97,6 +97,7 @@ export default function Appointment() {
           alignItems: 'flex-start',
           marginTop: '20px',
         }}>
+          {/* Form Section and uses CSS Tailwind for reference */}
           <div style={{
             width: '60%',
             padding: '20px',
@@ -105,6 +106,7 @@ export default function Appointment() {
             backgroundColor: '#fff',
           }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Form fields, used chat gpt for form field to correct errors as my code was not runnning.  */}
               <label>Reason for Visit</label>
               <input
                 type="text"
@@ -155,12 +157,12 @@ export default function Appointment() {
                 style={inputStyle}
                 required
               />
-
+              {/* Time Slot Selection, used CSS Tailwind*/}
               <label>Select Time</label>
               <p style={{ color: '#555', fontSize: '14px', marginBottom: '10px' }}>
                 *You can only book from the available times below*:
               </p>
-
+               {/*Used Chatgpt for this time array as i asked chatgpt that i want slots of time which i already initialized, can you make it?*/}
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 {timeSlots.map((slot, index) => (
                   <button

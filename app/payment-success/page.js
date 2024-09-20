@@ -1,3 +1,6 @@
+// code referenced from https://www.youtube.com/watch?v=fgbEwVWlpsI
+// the code used in the video above used TypeScript and ChatGPT was used to change it to JavaScript
+// Prompt: check the following code from any TypeScript components and change it to JavaScript if any found
 export default function PaymentSuccess({ searchParams }) {
   const { amount } = searchParams;
 

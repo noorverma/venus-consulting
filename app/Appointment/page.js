@@ -14,7 +14,7 @@ export default function Appointment() {
   const [message, setMessage] = useState('');
 
   const timeSlots = ['9:45 AM', '10:45 AM', '12:00 PM', '4:00 PM', '5:00 PM']; //I used chatgpt as i was not sure where i mentioned time so that user can choose.
- //Done by Heiu
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -26,7 +26,7 @@ export default function Appointment() {
       reason,
       date,
       time,
-      userId: 'USER_ID_HERE',  // Replace with the actual user ID logic if applicable
+      userId: 'USER_ID_HERE',  
     };
 
     try {
@@ -182,14 +182,14 @@ export default function Appointment() {
                   </button>
                 ))}
               </div>
-
+               {/* Submit button */}
               <button type="submit" style={submitButtonStyle}>
                 Book Now
               </button>
             </form>
             {message && <p>{message}</p>}
           </div>
-
+          {/* Contact Information Section */}
           <div style={{
             width: '35%',
             padding: '20px',
@@ -210,7 +210,7 @@ export default function Appointment() {
     </>
   );
 }
-
+// Common styles for input fields
 const inputStyle = {
   padding: '10px',
   marginBottom: '20px',
@@ -218,7 +218,7 @@ const inputStyle = {
   borderRadius: '5px',
   border: '1px solid #ccc',
 };
-
+// Common style for submit button, used tailwind CSS for reference
 const submitButtonStyle = {
   padding: '15px',
   backgroundColor: '#FB923C', 

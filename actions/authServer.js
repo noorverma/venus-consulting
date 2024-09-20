@@ -1,8 +1,6 @@
 "use server";
 
 import { loginUser, logOutUser, registerUser } from '@/app/Lib/authUtilities';
-import { redirect } from 'next/navigation';
-import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function Login({ email, password }) {
     try {
@@ -10,26 +8,23 @@ export async function Login({ email, password }) {
             return { error: "Email and password are required." };
         }
 
-        // Attempt to login the user
-        await loginUser(email, password);
+        const { user, role } = await loginUser(email, password);
 
-        // After successful login, return a success message
-        return { success: true };
+        return { success: true, role };
     } catch (error) {
         console.error("Login Error:", error.message);
-        return { error: error.message || "Login failed. Please check your credentials and try again." };
+        return { error: error.message || "Login failed. Wrong email or password" };
     }
 }
 
-export async function Register({ username, email, password }) {
+export async function Register({ username, email, password, isAdmin = false }) {
     try {
         if (!username || !email || !password) {
             return { error: "Username, email, and password are required." };
         }
 
-        await registerUser(username, email, password);
+        await registerUser(username, email, password, isAdmin);
 
-        // After successful registration, return a success message
         return { success: true };
     } catch (error) {
         console.error("Registration Error:", error.message);

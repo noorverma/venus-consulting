@@ -34,7 +34,11 @@ export default function SignIn() {
             if (result.error) {
                 setError(result.error);
             } else if (result.success) {
-                router.push('/Main');
+                if (result.role === 'admin') {
+                    router.push('/Admin');
+                } else {
+                    router.push('/Main');
+                }
             }
         } catch (err) {
             console.error('Login error:', err);
@@ -84,15 +88,28 @@ export default function SignIn() {
                                 <Link href="#" className="text-orange-500 hover:text-orange-400 text-sm">Forgot password?</Link>
                             </div>
 
-                            <button type="submit" className="w-full px-4 py-2 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500">
-                                Sign In
+                            <button type="submit" className="w-full px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:outline-none focus:ring focus:ring-orange-500">
+                                Sign in
                             </button>
+
+                            <div className="relative my-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-700"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+                                </div>
+                            </div>
+
                             <button type="button" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500" onClick={handleGoogleSignIn}>
                                 Sign in with Google
                             </button>
+                            <div className="text-sm text-center">
+                                <Link href="/SignUp" className="font-medium text-orange-500 hover:text-orange-400">Don't have an account? Sign up</Link>
+                            </div>
                         </form>
                         <p className="text-sm text-center text-gray-300">
-                            Don't have an account? <Link href="/SignUp" className="font-bold text-orange-500 hover:underline">Sign up</Link>
+                            Do not have an account? <Link href="/SignUp" className="font-bold text-orange-500 hover:underline">Sign up</Link>
                         </p>
                     </div>
                 </div>

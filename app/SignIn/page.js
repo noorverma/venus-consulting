@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function SignIn() {
     const router = useRouter();  
@@ -101,8 +102,20 @@ export default function SignIn() {
                                 </div>
                             </div>
 
-                            <button type="button" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500" onClick={handleGoogleSignIn}>
-                                Sign in with Google
+                            <button
+                                type="button"
+                                className="w-full relative px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500 flex justify-center items-center"
+                                onClick={handleGoogleSignIn}
+                                >
+                                <div className="absolute left-4">
+                                    <Image
+                                    src="/GoogleIcon.svg"
+                                    alt="Google Icon"
+                                    width={33}
+                                    height={33}
+                                    />
+                                </div>
+                                <span>Sign in with Google</span>
                             </button>
                             <div className="text-sm text-center">
                                 <Link href="/SignUp" className="font-medium text-orange-500 hover:text-orange-400">Don't have an account? Sign up</Link>

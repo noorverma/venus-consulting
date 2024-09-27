@@ -16,16 +16,21 @@ export default function SignIn() {
   const [error, setError] = useState(null);
 
   const handleGoogleSignIn = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      const userDoc = await getDoc(doc(db, "Users", user.uid)); 
-
+  
+      const userDoc = await getDoc(doc(db, "Users", user.uid)); // Use "Users" collection
+  
       if (userDoc.exists()) {
-        router.push('/Main');
+        const userData = userDoc.data();
+        if (userData.isAdmin) {
+          router.push('/Admin');
+        } else {
+          router.push('/Main');
+        }
       } else {
         await signOut(auth);
         setError("Google account not registered. Please use a registered account.");
@@ -35,6 +40,7 @@ export default function SignIn() {
       setError('An error occurred during Google sign-in.');
     }
   };
+  
 
   const handleSignIn = async (e) => {
     e.preventDefault();

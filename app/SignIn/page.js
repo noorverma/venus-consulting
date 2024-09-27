@@ -1,3 +1,6 @@
+//use perplexity AI for reference
+
+
 "use client";
 
 import { Login } from '@/actions/authServer';
@@ -13,7 +16,6 @@ export default function SignIn() {
     const router = useRouter();  
     const [error, setError] = useState(null);
 
-    // Updated Google Sign-in function with user existence check
     const handleGoogleSignIn = async (e) => {
         e.preventDefault(); 
         const provider = new GoogleAuthProvider();
@@ -21,14 +23,11 @@ export default function SignIn() {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
-            // Check if user exists in the Firestore database
             const userDoc = await getDoc(doc(db, "users", user.uid));
 
             if (userDoc.exists()) {
-                // If user exists, redirect to main page
                 router.push('/Main');
             } else {
-                // Sign out user and show error message
                 await signOut(auth);
                 setError("Google account not registered. Please use a registered account.");
             }

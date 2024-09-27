@@ -1,8 +1,9 @@
 "use client";
 
 import { Login } from '@/actions/authServer';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../Lib/firebase';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { auth, db } from '../Lib/firebase';
+import { getDoc, doc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Head from 'next/head';
@@ -12,12 +13,25 @@ export default function SignIn() {
     const router = useRouter();  
     const [error, setError] = useState(null);
 
+    // Updated Google Sign-in function with user existence check
     const handleGoogleSignIn = async (e) => {
         e.preventDefault(); 
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
-            router.push('/Main');  
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user exists in the Firestore database
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+
+            if (userDoc.exists()) {
+                // If user exists, redirect to main page
+                router.push('/Main');
+            } else {
+                // Sign out user and show error message
+                await signOut(auth);
+                setError("Google account not registered. Please use a registered account.");
+            }
         } catch (error) {
             console.error('Google sign-in error:', error);
             setError('An error occurred during Google sign-in.');

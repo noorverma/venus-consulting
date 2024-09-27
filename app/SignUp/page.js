@@ -13,7 +13,6 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSignUp = async (e) => {
@@ -21,7 +20,7 @@ export default function SignUp() {
     setError(null);
 
     try {
-      const result = await Register({ username, email, password, isAdmin });
+      const result = await Register({ username, email, password });
       if (result.error) {
         setError(result.error);
       } else if (result.success) {
@@ -99,19 +98,6 @@ export default function SignUp() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-
-                <div className="flex items-center">
-                  <input
-                    id="isAdmin"
-                    name="isAdmin"
-                    type="checkbox"
-                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
-                    onChange={(e) => setIsAdmin(e.target.checked)}
-                  />
-                  <label htmlFor="isAdmin" className="ml-2 block text-sm text-white">
-                    Register as Admin
-                  </label>
-                </div>
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}  
 

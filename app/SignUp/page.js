@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '../Lib/firebase';
-import { setDoc, doc } from 'firebase/firestore'; // Import setDoc and doc for Firestore operations
+import { setDoc, doc } from 'firebase/firestore';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Register } from '@/actions/authServer';
@@ -27,7 +27,6 @@ export default function SignUp() {
       if (result.error) {
         setError(result.error);
       } else if (result.success) {
-        // Redirect to sign-in page after successful registration
         router.push('/SignIn');
       }
     } catch (err) {
@@ -44,20 +43,16 @@ export default function SignUp() {
       const user = result.user;
 
       const userRef = doc(db, "Users", user.uid);
-      
 
       await setDoc(userRef, {
         email: user.email,
         username: user.displayName,
-        isAdmin: false 
-      }, { merge: true }); 
-
+        isAdmin: false  // Ensure consistent use of isAdmin field
+      }, { merge: true });
 
       router.push('/SignIn');
     } catch (error) {
       console.error('Google sign-up error:', error);
-      
-      
       if (error.code === 'auth/popup-closed-by-user') {
         setError('The sign-up popup was closed. Please try again.');
       } else if (error.code === 'auth/network-request-failed') {

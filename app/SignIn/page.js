@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function SignIn() {
   const router = useRouter();  
@@ -98,19 +99,49 @@ export default function SignIn() {
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}  
 
-              <button type="submit" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500">
-                Sign In
-              </button>
-              <button type="button" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500" onClick={handleGoogleSignIn}>
-                Sign in with Google
-              </button>
-            </form>
-            <p className="text-sm text-center text-gray-300">
-              Don't have an account? <Link href="/SignUp" className="font-bold text-orange-500 hover:underline">Sign up</Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+                            <div className="flex items-center justify-between">
+                                <label className="flex items-center text-sm text-gray-300">
+                                    <input type="checkbox" className="mr-2 w-4 h-4 text-orange-600 bg-gray-800 border-gray-700 rounded focus:ring-orange-500" />
+                                    Remember me
+                                </label>
+                                <Link href="#" className="text-orange-500 hover:text-orange-400 text-sm">Forgot password?</Link>
+                            </div>
+
+                            <button type="submit" className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:outline-none focus:ring focus:ring-orange-500">
+                                Sign in
+                            </button>
+
+                            <div className="relative my-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-700"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="w-full relative px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500 flex justify-center items-center"
+                                onClick={handleGoogleSignIn}
+                                >
+                                <div className="absolute left-4">
+                                    <Image
+                                    src="/GoogleIcon.svg"
+                                    alt="Google Icon"
+                                    width={33}
+                                    height={33}
+                                    />
+                                </div>
+                                <span>Sign in with Google</span>
+                            </button>
+                            <div className="text-sm text-center">
+                                <Link href="/SignUp" className="font-medium text-orange-500 hover:text-orange-400">Don't have an account? Sign up</Link>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }

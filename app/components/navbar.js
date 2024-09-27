@@ -5,7 +5,7 @@ const Navbar = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <img src="/logo.png" alt="Logo" className="h-16 w-16 mr-2 shadow-xl" />
-            <span className="text-white text-2xl font-bold"> Venus Electrical Consulting </span>
+            <span className="text-white text-2xl font-bold"> Electrical Consulting </span>
           </div>
  
           <div className="space-x-8">

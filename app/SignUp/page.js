@@ -43,22 +43,21 @@ export default function SignUp() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user exists before creating a new document (optional)
       const userRef = doc(db, "Users", user.uid);
       
-      // Store Google user data in Firestore
+
       await setDoc(userRef, {
         email: user.email,
         username: user.displayName,
-        isAdmin: false // Google signup default as user
-      }, { merge: true }); // Use merge: true to avoid overwriting existing data
+        isAdmin: false 
+      }, { merge: true }); 
 
-      // Redirect to main page after successful sign-up
-      router.push('/Main');
+
+      router.push('/SignIn');
     } catch (error) {
       console.error('Google sign-up error:', error);
       
-      // Better error handling to capture specific errors
+      
       if (error.code === 'auth/popup-closed-by-user') {
         setError('The sign-up popup was closed. Please try again.');
       } else if (error.code === 'auth/network-request-failed') {

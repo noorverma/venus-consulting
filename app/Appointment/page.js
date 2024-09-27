@@ -64,7 +64,7 @@ export default function Appointment() {
             left: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(105, 105, 105, 0.7)', 
+            backgroundColor: 'rgba(105, 105, 105, 0.7)',
           }}></div>
 
           <h2 style={{
@@ -165,7 +165,7 @@ export default function Appointment() {
                       borderRadius: '5px',
                       border: 'none',
                       cursor: 'pointer',
-                      backgroundColor: time === slot ? '#FB923C' : '#f0f0f0', 
+                      backgroundColor: time === slot ? '#FB923C' : '#f0f0f0',
                       color: time === slot ? '#fff' : '#000',
                     }}
                     onClick={() => setTime(slot)}
@@ -179,7 +179,16 @@ export default function Appointment() {
                 Book Now
               </button>
             </form>
-            {message && <p>{message}</p>}
+            {message && (
+              <p style={{
+                color: message.includes('Failed') || message.includes('error') ? 'red' : 'green',
+                fontSize: '1.5rem',
+                textAlign: 'center',
+                marginTop: '20px'
+              }}>
+                {message}
+              </p>
+            )}
           </div>
 
           <div style={{
@@ -213,7 +222,7 @@ const inputStyle = {
 
 const submitButtonStyle = {
   padding: '15px',
-  backgroundColor: '#FB923C', 
+  backgroundColor: '#FB923C',
   color: '#fff',
   fontSize: '16px',
   border: 'none',

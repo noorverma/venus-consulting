@@ -1,7 +1,16 @@
+//Use perplexity AI for reference but the code was written myself
+
 import { auth, db } from "./firebase";
-import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail, // Import the sendPasswordResetEmail method
+} from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
+// Register a new user
 export const registerUser = async (username, email, password, isAdmin = false) => {
   if (!username || !email || !password) {
     throw new Error("All fields (username, email, password) are required.");
@@ -12,14 +21,14 @@ export const registerUser = async (username, email, password, isAdmin = false) =
     const user = userCredential.user;
 
     await updateProfile(user, {
-      displayName: username
+      displayName: username,
     });
 
     const role = isAdmin ? "admin" : "user";
     await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       username: username,
-      role: role
+      role: role,
     });
 
     return user;
@@ -29,6 +38,7 @@ export const registerUser = async (username, email, password, isAdmin = false) =
   }
 };
 
+// Log in a user
 export const loginUser = async (email, password) => {
   if (!email || !password) {
     throw new Error("Email and password are required.");
@@ -53,6 +63,7 @@ export const loginUser = async (email, password) => {
   }
 };
 
+// Log out the user
 export const logOutUser = async () => {
   try {
     await signOut(auth);
@@ -60,5 +71,20 @@ export const logOutUser = async () => {
   } catch (error) {
     console.error("Logout Error:", error.message);
     throw new Error("Logout failed. Please try again.");
+  }
+};
+
+// Send a password reset email
+export const sendPasswordResetEmail = async (email) => {
+  if (!email) {
+    throw new Error("Email is required.");
+  }
+
+  try {
+    await firebaseSendPasswordResetEmail(auth, email);
+    return true; // Optionally return a success message or value
+  } catch (error) {
+    console.error("Password Reset Error:", error.message);
+    throw new Error("Failed to send password reset email. Please try again.");
   }
 };

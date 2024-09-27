@@ -47,7 +47,7 @@ export default function SignUp() {
       await setDoc(userRef, {
         email: user.email,
         username: user.displayName,
-        isAdmin: false  // Ensure consistent use of isAdmin field
+        isAdmin: false  
       }, { merge: true });
 
       router.push('/SignIn');

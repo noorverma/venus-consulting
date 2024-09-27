@@ -1,9 +1,9 @@
-// Import the functions I need from the SDKs I need
+//I wrote the code myself but I used perlexity AI for reference
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // Add this line
+import { getFirestore } from "firebase/firestore"; 
 
-// My web app's Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyBcKV8lKtS5jSauRp-9NJsDEdoHUbQ4mbI",
   authDomain: "venus-consulting-master-22cb2.firebaseapp.com",
@@ -14,9 +14,10 @@ const firebaseConfig = {
   measurementId: "G-QBFVJD5H94"
 };
 
-// Initialize Firebase
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-export const db = getFirestore(app); // Initialize Firestore
-export default app;
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { auth, db };

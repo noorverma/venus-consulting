@@ -10,12 +10,12 @@ export async function createAppointment(data) {
       throw new Error('All fields are required');
     }
 
-    // First, check if a user with this email exists
+    
     let user = await prisma.user.findUnique({
       where: { email: email }
     });
 
-    // If no user exists, create one
+
     if (!user) {
       user = await prisma.user.create({
         data: {
@@ -25,7 +25,7 @@ export async function createAppointment(data) {
       });
     }
 
-    // Now create the appointment with the user's ID
+
     const appointment = await prisma.appointment.create({
       data: {
         name,
@@ -34,7 +34,7 @@ export async function createAppointment(data) {
         reason,
         date: new Date(date),
         time,
-        userId: user.id  // Link the appointment to the user
+        userId: user.id  
       },
     });
 

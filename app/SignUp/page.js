@@ -1,9 +1,12 @@
+//Use perplexity AI for reference but the code was written myself
+
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '../Lib/firebase';
+import { setDoc, doc } from 'firebase/firestore';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Register } from '@/actions/authServer';
@@ -13,7 +16,6 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSignUp = async (e) => {
@@ -21,7 +23,7 @@ export default function SignUp() {
     setError(null);
 
     try {
-      const result = await Register({ username, email, password, isAdmin });
+      const result = await Register({ username, email, password });
       if (result.error) {
         setError(result.error);
       } else if (result.success) {
@@ -40,17 +42,24 @@ export default function SignUp() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Store Google user data in Firestore
-      await setDoc(doc(db, "Users", user.uid), {
+      const userRef = doc(db, "Users", user.uid);
+
+      await setDoc(userRef, {
         email: user.email,
         username: user.displayName,
-        isAdmin: false // Google signup default as user
-      });
+        isAdmin: false  
+      }, { merge: true });
 
-      router.push('/Main');
+      router.push('/SignIn');
     } catch (error) {
       console.error('Google sign-up error:', error);
-      setError('An error occurred during Google sign-up.');
+      if (error.code === 'auth/popup-closed-by-user') {
+        setError('The sign-up popup was closed. Please try again.');
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('An error occurred during Google sign-up.');
+      }
     }
   };
 
@@ -99,19 +108,6 @@ export default function SignUp() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-
-                <div className="flex items-center">
-                  <input
-                    id="isAdmin"
-                    name="isAdmin"
-                    type="checkbox"
-                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
-                    onChange={(e) => setIsAdmin(e.target.checked)}
-                  />
-                  <label htmlFor="isAdmin" className="ml-2 block text-sm text-white">
-                    Register as Admin
-                  </label>
-                </div>
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}  
 

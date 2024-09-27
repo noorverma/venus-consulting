@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import Navbar from '../component/navbar'; // Importing the Navbar component
+import Navbar from '../components/navbar'; // Importing the Navbar component
 
 export default function About() {
   return (

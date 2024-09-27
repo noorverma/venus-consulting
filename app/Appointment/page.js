@@ -173,7 +173,7 @@ export default function Appointment() {
                       borderRadius: '5px',
                       border: 'none',
                       cursor: 'pointer',
-                      backgroundColor: time === slot ? '#FB923C' : '#f0f0f0', 
+                      backgroundColor: time === slot ? '#FB923C' : '#f0f0f0',
                       color: time === slot ? '#fff' : '#000',
                     }}
                     onClick={() => setTime(slot)}
@@ -187,7 +187,16 @@ export default function Appointment() {
                 Book Now
               </button>
             </form>
-            {message && <p>{message}</p>}
+            {message && (
+              <p style={{
+                color: message.includes('Failed') || message.includes('error') ? 'red' : 'green',
+                fontSize: '1.5rem',
+                textAlign: 'center',
+                marginTop: '20px'
+              }}>
+                {message}
+              </p>
+            )}
           </div>
           {/* Contact Information Section */}
           <div style={{
@@ -221,7 +230,7 @@ const inputStyle = {
 // Common style for submit button, used tailwind CSS for reference
 const submitButtonStyle = {
   padding: '15px',
-  backgroundColor: '#FB923C', 
+  backgroundColor: '#FB923C',
   color: '#fff',
   fontSize: '16px',
   border: 'none',

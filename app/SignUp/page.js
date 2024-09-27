@@ -1,9 +1,12 @@
+//Use perplexity AI for reference but the code was written myself
+
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '../Lib/firebase';
+import { setDoc, doc } from 'firebase/firestore'; // Import setDoc and doc for Firestore operations
 import Head from 'next/head';
 import Link from 'next/link';
 import { Register } from '@/actions/authServer';
@@ -24,6 +27,7 @@ export default function SignUp() {
       if (result.error) {
         setError(result.error);
       } else if (result.success) {
+        // Redirect to sign-in page after successful registration
         router.push('/SignIn');
       }
     } catch (err) {
@@ -39,17 +43,29 @@ export default function SignUp() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
+      // Check if user exists before creating a new document (optional)
+      const userRef = doc(db, "Users", user.uid);
+      
       // Store Google user data in Firestore
-      await setDoc(doc(db, "Users", user.uid), {
+      await setDoc(userRef, {
         email: user.email,
         username: user.displayName,
         isAdmin: false // Google signup default as user
-      });
+      }, { merge: true }); // Use merge: true to avoid overwriting existing data
 
+      // Redirect to main page after successful sign-up
       router.push('/Main');
     } catch (error) {
       console.error('Google sign-up error:', error);
-      setError('An error occurred during Google sign-up.');
+      
+      // Better error handling to capture specific errors
+      if (error.code === 'auth/popup-closed-by-user') {
+        setError('The sign-up popup was closed. Please try again.');
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('An error occurred during Google sign-up.');
+      }
     }
   };
 

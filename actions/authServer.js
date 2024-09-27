@@ -2,7 +2,7 @@
 
 "use server";
 
-import { loginUser, logOutUser, registerUser } from '@/app/Lib/authUtilities';
+import { loginUser, logOutUser, registerUser, sendPasswordResetEmail } from '@/app/Lib/authUtilities'; // Make sure to import the new function
 
 export async function Login({ email, password }) {
     try {
@@ -41,5 +41,20 @@ export async function Logout() {
     } catch (error) {
         console.error("Logout Error:", error.message);
         return { error: error.message || "Logout failed. Please try again." };
+    }
+}
+
+
+export async function RequestPasswordReset({ email }) {
+    try {
+        if (!email) {
+            return { error: "Email is required." };
+        }
+
+        await sendPasswordResetEmail(email); 
+        return { success: true };
+    } catch (error) {
+        console.error("Password Reset Error:", error.message);
+        return { error: error.message || "Failed to send password reset email." };
     }
 }

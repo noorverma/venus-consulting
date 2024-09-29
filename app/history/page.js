@@ -1,11 +1,9 @@
-// app/history/page.js
-
-"use client"; // Enable client-side rendering
+"use client";  // It will enable client-side rendering
 import React, { useState } from 'react';
 import AdminNavbar from '../components/AdminNavbar';
 
 const HistoryPage = () => {
-  // Sample data for appointment history
+ // just a dummy data for history of appointments//
   const [appointments] = useState([
     { id: 1, email: 'john@example.com', date: '2024-09-15', reason: 'Consultation for electrical issues', status: 'Approved' },
     { id: 2, email: 'jane@example.com', date: '2024-09-16', reason: 'Request for project estimation', status: 'Denied' },
@@ -49,7 +47,7 @@ const HistoryPage = () => {
   );
 };
 
-// Styles
+// CSS styling using Tailwind CSS
 const mainContentStyle = {
   flexGrow: 1,
   padding: '40px',
@@ -67,7 +65,7 @@ const tableStyle = {
 const tableHeaderStyle = {
   padding: '12px',
   border: '1px solid #ddd',
-  backgroundColor: '#FB923C', // Orange color
+  backgroundColor: '#FB923C', 
   textAlign: 'center',
   color: '#fff',
   fontWeight: 'bold',

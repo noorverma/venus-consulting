@@ -1,21 +1,19 @@
-// app/admin/page.js
-
-"use client"; // Enabling Client-side rendering
+"use client"; // it will enable the client side rendering
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminNavbar from '../components/AdminNavbar';
 
 const AdminDashboard = () => {
-  const router = useRouter(); // For navigation to the history page
+  const router = useRouter(); // It will navigate to the history page
 
-  // Sample data for appointments
+// This is just a dummy data
   const [appointments, setAppointments] = useState([
     { id: 1, email: 'john@example.com', date: '2024-09-15', reason: 'Consultation for electrical issues', status: 'Pending' },
     { id: 2, email: 'jane@example.com', date: '2024-09-16', reason: 'Request for project estimation', status: 'Pending' },
     { id: 3, email: 'alice@example.com', date: '2024-09-17', reason: 'Installation inquiry', status: 'Pending' },
   ]);
 
-  // Handle approve/deny actions
+// used to handle approve/ deny by admin
   const handleAction = (id, action) => {
     setAppointments((prevAppointments) =>
       prevAppointments.map((appointment) =>
@@ -24,7 +22,6 @@ const AdminDashboard = () => {
     );
   };
 
-  // Handle submit changes button click
   const handleSubmit = () => {
     router.push('/history'); // Navigate to history page
   };

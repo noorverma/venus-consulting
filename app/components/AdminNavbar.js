@@ -1,5 +1,3 @@
-// app/components/AdminNavbar.js
-
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -9,13 +7,12 @@ const AdminNavbar = () => {
   return (
     <nav style={navbarStyle}>
       <div style={sidebarHeaderStyle}>Admin Dashboard</div>
-      <div style={linkStyle} onClick={() => router.push('/admin')}>Appointments</div>
-      <div style={linkStyle} onClick={() => router.push('/history')}>History</div>
+      <div style={linkStyle} onClick={() => router.push('/admin')}>Appointments</div>{/*Tab for the admin*/}
+      <div style={linkStyle} onClick={() => router.push('/history')}>History</div> {/*Tab for the admin*/}
     </nav>
   );
 };
-
-// CSS styles in JS
+//Some CSS changes in AdminNavbar
 const navbarStyle = {
   width: '220px',
   height: '100vh',

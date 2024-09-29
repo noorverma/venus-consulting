@@ -23,12 +23,12 @@ const AdminDashboard = () => {
   };
 
   const handleSubmit = () => {
-    router.push('/history'); // Navigate to history page
+    router.push('/history'); // It will automatically navigate to the history page after admin approve/deny
   };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      {/* Sidebar Navigation */}
+    
       <AdminNavbar />
 
       {/* Main Content */}
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
           </tbody>
         </table>
 
-        {/* Submit Button */}
+        {/* Submit button for the admin*/}
         <div style={{ textAlign: 'center', margin: '20px' }}>
           <button style={submitButtonStyle} onClick={handleSubmit}>Submit Changes</button>
         </div>
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
   );
 };
 
-// Styles
+// styling using Tailwind CSS
 const mainContentStyle = {
   flexGrow: 1,
   padding: '40px',
@@ -100,7 +100,7 @@ const tableCellStyle = {
   border: '1px solid #ddd',
   textAlign: 'center',
 };
-
+// styling for approve button
 const approveButtonStyle = {
   padding: '8px 12px',
   backgroundColor: 'green',
@@ -110,7 +110,7 @@ const approveButtonStyle = {
   cursor: 'pointer',
   marginRight: '10px',
 };
-
+// styling for deny button
 const denyButtonStyle = {
   padding: '8px 12px',
   backgroundColor: 'red',
@@ -119,7 +119,7 @@ const denyButtonStyle = {
   borderRadius: '5px',
   cursor: 'pointer',
 };
-
+// styling for submit button
 const submitButtonStyle = {
   padding: '15px 30px',
   backgroundColor: '#FB923C',

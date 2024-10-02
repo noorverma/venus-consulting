@@ -54,12 +54,17 @@ export async function fetchAppointments() {
         user: true, 
       },
     });
+
+    // Log the appointments to verify the structure
+    console.log('Fetched Appointments:', appointments);
+
     return { success: true, appointments };
   } catch (error) {
     console.error('Failed to fetch appointments:', error);
     return { success: false, error: error.message };
   }
 }
+
 
 // Update the status of an appointment
 export async function updateAppointmentStatus(id, status) {

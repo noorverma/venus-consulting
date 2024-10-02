@@ -11,13 +11,23 @@ const HistoryPage = () => {
   useEffect(() => {
     async function loadHistory() {
       const response = await fetchAppointments();
+      console.log('Fetch Response:', response); // Log the response
       if (response.success) {
         // Only show approved or denied appointments
-        setAppointments(response.appointments.filter(appointment => appointment.status !== 'Pending'));
+        const filteredAppointments = response.appointments.filter(appointment => appointment.status !== 'Pending');
+        console.log('Filtered Appointments:', filteredAppointments); // Log filtered appointments
+        setAppointments(filteredAppointments);
       }
     }
     loadHistory();
   }, []);
+
+  // Function to determine the text color based on status
+  const getStatusStyle = (status) => {
+    return {
+      color: status === 'Approved' || status === 'Denied' ? 'black' : 'inherit',
+    };
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
@@ -45,10 +55,11 @@ const HistoryPage = () => {
                 <tr key={appointment.id}>
                   <td style={tableCellStyle}>{appointment.id}</td>
                   <td style={tableCellStyle}>{appointment.email}</td>
-                  {/* Format the date here */}
                   <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
                   <td style={tableCellStyle}>{appointment.reason}</td>
-                  <td style={tableCellStyle}>{appointment.status}</td>
+                  <td style={{ ...tableCellStyle, ...getStatusStyle(appointment.status) }}>
+                    {appointment.status || 'N/A'} {/* Show N/A if status is undefined */}
+                  </td>
                 </tr>
               ))
             )}

@@ -1,25 +1,30 @@
-"use client";  // It will enable client-side rendering
-import React, { useState } from 'react';
+// Used perplexity AI for reference
+"use client";
+import React, { useState, useEffect } from 'react';
 import AdminNavbar from '../components/AdminNavbar';
+import { fetchAppointments } from '@/actions/appointments';
 
 const HistoryPage = () => {
- // just a dummy data for history of appointments//
-  const [appointments] = useState([
-    { id: 1, email: 'john@example.com', date: '2024-09-15', reason: 'Consultation for electrical issues', status: 'Approved' },
-    { id: 2, email: 'jane@example.com', date: '2024-09-16', reason: 'Request for project estimation', status: 'Denied' },
-    { id: 3, email: 'alice@example.com', date: '2024-09-17', reason: 'Installation inquiry', status: 'Approved' },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+
+  // Fetch history appointments
+  useEffect(() => {
+    async function loadHistory() {
+      const response = await fetchAppointments();
+      if (response.success) {
+        // Only show approved or denied appointments
+        setAppointments(response.appointments.filter(appointment => appointment.status !== 'Pending'));
+      }
+    }
+    loadHistory();
+  }, []);
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      {/* Sidebar Navigation */}
       <AdminNavbar />
-
-      {/* Main Content */}
       <div style={mainContentStyle}>
         <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Appointments History</h1>
 
-        {/* Appointments Table */}
         <table style={tableStyle}>
           <thead>
             <tr>
@@ -31,15 +36,22 @@ const HistoryPage = () => {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.id}>
-                <td style={tableCellStyle}>{appointment.id}</td>
-                <td style={tableCellStyle}>{appointment.email}</td>
-                <td style={tableCellStyle}>{appointment.date}</td>
-                <td style={tableCellStyle}>{appointment.reason}</td>
-                <td style={tableCellStyle}>{appointment.status}</td>
+            {appointments.length === 0 ? (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center' }}>No appointments found</td>
               </tr>
-            ))}
+            ) : (
+              appointments.map((appointment) => (
+                <tr key={appointment.id}>
+                  <td style={tableCellStyle}>{appointment.id}</td>
+                  <td style={tableCellStyle}>{appointment.email}</td>
+                  {/* Format the date here */}
+                  <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
+                  <td style={tableCellStyle}>{appointment.reason}</td>
+                  <td style={tableCellStyle}>{appointment.status}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

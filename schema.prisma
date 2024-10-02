@@ -1,15 +1,5 @@
 // prisma/schema.prisma
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
-}
-
 model User {
   id            String        @id @default(cuid())
   name          String?
@@ -27,7 +17,8 @@ model Appointment {
   reason    String
   date      DateTime
   time      String
-  userId    String?  // Changed from Int to String
+  userId    String?  // Foreign key from User
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  status    String   @default("Pending")  // New status field
 }

@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "@stripe/react-stripe-js": "^2.8.0",
     "@stripe/stripe-js": "^4.5.0",
     "bcrypt": "^5.1.1",

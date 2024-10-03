@@ -10,21 +10,21 @@ const Projects = () => {
   // Sample projects data. Replace this with your actual data source.
   const projects = [
     {
-      title: "Custom Electrical Grid for Commercial Space",
-      shortDescription: "Designed and implemented an electrical grid for a large commercial building.",
-      description: "This project involved setting up a highly efficient electrical grid for a multi-story commercial space to ensure safety, efficiency, and scalability. The installation involved numerous safety checks, adherence to commercial regulations, and collaboration with multiple stakeholders. The project ensured long-term reliability and future scalability, making it an ideal solution for the client's needs.",
+      title: "Modular Signal Processing System for Commercial Electrical Setup",
+      shortDescription: "Advanced Modular Synthesis System for Custom Signal Processing",
+      description: "This project focused on designing and integrating a modular signal processing system to optimize commercial electrical operations. The setup featured an advanced control panel for real-time monitoring and precise adjustments, enhancing system efficiency and scalability for future needs. The intuitive interface with LED indicators allowed for easy operation, ensured optimal performance, and offered flexibility for potential expansions and upgrades.",
       imageSrc: "/project1.jpg",
     },
     {
-      title: "Residential Solar Panel Installation",
-      shortDescription: "Installed solar panels and optimized power usage for a residential building.",
-      description: "Solar panel installation, energy optimization, and grid integration for a modern, energy-efficient residential home. The project aimed at reducing the homeowner's electricity bills by at least 40% and contributing to sustainable energy goals. Custom battery storage solutions were integrated for better energy efficiency during non-sunny periods.",
+      title: "High Voltage Substation Design for Enhanced Grid Reliability",
+      shortDescription: "Designed and built a high voltage substation for improved grid reliability.",
+      description: "This project involved the design and implementation of a high voltage substation to support reliable power distribution across a large grid. The system included advanced insulators, transformers, and breakers to ensure safe and efficient handling of electricity. This substation was built to handle significant load capacities while incorporating safety features to minimize risks during power surges or maintenance.",
       imageSrc: "/project2.jpg",
     },
     {
-      title: "Advanced Office Lighting System",
-      shortDescription: "Developed an advanced lighting solution for an office building.",
-      description: "Custom lighting design and installation for enhanced productivity and energy efficiency in a corporate office. This project utilized smart IoT solutions to provide programmable lighting schedules and ensured compliance with workplace safety standards while reducing energy consumption by 30%.",
+      title: "Marine Cable Management System for Offshore Operations",
+      shortDescription: "Engineered a robust cable management system for marine offshore operations.",
+      description: "This project involved designing a marine cable management system for efficient routing and secure placement of power and communication cables. Built to withstand harsh marine conditions, it used corrosion-resistant materials and strategic pathways to improve safety, reduce maintenance, and ensure long-term reliability for offshore operations. The system also allowed for easy future expansions as operational needs grow",
       imageSrc: "/project3.png",
     },
   ];
@@ -53,7 +53,7 @@ const Projects = () => {
         </div>
 
         {/* Right Side: Initially Empty */}
-        <div className="w-1/2 flex items-center justify-center">
+        <div className="w-1/2 flex items-start justify-center mt-10">
           {!selectedProject && (
             <div className="text-center text-gray-500">
               <p className="text-2xl">Select a project to view details</p>

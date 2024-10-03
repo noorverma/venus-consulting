@@ -12,7 +12,7 @@ const AdminNavbar = () => {
     </nav>
   );
 };
-//Some CSS changes in AdminNavbar
+//Some CSS changes in AdminNavbar, used Tailwind CSS for reference
 const navbarStyle = {
   width: '220px',
   height: '100vh',

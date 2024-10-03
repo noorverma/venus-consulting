@@ -7,7 +7,7 @@ const AdminNavbar = () => {
   return (
     <nav style={navbarStyle}>
       <div style={sidebarHeaderStyle}>Admin Dashboard</div>
-      <div style={linkStyle} onClick={() => router.push('/admin')}>Appointments</div>{/*Tab for the admin*/}
+      <div style={linkStyle} onClick={() => router.push('/Admin')}>Appointments</div>{/*Tab for the admin*/}
       <div style={linkStyle} onClick={() => router.push('/history')}>History</div> {/*Tab for the admin*/}
     </nav>
   );

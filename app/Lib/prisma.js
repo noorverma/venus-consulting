@@ -1,6 +1,6 @@
 ////Use perplexity AI for reference but the code was written myself
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 let prisma;
 

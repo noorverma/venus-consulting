@@ -1,4 +1,3 @@
-// Used perplexity AI for reference
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -23,12 +22,42 @@ const AdminDashboard = () => {
   }, []);
 
   // Handle approve/deny actions locally
-  const handleAction = (id, action) => {
+  const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
-      prevAppointments.map((appointment) =>
-        appointment.id === id ? { ...appointment, status: action } : appointment
+      prevAppointments.map((app) =>
+        app.id === appointment.id ? { ...app, status: action } : app
       )
     );
+
+    // Send email notification after status change
+    sendEmail(appointment.email, appointment.reason, appointment.date, action);
+  };
+
+  // Send email function
+  const sendEmail = async (email, reason, date, action) => {
+    try {
+      const response = await fetch('/api/SendAppointmentEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          reason,
+          date,
+          status: action,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('Email sent successfully');
+      } else {
+        console.error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
   };
 
   // Handle submit to update server and navigate to history
@@ -55,43 +84,46 @@ const AdminDashboard = () => {
       <div style={mainContentStyle}>
         <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Admin Dashboard - Appointments</h1>
 
-        <table style={tableStyle}>
-          <thead>
-            <tr style={{ backgroundColor: '#f9f9f9' }}>
-              <th style={tableHeaderStyle}>ID</th>
-              <th style={tableHeaderStyle}>Email</th>
-              <th style={tableHeaderStyle}>Date</th>
-              <th style={tableHeaderStyle}>Reason for Visit</th>
-              <th style={tableHeaderStyle}>Status</th>
-              <th style={tableHeaderStyle}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.id}>
-                <td style={tableCellStyle}>{appointment.id}</td>
-                <td style={tableCellStyle}>{appointment.email}</td>
-                <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
-                <td style={tableCellStyle}>{appointment.reason}</td>
-                <td style={tableCellStyle}>{appointment.status}</td>
-                <td style={tableCellStyle}>
-                  <button
-                    style={approveButtonStyle}
-                    onClick={() => handleAction(appointment.id, 'Approved')}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    style={denyButtonStyle}
-                    onClick={() => handleAction(appointment.id, 'Denied')}
-                  >
-                    Deny
-                  </button>
-                </td>
+        {/* Scrollable table container */}
+        <div style={tableContainerStyle}>
+          <table style={tableStyle}>
+            <thead>
+              <tr style={{ backgroundColor: '#f9f9f9' }}>
+                <th style={tableHeaderStyle}>ID</th>
+                <th style={tableHeaderStyle}>Email</th>
+                <th style={tableHeaderStyle}>Date</th>
+                <th style={tableHeaderStyle}>Reason for Visit</th>
+                <th style={tableHeaderStyle}>Status</th>
+                <th style={tableHeaderStyle}>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {appointments.map((appointment) => (
+                <tr key={appointment.id}>
+                  <td style={tableCellStyle}>{appointment.id}</td>
+                  <td style={tableCellStyle}>{appointment.email}</td>
+                  <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
+                  <td style={tableCellStyle}>{appointment.reason}</td>
+                  <td style={tableCellStyle}>{appointment.status}</td>
+                  <td style={tableCellStyle}>
+                    <button
+                      style={approveButtonStyle}
+                      onClick={() => handleAction(appointment, 'Approved')}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      style={denyButtonStyle}
+                      onClick={() => handleAction(appointment, 'Denied')}
+                    >
+                      Deny
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div style={{ textAlign: 'center', margin: '20px' }}>
           <button style={submitButtonStyle} onClick={handleSubmit}>Submit Changes</button>
@@ -101,17 +133,23 @@ const AdminDashboard = () => {
   );
 };
 
-// styling using Tailwind CSS
+// Styling
 const mainContentStyle = {
   flexGrow: 1,
   padding: '40px',
   backgroundColor: '#f5f5f5',
 };
 
+const tableContainerStyle = {
+  maxHeight: '400px', // Limit table height to 400px and allow scrolling
+  overflowY: 'scroll',
+  border: '1px solid #ddd',
+  marginTop: '20px',
+};
+
 const tableStyle = {
   width: '100%',
   borderCollapse: 'collapse',
-  marginTop: '20px',
 };
 
 const tableHeaderStyle = {
@@ -129,7 +167,6 @@ const tableCellStyle = {
   textAlign: 'center',
 };
 
-// styling for approve button
 const approveButtonStyle = {
   padding: '8px 12px',
   backgroundColor: 'green',
@@ -140,7 +177,6 @@ const approveButtonStyle = {
   marginRight: '10px',
 };
 
-// styling for deny button
 const denyButtonStyle = {
   padding: '8px 12px',
   backgroundColor: 'red',
@@ -150,7 +186,6 @@ const denyButtonStyle = {
   cursor: 'pointer',
 };
 
-// styling for submit button
 const submitButtonStyle = {
   padding: '15px 30px',
   backgroundColor: '#FB923C',

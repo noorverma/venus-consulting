@@ -54,7 +54,7 @@ export default function SignIn() {
         setError(result.error);
       } else if (result.success) {
         if (result.role === 'admin') {
-          router.push('/Admin');
+          router.push('/admin');
         } else {
           router.push('/Main');
         }

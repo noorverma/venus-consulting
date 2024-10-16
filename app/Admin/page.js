@@ -1,41 +1,89 @@
-"use client"; // it will enable the client side rendering
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminNavbar from '../components/AdminNavbar';
+import { fetchAppointments, updateAppointmentStatus } from '@/actions/appointments';
 
 const AdminDashboard = () => {
-  const router = useRouter(); // It will navigate to the history page
+  const router = useRouter();
+  const [appointments, setAppointments] = useState([]);
 
-// This is just a dummy data
-  const [appointments, setAppointments] = useState([
-    { id: 1, email: 'john@example.com', date: '2024-09-15', reason: 'Consultation for electrical issues', status: 'Pending' },
-    { id: 2, email: 'jane@example.com', date: '2024-09-16', reason: 'Request for project estimation', status: 'Pending' },
-    { id: 3, email: 'alice@example.com', date: '2024-09-17', reason: 'Installation inquiry', status: 'Pending' },
-  ]);
+  // Fetch appointments when the page loads
+  useEffect(() => {
+    async function loadAppointments() {
+      const response = await fetchAppointments();
+      if (response.success) {
+        setAppointments(response.appointments);
+      } else {
+        console.error('Failed to fetch appointments');
+      }
+    }
+    loadAppointments();
+  }, []);
 
-// used to handle approve/ deny by admin
-  const handleAction = (id, action) => {
+  // Handle approve/deny actions locally
+  const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
-      prevAppointments.map((appointment) =>
-        appointment.id === id ? { ...appointment, status: action } : appointment
+      prevAppointments.map((app) =>
+        app.id === appointment.id ? { ...app, status: action } : app
       )
     );
+
+    // Send email notification after status change
+    sendEmail(appointment.email, appointment.reason, appointment.date, action);
   };
 
-  const handleSubmit = () => {
-    router.push('/history'); // It will automatically navigate to the history page after admin approve/deny
+  // Send email function
+  const sendEmail = async (email, reason, date, action) => {
+    try {
+      const response = await fetch('/api/SendAppointmentEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          reason,
+          date,
+          status: action,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('Email sent successfully');
+      } else {
+        console.error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
+
+  // Handle submit to update server and navigate to history
+  const handleSubmit = async () => {
+    const updatePromises = appointments.map(async (appointment) => {
+      if (appointment.status === 'Approved' || appointment.status === 'Denied') {
+        await updateAppointmentStatus(appointment.id, appointment.status);
+        return null; // Return null for approved or denied appointments
+      }
+      return appointment; // Return other appointments unchanged
+    });
+
+    const results = await Promise.all(updatePromises);
+    // Filter out null results (those that were approved or denied)
+    const filteredAppointments = results.filter(appointment => appointment !== null);
+    setAppointments(filteredAppointments); // Update state with remaining appointments
+
+    router.push('/history'); // Navigate to the history page
   };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-    
       <AdminNavbar />
-
-      {/* Main Content */}
       <div style={mainContentStyle}>
         <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Admin Dashboard - Appointments</h1>
 
-        {/* Appointments Table */}
         <table style={tableStyle}>
           <thead>
             <tr style={{ backgroundColor: '#f9f9f9' }}>
@@ -52,19 +100,28 @@ const AdminDashboard = () => {
               <tr key={appointment.id}>
                 <td style={tableCellStyle}>{appointment.id}</td>
                 <td style={tableCellStyle}>{appointment.email}</td>
-                <td style={tableCellStyle}>{appointment.date}</td>
+                <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
                 <td style={tableCellStyle}>{appointment.reason}</td>
                 <td style={tableCellStyle}>{appointment.status}</td>
                 <td style={tableCellStyle}>
-                  <button style={approveButtonStyle} onClick={() => handleAction(appointment.id, 'Approved')}>Approve</button>
-                  <button style={denyButtonStyle} onClick={() => handleAction(appointment.id, 'Denied')}>Deny</button>
+                  <button
+                    style={approveButtonStyle}
+                    onClick={() => handleAction(appointment, 'Approved')}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    style={denyButtonStyle}
+                    onClick={() => handleAction(appointment, 'Denied')}
+                  >
+                    Deny
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Submit button for the admin*/}
         <div style={{ textAlign: 'center', margin: '20px' }}>
           <button style={submitButtonStyle} onClick={handleSubmit}>Submit Changes</button>
         </div>
@@ -100,6 +157,7 @@ const tableCellStyle = {
   border: '1px solid #ddd',
   textAlign: 'center',
 };
+
 // styling for approve button
 const approveButtonStyle = {
   padding: '8px 12px',
@@ -110,6 +168,7 @@ const approveButtonStyle = {
   cursor: 'pointer',
   marginRight: '10px',
 };
+
 // styling for deny button
 const denyButtonStyle = {
   padding: '8px 12px',
@@ -119,6 +178,7 @@ const denyButtonStyle = {
   borderRadius: '5px',
   cursor: 'pointer',
 };
+
 // styling for submit button
 const submitButtonStyle = {
   padding: '15px 30px',

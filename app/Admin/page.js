@@ -1,4 +1,3 @@
-// Used perplexity AI for reference
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -23,12 +22,42 @@ const AdminDashboard = () => {
   }, []);
 
   // Handle approve/deny actions locally
-  const handleAction = (id, action) => {
+  const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
-      prevAppointments.map((appointment) =>
-        appointment.id === id ? { ...appointment, status: action } : appointment
+      prevAppointments.map((app) =>
+        app.id === appointment.id ? { ...app, status: action } : app
       )
     );
+
+    // Send email notification after status change
+    sendEmail(appointment.email, appointment.reason, appointment.date, action);
+  };
+
+  // Send email function
+  const sendEmail = async (email, reason, date, action) => {
+    try {
+      const response = await fetch('/api/SendAppointmentEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          reason,
+          date,
+          status: action,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('Email sent successfully');
+      } else {
+        console.error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
   };
 
   // Handle submit to update server and navigate to history
@@ -55,7 +84,8 @@ const AdminDashboard = () => {
       <div style={mainContentStyle}>
         <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Admin Dashboard - Appointments</h1>
 
-        <div style={tableContainerStyle}> {/* Scrollable container */}
+        {/* Scrollable table container */}
+        <div style={tableContainerStyle}>
           <table style={tableStyle}>
             <thead>
               <tr style={{ backgroundColor: '#f9f9f9' }}>
@@ -78,13 +108,13 @@ const AdminDashboard = () => {
                   <td style={tableCellStyle}>
                     <button
                       style={approveButtonStyle}
-                      onClick={() => handleAction(appointment.id, 'Approved')}
+                      onClick={() => handleAction(appointment, 'Approved')}
                     >
                       Approve
                     </button>
                     <button
                       style={denyButtonStyle}
-                      onClick={() => handleAction(appointment.id, 'Denied')}
+                      onClick={() => handleAction(appointment, 'Denied')}
                     >
                       Deny
                     </button>

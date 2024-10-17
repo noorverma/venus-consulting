@@ -13,10 +13,10 @@ export default async function handler(req, res) {//using the export default for 
       },
     });
 
-    // Define the HTML content for the approval and denial emails
+    //HTML Content for Approved and denied Emails. It is done by me//
     let emailContent = '';
 
-    if (status === 'Approved') {
+    if (status === 'Approved') { //===strict operator is used here//
       emailContent = `
         <p>Hello,</p>
         <p>Thank you for choosing <strong>Venus Electrical Consulting</strong>.</p>
@@ -25,11 +25,11 @@ export default async function handler(req, res) {//using the export default for 
         <ul>
           <li><strong>Date:</strong> ${date}</li>
           <li><strong>Time:</strong> ${time}</li>
-          <li><strong>Reason:</strong> ${reason}</li>
+          <li><strong>Reason:</strong> ${reason}</li> 
         </ul>
         <p>We look forward to seeing you.</p>
       `;
-    } else if (status === 'Denied') {
+    } else if (status === 'Denied') { ///===strict operator is used here///
       emailContent = `
         <p>Hello,</p>
         <p>Thank you for choosing <strong>Venus Electrical Consulting</strong>.</p>

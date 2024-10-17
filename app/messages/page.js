@@ -1,4 +1,8 @@
 //Noor
+//used chatgpt and here is the prompt
+//I want to add a feature on the admin page where the admin can view user messages and reply to
+//them. The admin should be able to see all messages, reply to individual messages, and the replies
+//should be displayed under the corresponding user messages.
 'use client';
 import React, { useState, useEffect } from 'react';
 import AdminNavbar from '../components/AdminNavbar';

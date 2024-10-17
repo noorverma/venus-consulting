@@ -9,10 +9,14 @@ const ChatWithAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  
+  // Toggle chat window open/close
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
+
+  // Send the user's message to the admin
 
   const sendMessage = async () => {
     if (message.trim() !== "") {
@@ -59,6 +63,7 @@ const ChatWithAdmin = () => {
 
   return (
     <div>
+      {/* Chat button in the bottom-right corner */}
       <div className="fixed bottom-5 right-5">
         <button
           onClick={toggleChat}
@@ -67,7 +72,7 @@ const ChatWithAdmin = () => {
           {isOpen ? "Close Chat" : "Chat with Admin"}
         </button>
       </div>
-
+      {/* Chatbox visible when chat is open */}
       {isOpen && (
         <div className="fixed bottom-20 right-5 bg-white border border-gray-400 p-4 rounded-lg shadow-lg w-80">
           <div className="h-60 overflow-y-scroll mb-2">

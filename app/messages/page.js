@@ -1,22 +1,24 @@
 //Noor
-//used chatgpt and here is the prompt
+//Used chatgpt and here is the prompt
 //I want to add a feature on the admin page where the admin can view user messages and reply to
 //them. The admin should be able to see all messages, reply to individual messages, and the replies
 //should be displayed under the corresponding user messages.
 'use client';
 import React, { useState, useEffect } from 'react';
 import AdminNavbar from '../components/AdminNavbar';
-
+//
 const AdminMessages = () => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [replyMessage, setReplyMessage] = useState('');
-  const [replyingTo, setReplyingTo] = useState(null);
-
+  const [messages, setMessages] = useState([]); //State which will hold the list of messages fetched from the server
+  const [loading, setLoading] = useState(true); //State which will manage loading indicator while fetching messages
+  const [replyMessage, setReplyMessage] = useState(''); //State to hold the admin's reply message
+  const [replyingTo, setReplyingTo] = useState(null); //State to track which message the admin is currently replying to
+  
+// Fetch messages when the page loads
   useEffect(() => {
     loadMessages();
   }, []);
 
+  //Function to load messages from the server
   async function loadMessages() {
     try {
       console.log('Fetching messages...');
@@ -120,7 +122,7 @@ const AdminMessages = () => {
     </div>
   );
 };
-
+//styling 
 const mainContentStyle = {
   flexGrow: 1,
   padding: '40px',

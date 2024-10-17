@@ -33,7 +33,7 @@ const AdminDashboard = () => {
     sendEmail(appointment.email, appointment.reason, appointment.date, action);
   };
 
-  // Send email function
+  // Sending the email function  which contains async and await function"
   const sendEmail = async (email, reason, date, action) => {
     try {
       const response = await fetch('/api/SendAppointmentEmail', {
@@ -42,10 +42,10 @@ const AdminDashboard = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          reason,
-          date,
-          status: action,
+          email, //recipient's email//
+          reason, //reason of the appointment//
+          date, //appointment date//
+          status: action, 
         }),
       });
 

@@ -9,6 +9,8 @@ import prisma from "@/app/Lib/prisma";
 export default async function handler(req, res) {
   console.log('API route called:', req.method);
 
+  // Handle GET requests to fetch messages
+
   if (req.method === 'GET') {
     try {
       console.log('Fetching messages from database...');
@@ -21,6 +23,10 @@ export default async function handler(req, res) {
       console.error('Error fetching messages:', error);
       res.status(500).json({ error: 'Failed to fetch messages' });
     }
+
+    //Handle POST requests to create a new message
+
+
   } else if (req.method === 'POST') {
     try {
       const { message, sender } = req.body;

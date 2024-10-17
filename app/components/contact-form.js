@@ -126,17 +126,25 @@ const ContactForm = () => {
       </form>
 
       {/* Add some space before the map */}
-      <div className="mt-52"></div> {/* Adds a gap between the form and the map */}
+      <div className="mt-52"></div> 
 
-      {/* Map Section with White Background */}
       <div className="bg-white p-10 relative z-10">  
-        {/* "Find us" Message */}
+        
         <div className="text-center text-4xl font-bold mb-6 text-black mt-10">Find us</div>
         
         {/* Lazy-loaded Map Section */}
         <div className="relative mt-10 flex justify-center" ref={mapRef}>
           {mapLoaded ? (
             <iframe
+            //To integrate the map these are the steps I followed 
+            //went to google maps
+            //selected location
+            //when to the share the location
+            //embedded a map and copied the link 
+            //pasted the link here 
+            //used chatGPT for the styling 
+            //prompt: this is the embed link can you make some adjustments in the height and weight of the map 
+
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5013.872715685945!2d-114.06466642355747!3d51.07272487171769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x53716565dd4035e5%3A0xc07fba08128d0169!2sVenus%20Electrical%20Consulting!5e0!3m2!1sen!2sca!4v1729105604823!5m2!1sen!2sca"
               width="1200"
               height="450"

@@ -1,6 +1,10 @@
+//Noor
+//Used chatGPT and here is the prompt I used 
+//I want you to provide me with code of live chat. This feature should allows users on the main page to send messages to the admin through 
+//a chat interface located at the bottom-right corner of the screen. The chat window
+//opens upon clicking a "Chat with Admin" button, where users can type and send messages.
 'use client';
 import { useState, useEffect } from 'react';
-
 const ChatWithAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");

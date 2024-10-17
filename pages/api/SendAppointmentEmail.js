@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'; //Asked chatgpt, "I want to send an appointment as an admin to user as i have appointment page where user can book an appointment. Can you tell me how i do that using next.js?""
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

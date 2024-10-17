@@ -1,4 +1,9 @@
 //Noor
+//The prompt I used in chatgpt
+//I need an API route that allows the admin to manage messages sent by users. 
+//The admin should be able to fetch all user messages, ordered by the most recent, and send replies to individual messages. 
+//The API should support GET requests to retrieve messages and POST requests to create new messages, both user-generated and admin replies. 
+//The database I am using is postgresql with Prisma. 
 import prisma from "@/app/Lib/prisma";
 
 export default async function handler(req, res) {

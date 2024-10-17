@@ -14,7 +14,7 @@ export default async function handler(req, res) {//using the export default for 
     });
 
     //HTML Content for Approved and denied Emails. It is done by me//
-    let emailContent = '';
+    let emailContent = ''; //Empty string that will hold HTML Content//
 
     if (status === 'Approved') { //===strict operator is used here//
       emailContent = `
@@ -43,7 +43,7 @@ export default async function handler(req, res) {//using the export default for 
         </ul>
       `;
     }
-
+//Options for the email such as recpeint's email, subject, Content of the Email//
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,

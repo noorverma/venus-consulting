@@ -128,6 +128,7 @@ const AdminDashboard = () => {
         <div style={{ textAlign: 'center', margin: '20px' }}>
           <button style={submitButtonStyle} onClick={handleSubmit}>Submit Changes</button>
         </div>
+        
       </div>
     </div>
   );

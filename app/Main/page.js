@@ -1,4 +1,5 @@
 import Navbar from "../components/navbar";  
+import ChatWithAdmin from "../components/chatWithAdmin";
 
 const MainPage = () => {
   return (
@@ -23,6 +24,7 @@ const MainPage = () => {
           </div>
         </div>
       </header>
+      <ChatWithAdmin />
     </div>
   );
 };

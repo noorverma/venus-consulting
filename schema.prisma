@@ -29,3 +29,13 @@ model Appointment {
   createdAt DateTime @default(now())
   status    String   @default("Pending")  // New status field
 }
+
+model Message {
+  id        Int       @id @default(autoincrement())
+  sender    String
+  message   String
+  timestamp DateTime  @default(now())
+  replyToId Int?
+  replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id])
+  replies   Message[] @relation("ReplyTo")
+}

@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer'; //Asked chatgpt, "I want to send an appointment as an admin to user as i have appointment page where user can book an appointment. Can you tell me how i do that using next.js?""
-//ChatGPT gave me all code as i asked chatgpt that can you give me code for sending email using my gmail as default but code was very vague so i only took it as reference.
+import nodemailer from 'nodemailer'; //Asked chatgpt, "I want to send an appointment as an admin to user as i have appointment page where user can book an appointment. Can you tell me how i do that using next.js?"//
+//ChatGPT gave me all code as i asked chatgpt that "can you give me code for sending email using my gmail as default and nodemailer library" but code was very vague so i only took it as reference//
 export default async function handler(req, res) {//using the export default for main function which is handler//
   if (req.method === 'POST') {//Only POST Requests are allowed//
     const { email, reason, date, time, status } = req.body; // All the Appointment form details coming from client side//
@@ -8,7 +8,7 @@ export default async function handler(req, res) {//using the export default for 
       service: 'gmail', //Using GMail.
       auth: {
         user: process.env.EMAIL_USER, // My Gmail account which is in .env.local
-        //I didnot know how to generate app-specific password so i asked gpt that "Can you give me all steps that how i generate app-specific password from my gmail?"
+        //I didnot know how to generate app-specific password so i asked gpt that "Can you give me all steps that how i generate app-specific password from my gmail?"//
         pass: process.env.EMAIL_PASS, // App-Specific password from my Gmail//
       },
     });

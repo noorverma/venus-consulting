@@ -158,7 +158,7 @@ const ContactForm = () => {
           )}
         </div>
 
-        {/* Contact Details Section (Below the Map) */}
+        {/* Contact Details Section added jsut below the map */}
         <div className="flex flex-col items-center justify-center mt-10">
           <div className="text-center text-lg mb-4">
             <p><strong>Phone:</strong> +1 (403) 603-0639</p>

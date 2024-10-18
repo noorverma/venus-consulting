@@ -6,6 +6,7 @@ import CheckoutPage from "../components/CheckoutPage";
 import convertToSubcurrency from "../Lib/convertToSubcurrency";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useSearchParams } from "next/navigation";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined");
@@ -13,8 +14,9 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default function Home() {
-    const amount = 49.99;
+export default function Payment() {
+    const searchParams = useSearchParams();
+    const amount = searchParams.get('amount') || 49.99;
 
     return(
         <main className="max-w-4xl mx-auto p-10 text-center bg-white rounded-lg shadow-lg mt-10">

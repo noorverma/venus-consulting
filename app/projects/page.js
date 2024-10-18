@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ProjectCard from "../components/project-card";
 import Navbar from "../components/navbar";
+import ChatWithAdmin from "../components/chatWithAdmin";
 import Image from "next/image";
 
 const Projects = () => {
@@ -110,6 +111,7 @@ const Projects = () => {
           </div>
         )}
       </main>
+      <ChatWithAdmin />
     </>
   );
 };

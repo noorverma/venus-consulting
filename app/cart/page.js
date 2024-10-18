@@ -3,9 +3,11 @@
 // Item data is hard-coded for now by me
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importing useRouter for navigation
 
 const CartPage = () => {
-  // Using the provided product information as the initial cart items
+  const router = useRouter(); // Initialize router for navigation
+
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
@@ -38,6 +40,13 @@ const CartPage = () => {
   // Function to handle removing items from the cart
   const removeFromCart = (id) => {
     setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  // Function to handle checkout
+  const handleCheckout = () => {
+    const totalAmount = calculateTotal();
+    // Navigate to the payment page with the total amount as a query parameter
+    router.push(`/payment?amount=${totalAmount}`);
   };
 
   return (
@@ -77,6 +86,7 @@ const CartPage = () => {
 
           {/* Checkout button */}
           <button 
+            onClick={handleCheckout} 
             className="bg-orange-500 text-white text-lg font-bold py-3 px-8 rounded-lg hover:bg-orange-600 transition duration-300"
           >
             Proceed to Checkout

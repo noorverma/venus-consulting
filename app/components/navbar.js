@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth'; 
 import { auth } from '../Lib/firebase';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
   const router = useRouter();
@@ -36,6 +37,15 @@ const Navbar = () => {
           <a href="/About" className="text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg hover:p-2 transition-all duration-300">About</a>
           <a href="/projects" className="text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg hover:p-2 transition-all duration-300">Projects</a>
           <a href="/contact" className="text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg hover:p-2 transition-all duration-300">Contact Us</a>
+
+          {/* Cart Icon */}
+          <a href="/cart" className="relative text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg p-2 transition-all duration-300">
+            <FaShoppingCart className="text-3xl" />
+            {/* Optionally, you can display the number of items in the cart */}
+            <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-black text-orange-500 rounded-full px-2 py-1 text-xs font-bold">
+              0 {/* Placeholder for cart item count */}
+            </span>
+          </a>
 
           {/* Log out button that triggers handleLogout */}
           <button 

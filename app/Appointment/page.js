@@ -207,7 +207,7 @@ export default function Appointment() {
                 <div class="flex overflow-x-scroll space-x-6 pb-6">
                   {/* Example Product 1 */}
                   <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="https://via.placeholder.com/150" alt="Equipment 1" class="w-full h-40 object-cover rounded-t-lg" />
+                    <img src="/voltagetester.png" alt="Equipment 1" class="w-full h-30 object-cover rounded-t-lg" />
                     <div>
                       <h3 class="text-lg font-semibold mt-4">Voltage Tester</h3>
                       <p class="text-gray-600 mt-2">High-quality voltage tester for safe electrical inspections.</p>
@@ -220,7 +220,7 @@ export default function Appointment() {
 
                   {/* Example Product 2 */}
                   <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="https://via.placeholder.com/150" alt="Equipment 2" class="w-full h-40 object-cover rounded-t-lg" />
+                    <img src="/insulatedgloves.jpeg" alt="Equipment 2" class="w-full h-30 object-cover rounded-t-lg" />
                     <div>
                       <h3 class="text-lg font-semibold mt-4">Insulated Gloves</h3>
                       <p class="text-gray-600 mt-2">Electrical safety gloves with high insulation protection.</p>
@@ -233,7 +233,7 @@ export default function Appointment() {
 
                   {/* Example Product 3 */}
                   <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="https://via.placeholder.com/150" alt="Equipment 3" class="w-full h-40 object-cover rounded-t-lg" />
+                    <img src="/circuitbreakerfinder.png" alt="Equipment 3" class="w-full h-30 object-cover rounded-t-lg" />
                     <div>
                       <h3 class="text-lg font-semibold mt-4">Circuit Breaker Finder</h3>
                       <p class="text-gray-600 mt-2">Accurate circuit breaker finder for quick electrical testing.</p>
@@ -246,14 +246,14 @@ export default function Appointment() {
                 </div>
                 
                 {/* Contact Information Section */}
-                <div style={{
-                  padding: '20px',
-                  backgroundColor: '#f9f9f9',
-                  borderRadius: '10px',
-                  boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
-                  marginTop: '10px',
-                  marginBottom: '20px',
-                }}>
+                  <div style={{
+                    padding: '20px',
+                    backgroundColor: '#f9f9f9',
+                    borderRadius: '10px',
+                    boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                    marginTop: '10px',
+                    marginBottom: '20px',
+                  }}>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
                   <p>2308 Centre a St NE#107</p>

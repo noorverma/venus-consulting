@@ -38,6 +38,7 @@ const Navbar = () => {
           <a href="/projects" className="text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg hover:p-2 transition-all duration-300">Projects</a>
           <a href="/contact" className="text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg hover:p-2 transition-all duration-300">Contact Us</a>
 
+          {/* ChstGPT used for the cart button */}
           {/* Cart Icon */}
           <a href="/cart" className="relative text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg p-2 transition-all duration-300">
             <FaShoppingCart className="text-3xl" />

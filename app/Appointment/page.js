@@ -198,7 +198,9 @@ export default function Appointment() {
               </p>
             )}
           </div>
-
+          
+          {/* ChatGPT used to create the scrollable product catalog section
+          Prompt: Add a product catalog section to this code */}
           {/* New container for Contact Information and Equipment Section */}
             <div style={{ width: '35%' }}>
               {/* Equipment Catalog Section */}

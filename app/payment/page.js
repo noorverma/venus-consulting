@@ -17,12 +17,12 @@ export default function Home() {
     const amount = 49.99;
 
     return(
-        <main className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
+        <main className="max-w-4xl mx-auto p-10 text-center bg-white rounded-lg shadow-lg mt-10">
             <div className="mb-10">
-                <h1 className="text-4xl font-extrabold mb-2">User</h1>
-                <h2 className="text-2xl">
-                    has requested
-                    <span className="font-bold"> ${amount}</span>
+                <h1 className="text-4xl font-extrabold mb-2 text-orange-500">Payment Request</h1>
+                <h2 className="text-2xl font-medium text-gray-700">
+                You have been requested to pay
+                <span className="font-bold text-black"> ${amount}</span>
                 </h2>
             </div>
 

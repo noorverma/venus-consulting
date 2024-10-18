@@ -198,61 +198,72 @@ export default function Appointment() {
               </p>
             )}
           </div>
-          {/* Contact Information Section */}
-          <div style={{
-            width: '35%',
-            padding: '20px',
-            backgroundColor: '#f9f9f9',
-            borderRadius: '10px',
-            boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
-            marginTop: '80px',
-          }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
-            <p>2308 Centre a St NE#107</p>
-            <p>Calgary, AB</p>
-            <p>T2E 2T7</p>
-            <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
-          </div>
-        </div>
-          {/* Equipment Catalog Preview Section */}
-          <div class="mt-10">
-          <h2 class="text-2xl font-bold mb-4">Explore Our Equipment</h2>
-          <div class="flex overflow-x-scroll space-x-6 pb-6">
-            {/* Example Product 1 */}
-            <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-              <img src="https://via.placeholder.com/150" alt="Equipment 1" class="w-full h-40 object-cover rounded-t-lg" />
-              <h3 class="text-lg font-semibold mt-4">Voltage Tester</h3>
-              <p class="text-gray-600 mt-2">High-quality voltage tester for safe electrical inspections.</p>
-              <p class="font-bold mt-2">$25.99</p>
-              <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                Buy Now
-              </button>
-            </div>
 
-            {/* Example Product 2 */}
-            <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-              <img src="https://via.placeholder.com/150" alt="Equipment 2" class="w-full h-40 object-cover rounded-t-lg" />
-              <h3 class="text-lg font-semibold mt-4">Insulated Gloves</h3>
-              <p class="text-gray-600 mt-2">Electrical safety gloves with high insulation protection.</p>
-              <p class="font-bold mt-2">$15.50</p>
-              <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                Buy Now
-              </button>
-            </div>
+          {/* New container for Contact Information and Equipment Section */}
+            <div style={{ width: '35%' }}>
+              {/* Equipment Catalog Section */}
+              <div>
+                <h2 class="text-2xl font-bold mb-4">Explore Our Equipment</h2>
+                <div class="flex overflow-x-scroll space-x-6 pb-6">
+                  {/* Example Product 1 */}
+                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
+                    <img src="https://via.placeholder.com/150" alt="Equipment 1" class="w-full h-40 object-cover rounded-t-lg" />
+                    <div>
+                      <h3 class="text-lg font-semibold mt-4">Voltage Tester</h3>
+                      <p class="text-gray-600 mt-2">High-quality voltage tester for safe electrical inspections.</p>
+                      <p class="font-bold mt-2">$25.99</p>
+                    </div>
+                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                      Buy Now
+                    </button>
+                  </div>
 
-            {/* Example Product 3 */}
-            <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-              <img src="https://via.placeholder.com/150" alt="Equipment 3" class="w-full h-40 object-cover rounded-t-lg" />
-              <h3 class="text-lg font-semibold mt-4">Circuit Breaker Finder</h3>
-              <p class="text-gray-600 mt-2">Accurate circuit breaker finder for quick electrical testing.</p>
-              <p class="font-bold mt-2">$40.00</p>
-              <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                Buy Now
-              </button>
+                  {/* Example Product 2 */}
+                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
+                    <img src="https://via.placeholder.com/150" alt="Equipment 2" class="w-full h-40 object-cover rounded-t-lg" />
+                    <div>
+                      <h3 class="text-lg font-semibold mt-4">Insulated Gloves</h3>
+                      <p class="text-gray-600 mt-2">Electrical safety gloves with high insulation protection.</p>
+                      <p class="font-bold mt-2">$15.50</p>
+                    </div>
+                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                      Buy Now
+                    </button>
+                  </div>
+
+                  {/* Example Product 3 */}
+                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
+                    <img src="https://via.placeholder.com/150" alt="Equipment 3" class="w-full h-40 object-cover rounded-t-lg" />
+                    <div>
+                      <h3 class="text-lg font-semibold mt-4">Circuit Breaker Finder</h3>
+                      <p class="text-gray-600 mt-2">Accurate circuit breaker finder for quick electrical testing.</p>
+                      <p class="font-bold mt-2">$40.00</p>
+                    </div>
+                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Contact Information Section */}
+                <div style={{
+                  padding: '20px',
+                  backgroundColor: '#f9f9f9',
+                  borderRadius: '10px',
+                  boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                  marginTop: '10px',
+                  marginBottom: '20px',
+                }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
+                  <p>2308 Centre a St NE#107</p>
+                  <p>Calgary, AB</p>
+                  <p>T2E 2T7</p>
+                  <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
       </div>
     </>
   );

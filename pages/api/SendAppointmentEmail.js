@@ -45,7 +45,7 @@ export default async function handler(req, res) {//using the export default for 
     }
 //Options for the email such as recpeint's email, subject, Content of the Email//
     const mailOptions = {
-      from: process.env.EMAIL_USER, //sender email address//
+      from: process.env.EMAIL_USER, //sender email address which is mine//
       to: email, // reciepients email address//
       subject: 'Appointment Status Update',
       html: emailContent,

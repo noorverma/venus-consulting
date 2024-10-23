@@ -3226,13 +3226,13 @@ lru-cache@^10.2.0:
   resolved "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
 
-mailer@^0.6.7:
-  version "0.6.7"
-  resolved "https://registry.npmjs.org/mailer/-/mailer-0.6.7.tgz"
-  integrity sha512-llrQPeVVMUGq+q9mWXvJfDKBq92accMum1tDuN6Wynvs628iYjGyOpLWUkcPq2Y6zK9WJxC85nlru+8llNxl2A==
+mailer@^0.6.6:
+  version "0.6.6"
+  resolved "https://registry.npmjs.org/mailer/-/mailer-0.6.6.tgz"
+  integrity sha512-phZ8oAbvFJvezbmU4uJ2V2LXoXamfHGeTtz1bodE+4MLc1NN5EtMHtvs/BpRyOrfsjKJ9lKFgrfgdnMV4r+NfQ==
   dependencies:
     colors ">= 0.3.0"
-    nodemailer "0.1.20"
+    nodemailer ">= 0.1.10"
 
 make-dir@^3.1.0:
   version "3.1.0"
@@ -3706,6 +3706,8 @@ micromatch@^4.0.4, micromatch@^4.0.5:
     braces "^3.0.3"
     picomatch "^2.3.1"
 
+<<<<<<< HEAD
+=======
 mime-db@1.52.0:
   version "1.52.0"
   resolved "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz"
@@ -3723,6 +3725,7 @@ mimelib-noiconv@*:
   resolved "https://registry.npmjs.org/mimelib-noiconv/-/mimelib-noiconv-0.1.9.tgz"
   integrity sha512-r5jXJR1Zq5SWX/LQDeC474Vvbq8tAWwaK1798wzfZGlmqoCH/cU5cDiYb1IMSYKPzC2hsTNIpqylW9R7DmDvQA==
 
+>>>>>>> 80a83005b2a02bd54c376d2919d2640243a4070e
 minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
@@ -3876,17 +3879,10 @@ node@^20.18.0:
   dependencies:
     node-bin-setup "^1.0.0"
 
-nodemailer@^6.9.15:
+nodemailer@^6.9.15, "nodemailer@>= 0.1.10":
   version "6.9.15"
   resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-6.9.15.tgz"
   integrity sha512-AHf04ySLC6CIfuRtRiEYtGEXgRfa6INgWGluDhnxTZhHSKvrBu7lc1VVchQ0d8nPc4cFaZoPq8vkyNoZr0TpGQ==
-
-nodemailer@0.1.20:
-  version "0.1.20"
-  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-0.1.20.tgz"
-  integrity sha512-0p+nadmJiD2SpYsxsAdj26QYMZKTxAHC6h4zyl9sKD5QHsyby9AdqxYvP5F++rUkc4x1goAyeOi6Xl05k6eekw==
-  dependencies:
-    mimelib-noiconv "*"
 
 nopt@^5.0.0:
   version "5.0.0"

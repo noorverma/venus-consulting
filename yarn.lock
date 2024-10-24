@@ -3706,8 +3706,6 @@ micromatch@^4.0.4, micromatch@^4.0.5:
     braces "^3.0.3"
     picomatch "^2.3.1"
 
-<<<<<<< HEAD
-=======
 mime-db@1.52.0:
   version "1.52.0"
   resolved "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz"
@@ -3720,12 +3718,6 @@ mime-types@^2.1.12:
   dependencies:
     mime-db "1.52.0"
 
-mimelib-noiconv@*:
-  version "0.1.9"
-  resolved "https://registry.npmjs.org/mimelib-noiconv/-/mimelib-noiconv-0.1.9.tgz"
-  integrity sha512-r5jXJR1Zq5SWX/LQDeC474Vvbq8tAWwaK1798wzfZGlmqoCH/cU5cDiYb1IMSYKPzC2hsTNIpqylW9R7DmDvQA==
-
->>>>>>> 80a83005b2a02bd54c376d2919d2640243a4070e
 minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"

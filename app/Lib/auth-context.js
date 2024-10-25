@@ -6,60 +6,67 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
-  GithubAuthProvider,
   GoogleAuthProvider,
   setPersistence,
   browserLocalPersistence,
   signInWithEmailAndPassword
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [authLoading, setAuthLoading] = useState(true); 
   const router = useRouter();
 
-  const gitHubSignIn = async () => {
-    const provider = new GithubAuthProvider();
-    await setPersistence(auth, browserLocalPersistence);  // Ensuring session persistence
-    return signInWithPopup(auth, provider);
-  };
-
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    await setPersistence(auth, browserLocalPersistence);  // Ensuring session persistence
-    return signInWithPopup(auth, provider);
+    await setPersistence(auth, browserLocalPersistence); 
+    const result = await signInWithPopup(auth, provider);
+    const userDoc = await getDoc(doc(db, "users", result.user.uid));
+    setRole(userDoc.exists() ? userDoc.data().role : "user");
+    setUser(result.user);
+    return { user: result.user, role: userDoc.data().role };
   };
 
   const emailSignIn = async (email, password) => {
-    await setPersistence(auth, browserLocalPersistence);  // Ensuring session persistence
-    return signInWithEmailAndPassword(auth, email, password);
+    await setPersistence(auth, browserLocalPersistence);  
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    const userDoc = await getDoc(doc(db, "users", result.user.uid));
+    setRole(userDoc.exists() ? userDoc.data().role : "user");
+    setUser(result.user);
+    return { user: result.user, role: userDoc.data().role };
   };
 
   const firebaseSignOut = () => {
     return signOut(auth).then(() => {
-      setUser(null); 
+      setUser(null);
+      setRole(null); 
       router.push('/SignIn'); 
     });
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);  // Set the user when authenticated
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        setRole(userDoc.exists() ? userDoc.data().role : "user");
+        setUser(currentUser);
       } else {
-        setUser(null);  // Clear user when signed out or not authenticated
+        setUser(null);
+        setRole(null);
       }
-      setAuthLoading(false);  // Done loading
+      setAuthLoading(false); 
     });
     return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, gitHubSignIn, emailSignIn, firebaseSignOut, authLoading }}>
+    <AuthContext.Provider value={{ user, role, googleSignIn, emailSignIn, firebaseSignOut, authLoading }}>
       {children}
     </AuthContext.Provider>
   );

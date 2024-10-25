@@ -19,8 +19,8 @@ export default function SignIn() {
     const email = e.target.email.value;
     const password = e.target.password.value;
     try {
-      await emailSignIn(email, password);  // Use emailSignIn method from auth-context
-      router.push('/Main');
+      const { role } = await emailSignIn(email, password);  
+      router.push(role === "admin" ? '/Admin' : '/Main'); 
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid email or password.');
@@ -30,8 +30,8 @@ export default function SignIn() {
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     try {
-      await googleSignIn();
-      router.push('/Main');
+      const { role } = await googleSignIn(); 
+      router.push(role === "admin" ? '/Admin' : '/Main');  
     } catch (error) {
       console.error('Google sign-in error:', error);
       setError('An error occurred during Google sign-in.');
@@ -67,6 +67,15 @@ export default function SignIn() {
                 />
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center text-sm text-gray-300">
+                  <input type="checkbox" className="mr-2 w-4 h-4 text-orange-600 bg-gray-800 border-gray-700 rounded focus:ring-orange-500" />
+                  Remember me
+                </label>
+                <Link href="/ForgotPassword" className="text-orange-500 hover:text-orange-400 text-sm">
+                  Forgot password?
+                </Link>
+              </div>
               <button type="submit" className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:outline-none focus:ring focus:ring-orange-500">
                 Sign in
               </button>

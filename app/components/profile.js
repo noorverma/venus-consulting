@@ -108,9 +108,13 @@ const Profile = () => {
     }
   };
 
-  if (loading || authLoading) return <div>Loading...</div>;
+  if (loading || authLoading) {
+    return <div>Loading...</div>;
+  }
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

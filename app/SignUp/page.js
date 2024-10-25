@@ -1,15 +1,16 @@
 //Use perplexity AI for reference but the code was written myself
-
-"use client";
+// app/SignUp/page.js
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '../Lib/firebase';
-import { setDoc, doc } from 'firebase/firestore';
+import { registerUser } from '../Lib/authUtilities'; // Import the register function
 import Head from 'next/head';
 import Link from 'next/link';
-import { Register } from '@/actions/authServer';
+import { doc, setDoc } from 'firebase/firestore';
+import Image from 'next/image'; // Import Image component for optimized images
 
 export default function SignUp() {
   const router = useRouter(); 
@@ -18,23 +19,19 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
+  // Handle sign-up with email and password
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setError(null);
-
     try {
-      const result = await Register({ username, email, password });
-      if (result.error) {
-        setError(result.error);
-      } else if (result.success) {
-        router.push('/SignIn');
-      }
+      await registerUser(username, email, password); // No isAdmin parameter needed here.
+      router.push('/SignIn');
     } catch (err) {
-      console.error('Registration error:', err);
-      setError('An unexpected error occurred. Please try again.');
+      console.error('Registration error:', err.message);
+      setError(err.message); // Set error message for display.
     }
   };
 
+  // Handle sign-up with Google account.
   const handleGoogleSignUp = async (e) => {
     e.preventDefault();
     const provider = new GoogleAuthProvider();
@@ -42,23 +39,21 @@ export default function SignUp() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const userRef = doc(db, "Users", user.uid);
-
-      await setDoc(userRef, {
+      await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         username: user.displayName,
-        isAdmin: false  
-      }, { merge: true });
+        role: "user", // Default role for Google sign-ups.
+      }, { merge: true }); // Use "users" collection and merge to prevent overwriting
 
       router.push('/SignIn');
     } catch (error) {
-      console.error('Google sign-up error:', error);
+      console.error('Google sign-up error:', error.message);
       if (error.code === 'auth/popup-closed-by-user') {
-        setError('The sign-up popup was closed. Please try again.');
+        alert('The sign-up popup was closed. Please try again.');
       } else if (error.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your connection and try again.');
+        alert('Network error. Please check your connection and try again.');
       } else {
-        setError('An error occurred during Google sign-up.');
+        alert('An error occurred during Google sign-up.');
       }
     }
   };
@@ -111,15 +106,16 @@ export default function SignUp() {
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}  
 
-              <button type="submit" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500">
+              <button type="submit" className="flex justify-center items-center w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500">
                 Create Account
               </button>
-              <button type="button" className="w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500" onClick={handleGoogleSignUp}>
+              <button type="button" className="flex justify-center items-center w-full px-4 py-2 mt-4 text-sm text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:ring-orange-500" onClick={handleGoogleSignUp}>
+                <Image src="/GoogleIcon.svg" alt="Google Icon" width={20} height={20} className="mr-2"/> 
                 Sign up with Google
               </button>
             </form>
             <p className="text-sm text-center text-gray-300">
-              Already have an account? <Link href="/SignIn" className="font-bold text-orange-500 hover:underline">Sign in</Link>
+              Already have an account? <Link href="/SignIn" className='font-bold text-orange-500 hover:underline'>Sign in</Link>
             </p>
           </div>
         </div>

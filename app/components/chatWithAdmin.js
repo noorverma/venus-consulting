@@ -5,7 +5,7 @@
 //opens upon clicking a "Chat with Admin" button, where users can type and send messages.
 'use client';
 import { useState, useEffect } from 'react';
-const ChatWithAdmin = () => {
+  const ChatWithAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -69,6 +69,7 @@ const ChatWithAdmin = () => {
           onClick={toggleChat}
           className="bg-orange-500 text-white px-4 py-2 rounded-full shadow-lg"
         >
+          {/* IsOpen is true then it shows close chat Is open is true then it shows chat with admin*/}
           {isOpen ? "Close Chat" : "Chat with Admin"}
         </button>
       </div>
@@ -76,10 +77,11 @@ const ChatWithAdmin = () => {
       {isOpen && (
         <div className="fixed bottom-20 right-5 bg-white border border-gray-400 p-4 rounded-lg shadow-lg w-80">
           <div className="h-60 overflow-y-scroll mb-2">
+             {/* loops through all the messages array and displays each one*/}
             {messages.map((msg, index) => (
               <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
                 <span className={`${msg.sender === 'user' ? 'bg-blue-200' : 'bg-gray-200'} p-2 rounded-lg inline-block`}>
-                  {msg.message}
+                  {msg.message}   
                 </span>
               </div>
             ))}

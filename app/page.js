@@ -7,6 +7,7 @@ import Image from "next/image";
 import { redirect } from "next/dist/server/api-utils";
 /* Page.js doesn't contain any code because when you open the website,
 it redirects to the page in sign-in folder. */
+
 export default function Page() {
   return (
     <div>

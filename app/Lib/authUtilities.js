@@ -1,12 +1,12 @@
 //Use perplexity AI for reference but the code was written myself
-
+// app/Lib/authUtilities.js
 import { auth, db } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail, // Import the sendPasswordResetEmail method
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 

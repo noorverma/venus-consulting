@@ -3,11 +3,11 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+ 
 generator client {
   provider = "prisma-client-js"
 }
-
+ 
 model User {
   id             String           @id @default(cuid())
   name           String?
@@ -17,7 +17,7 @@ model User {
   appointments   Appointment[] // Relationship with Appointment
   JobApplication JobApplication[]
 }
-
+ 
 model Appointment {
   id        Int      @id @default(autoincrement())
   name      String
@@ -31,7 +31,7 @@ model Appointment {
   createdAt DateTime @default(now())
   status    String   @default("Pending") // New status field
 }
-
+ 
 model Message {
   id        Int       @id @default(autoincrement())
   sender    String
@@ -41,7 +41,7 @@ model Message {
   replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id])
   replies   Message[] @relation("ReplyTo")
 }
-
+ 
 model JobPosting {
   id              Int              @id @default(autoincrement())
   title           String
@@ -52,7 +52,7 @@ model JobPosting {
   createdAt       DateTime         @default(now())
   jobApplications JobApplication[]
 }
-
+ 
 model JobApplication {
   id           Int        @id @default(autoincrement())
   name         String

@@ -30,6 +30,8 @@ const AdminNavbar = () => {
       <div style={linkStyle} onClick={() => router.push('/Admin')}>Appointments</div>
       <div style={linkStyle} onClick={() => router.push('/history')}>History</div>
       <div style={linkStyle} onClick={() => router.push('/messages')}>Messages</div> {/* Added a messages link here which will navigate the user to the messages page*/}
+      <div style={linkStyle} onClick={() => router.push('/adminJobPostings')}>Postings</div>
+      <div style={linkStyle} onClick={() => router.push('/adminJobApplicants')}>Applicants</div>
       <div style={logoutStyle} onClick={handleLogout}>Log out</div>
     </nav>
   );

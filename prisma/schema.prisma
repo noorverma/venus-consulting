@@ -7,13 +7,15 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
 model User {
-  id            String        @id @default(cuid())
-  name          String?
-  email         String?       @unique
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  appointments  Appointment[] // Relationship with Appointment
+  id             String           @id @default(cuid())
+  name           String?
+  email          String?          @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  appointments   Appointment[] // Relationship with Appointment
+  JobApplication JobApplication[]
 }
 
 model Appointment {
@@ -24,10 +26,10 @@ model Appointment {
   reason    String
   date      DateTime
   time      String
-  userId    String?  // Foreign key from User
+  userId    String? // Foreign key from User
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-  status    String   @default("Pending")  // New status field
+  status    String   @default("Pending") // New status field
 }
 
 model Message {
@@ -38,6 +40,29 @@ model Message {
   replyToId Int?
   replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id])
   replies   Message[] @relation("ReplyTo")
+}
+
+model JobPosting {
+  id              Int              @id @default(autoincrement())
+  title           String
+  description     String
+  location        String
+  salary          String
+  requirements    String
+  createdAt       DateTime         @default(now())
+  jobApplications JobApplication[]
+}
+
+model JobApplication {
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String
+  resume       String
+  jobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
+  jobPostingId Int
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now())
 }
 
 model Product {

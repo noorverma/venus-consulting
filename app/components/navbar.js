@@ -1,13 +1,31 @@
 //used Perplexity AI for instructions and references
 
 'use client';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth'; 
 import { auth } from '../Lib/firebase';
 import { FaShoppingCart } from 'react-icons/fa';
+import { getCart } from '../Lib/cart';
 
 const Navbar = () => {
   const router = useRouter();
+  const [cartCount, setCartCount] = useState(0);
+
+  // Fetch the cart items and update the count
+  useEffect(() => {
+    const fetchCartCount = () => {
+      const cartItems = getCart();  // Fetch cart items from localStorage
+      const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0); // Sum the quantity of items in the cart
+      setCartCount(itemCount);  // Update cart count state
+    };
+
+    fetchCartCount();  // Initial fetch
+
+    // Optionally, listen for changes in localStorage and update the count
+    // You could use a custom event or useContext for global state management if the cart updates elsewhere
+  }, []);
+
   // perplexity AI told me to call on firebase's in built signOut function
   // handleLogout function: logs the user out using Firebase signOut method
   const handleLogout = async () => {
@@ -42,9 +60,9 @@ const Navbar = () => {
           {/* Cart Icon */}
           <a href="/cart" className="relative text-white text-xl font-bold hover:bg-white hover:text-orange-500 hover:rounded-lg p-2 transition-all duration-300">
             <FaShoppingCart className="text-3xl" />
-            {/* Optionally, you can display the number of items in the cart */}
+            {/* Display the dynamic number of items in the cart */}
             <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-black text-orange-500 rounded-full px-2 py-1 text-xs font-bold">
-              0 {/* Placeholder for cart item count */}
+              {cartCount}
             </span>
           </a>
 

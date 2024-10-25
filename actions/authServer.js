@@ -1,8 +1,8 @@
 //I wrote the code myself but I used perlexity AI for reference
+// app/actions/authServer.js
+'use server';
 
-"use server";
-
-import { loginUser, logOutUser, registerUser, sendPasswordResetEmail } from '@/app/Lib/authUtilities'; // Make sure to import the new function
+import { loginUser, logOutUser, registerUser, sendPasswordResetEmail } from '@/app/Lib/authUtilities'; // Ensure correct path
 
 export async function Login({ email, password }) {
     try {
@@ -15,7 +15,7 @@ export async function Login({ email, password }) {
         return { success: true, role };
     } catch (error) {
         console.error("Login Error:", error.message);
-        return { error: error.message || "Login failed. Wrong email or password" };
+        return { error: error.message || "Login failed. Wrong email or password." };
     }
 }
 
@@ -43,7 +43,6 @@ export async function Logout() {
         return { error: error.message || "Logout failed. Please try again." };
     }
 }
-
 
 export async function RequestPasswordReset({ email }) {
     try {

@@ -29,12 +29,12 @@ const AdminDashboard = () => {
       )
     );
 
-    // Send email notification after status change
-    sendEmail(appointment.email, appointment.reason, appointment.date, action);
+    // Make sure to pass 'appointment.time' here
+    sendEmail(appointment.email, appointment.reason, appointment.date, appointment.time, action);
   };
 
-  // Sending the email function  which contains async and await function"
-  const sendEmail = async (email, reason, date, action) => {
+  // Sending the email function which contains async and await
+  const sendEmail = async (email, reason, date, time, action) => {
     try {
       const response = await fetch('/api/SendAppointmentEmail', {
         method: 'POST',
@@ -42,9 +42,10 @@ const AdminDashboard = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email, //recipient's email//
-          reason, //reason of the appointment//
-          date, //appointment date//
+          email, // recipient's email
+          reason, // reason for the appointment
+          date,  // appointment date
+          time,  // appointment time
           status: action, 
         }),
       });
@@ -94,6 +95,7 @@ const AdminDashboard = () => {
                 <th style={tableHeaderStyle}>Date</th>
                 <th style={tableHeaderStyle}>Reason for Visit</th>
                 <th style={tableHeaderStyle}>Status</th>
+                <th style={tableHeaderStyle}>Time</th> {/* Add Time Column */}
                 <th style={tableHeaderStyle}>Action</th>
               </tr>
             </thead>
@@ -105,6 +107,7 @@ const AdminDashboard = () => {
                   <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
                   <td style={tableCellStyle}>{appointment.reason}</td>
                   <td style={tableCellStyle}>{appointment.status}</td>
+                  <td style={tableCellStyle}>{appointment.time || 'N/A'}</td> {/* Display Time */}
                   <td style={tableCellStyle}>
                     <button
                       style={approveButtonStyle}

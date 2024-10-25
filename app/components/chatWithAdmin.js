@@ -1,109 +1,135 @@
-//Noor
-//Used chatGPT and here is the prompt I used 
-//I want you to provide me with code of live chat. This feature should allows users on the main page to send messages to the admin through 
-//a chat interface located at the bottom-right corner of the screen. The chat window
-//opens upon clicking a "Chat with Admin" button, where users can type and send messages.
-'use client';
-import { useState, useEffect } from 'react';
-  const ChatWithAdmin = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  
-  // Toggle chat window open/close
+"use client"
+import { useEffect, useState } from 'react';
+import { StreamChat } from 'stream-chat';
+import { Chat, Channel, Window, ChannelHeader, MessageList, MessageInput } from 'stream-chat-react';
+import 'stream-chat-react/dist/css/v2/index.css';
+import styled from 'styled-components';
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
+const ChatButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #FF6F00; // Darker orange color
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+`;
 
-  // Send the user's message to the admin
+const ChatWindow = styled.div`
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  z-index: 1000;
+`;
 
-  const sendMessage = async () => {
-    if (message.trim() !== "") {
-      try {
-        const res = await fetch('/api/admin/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message, sender: 'user' }),
-        });
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+`;
 
-        if (!res.ok) {
-          throw new Error('Failed to send message');
-        }
+const ChatWithAdmin = ({ userId }) => {
+    const [client, setClient] = useState(null);
+    const [channel, setChannel] = useState(null);
+    const [showChat, setShowChat] = useState(false);
 
-        const savedMessage = await res.json();
-        setMessages(prevMessages => [...prevMessages, savedMessage]);
-        setMessage("");
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
-    }
-  };
+    useEffect(() => {
+        const initChat = async () => {
+            try {
+                const chatClient = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_API_KEY);
+                
+                const response = await fetch('/api/stream/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId }),
+                });
 
-  const fetchMessages = async () => {
-    try {
-      const res = await fetch('/api/admin/messages');
-      if (!res.ok) {
-        throw new Error('Failed to fetch messages');
-      }
-      const data = await res.json();
-      setMessages(data.messages || []);
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
-  };
+                if (!response.ok) {
+                    throw new Error('Failed to fetch token');
+                }
 
-  useEffect(() => {
-    fetchMessages();
-    const intervalId = setInterval(fetchMessages, 5000); // Poll every 5 seconds
-    return () => clearInterval(intervalId);
-  }, []);
+                const { token } = await response.json();
 
-  return (
-    <div>
-      {/* Chat button in the bottom-right corner */}
-      <div className="fixed bottom-5 right-5">
-        <button
-          onClick={toggleChat}
-          className="bg-orange-500 text-white px-4 py-2 rounded-full shadow-lg"
-        >
-          {/* IsOpen is true then it shows close chat Is open is true then it shows chat with admin*/}
-          {isOpen ? "Close Chat" : "Chat with Admin"}
-        </button>
-      </div>
-      {/* Chatbox visible when chat is open */}
-      {isOpen && (
-        <div className="fixed bottom-20 right-5 bg-white border border-gray-400 p-4 rounded-lg shadow-lg w-80">
-          <div className="h-60 overflow-y-scroll mb-2">
-             {/* loops through all the messages array and displays each one*/}
-            {messages.map((msg, index) => (
-              <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                <span className={`${msg.sender === 'user' ? 'bg-blue-200' : 'bg-gray-200'} p-2 rounded-lg inline-block`}>
-                  {msg.message}   
-                </span>
-              </div>
-            ))}
-          </div>
+                if (!token) {
+                    throw new Error('Token is empty');
+                }
 
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="border w-full p-2 mb-2"
-            placeholder="Type a message..."
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg w-full"
-          >
-            Send
-          </button>
-        </div>
-      )}
-    </div>
-  );
+                await chatClient.connectUser(
+                    {
+                        id: userId,
+                        name: userId,
+                    },
+                    token
+                );
+
+                setClient(chatClient);
+
+                const channelId = `admin-${userId}`;
+                const userChannel = chatClient.channel('messaging', channelId, {
+                    members: [userId, 'admin'],
+                });
+
+                await userChannel.watch();
+                setChannel(userChannel);
+            } catch (error) {
+                console.error('Error initializing chat:', error);
+            }
+        };
+
+        initChat();
+
+        return () => {
+            if (client) client.disconnectUser();
+        };
+    }, [userId]);
+
+    const toggleChat = () => {
+        setShowChat(prevState => !prevState);
+    };
+
+    if (!channel || !client) return null;
+
+    return (
+        <>
+            <ChatButton onClick={toggleChat}>💬</ChatButton>
+            {showChat && (
+                <ChatWindow>
+                    <CloseButton onClick={toggleChat}>✖</CloseButton>
+                    <Chat client={client} theme="messaging light">
+                        <Channel channel={channel}>
+                            <Window>
+                                <ChannelHeader />
+                                <MessageList />
+                                <MessageInput />
+                            </Window>
+                        </Channel>
+                    </Chat>
+                </ChatWindow>
+            )}
+            <style jsx global>{`
+                :root {
+                    --str-chat__primary-color: #FF6F00; // Darker orange color
+                    --str-chat__active-primary-color: #FFA500; // You can also adjust this if needed
+                }
+            `}</style>
+        </>
+    );
 };
 
 export default ChatWithAdmin;

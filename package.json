@@ -16,6 +16,7 @@
     "bcryptjs": "^2.4.3",
     "encoding": "^0.1.13",
     "firebase": "^10.13.2",
+    "formidable": "^3.5.2",
     "mailer": "^0.6.6",
     "next": "14.2.10",
     "node": "^20.18.0",

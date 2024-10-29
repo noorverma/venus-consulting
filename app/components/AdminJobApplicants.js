@@ -1,3 +1,4 @@
+//components/AdminJobApplicants.js
 "use client"; // Ensures that the component is rendered on the client side
 
 import { useEffect, useState } from 'react';

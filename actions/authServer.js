@@ -57,3 +57,8 @@ export async function RequestPasswordReset({ email }) {
         return { error: error.message || "Failed to send password reset email." };
     }
 }
+
+export async function GetUserRole() {
+    // Add code to get the user's role
+    return { role: "user" }; // Return a default role for now
+}

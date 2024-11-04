@@ -1,5 +1,5 @@
 // actions/jobs.js
-
+'use server'
 import prisma from "@/app/Lib/prisma";
 
 export async function createJobPosting(data) {

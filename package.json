@@ -16,6 +16,7 @@
     "bcryptjs": "^2.4.3",
     "encoding": "^0.1.13",
     "firebase": "^10.13.2",
+    "formidable": "^3.5.2",
     "mailer": "^0.6.6",
     "next": "14.2.10",
     "node": "^20.18.0",
@@ -24,7 +25,7 @@
     "react-dom": "^18",
     "react-icons": "^5.3.0",
     "resend": "^4.0.0",
-    "stream-chat": "^8.40.9",
+    "stream-chat": "^8.41.0",
     "stream-chat-react": "^12.2.2",
     "stripe": "^16.12.0",
     "styled-components": "^6.1.13"
@@ -35,5 +36,8 @@
     "postcss": "^8",
     "prisma": "^5.19.1",
     "tailwindcss": "^3.4.1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

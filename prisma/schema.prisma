@@ -64,3 +64,13 @@ model JobApplication {
   user         User?      @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now())
 }
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

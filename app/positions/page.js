@@ -1,19 +1,20 @@
+// Positions/page.js
 "use client";
 import React, { useState, useEffect } from "react";
- 
+
 // Fetch job postings from the backend API
 const fetchJobPostings = async () => {
   const response = await fetch("/api/jobPostings");
   const data = await response.json();
   return data.jobPostings;
 };
- 
+
 export default function PositionsPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [jobPostings, setJobPostings] = useState([]);
- 
+
   // Fetch job postings on component mount
   useEffect(() => {
     const getJobPostings = async () => {
@@ -22,38 +23,30 @@ export default function PositionsPage() {
     };
     getJobPostings();
   }, []);
- 
+
   // Handle selecting a job
   const handleLearnMore = (job) => {
     setSelectedJob(job);
-    setShowForm(false); // Hide the form when a new job is selected
-    setFormSubmitted(false); // Reset the form submitted message
+    setShowForm(false);
+    setFormSubmitted(false);
   };
- 
+
   // Handle form submission to apply for a job
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
-    const formData = new FormData(e.target); // Assuming you're handling file uploads
-    const applicationData = {
-      jobPostingId: selectedJob.id,
-      name: formData.get('name'),
-      email: formData.get('email'),
-      resume: formData.get('resume'), // Assuming resume is a file or URL
-    };
- 
+
+    const formData = new FormData(e.target);
+    formData.append("jobPostingId", selectedJob.id);
+
     try {
       const response = await fetch('/api/jobApplication', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(applicationData),
+        body: formData, // Send FormData with file included
       });
- 
+
       const result = await response.json();
       if (result.success) {
-        setFormSubmitted(true); // Show success message after submission
+        setFormSubmitted(true);
       } else {
         console.error('Error submitting application:', result.error);
       }
@@ -61,24 +54,20 @@ export default function PositionsPage() {
       console.error('Error submitting application:', error);
     }
   };
- 
+
   return (
     <div style={pageContainer}>
-      {/* Navbar Section */}
       <div style={navbarStyle}>
         <h1 style={navbarTitle}>Open Positions</h1>
       </div>
- 
+
       <div style={contentContainer}>
-        {/* Left Section - Job List */}
         <div style={jobListContainer}>
           {jobPostings && jobPostings.length > 0 ? (
             jobPostings.map((job) => (
               <div key={job.id} style={jobItemStyle}>
                 <h2 style={jobTitleStyle}>{job.title}</h2>
-                <p style={jobLocationStyle}>
-                  <strong>Location:</strong> {job.location}
-                </p>
+                <p style={jobLocationStyle}><strong>Location:</strong> {job.location}</p>
                 <p style={jobDescriptionStyle}>{job.description}</p>
                 <button
                   style={learnMoreButtonStyle}
@@ -92,31 +81,29 @@ export default function PositionsPage() {
             <p>No jobs available at the moment.</p>
           )}
         </div>
- 
-        {/* Right Section - Job Details */}
+
         {selectedJob && (
           <div style={jobDetailsContainer}>
             <h2 style={jobTitleStyle}>{selectedJob.title}</h2>
             <p style={jobDetailHeadingStyle}>Location:</p>
             <p style={jobDetailStyle}>{selectedJob.location}</p>
- 
+
             <p style={jobDetailHeadingStyle}>Description:</p>
             <p style={jobDetailStyle}>{selectedJob.description}</p>
- 
+
             <p style={jobDetailHeadingStyle}>Salary:</p>
             <p style={jobDetailStyle}>{selectedJob.salary}</p>
- 
+
             <p style={jobDetailHeadingStyle}>Requirements:</p>
             <p style={jobDetailStyle}>{selectedJob.requirements}</p>
- 
+
             <button
               style={applyButtonStyle}
               onClick={() => setShowForm(!showForm)}
             >
               Apply Now
             </button>
- 
-            {/* Conditionally render the form */}
+
             {showForm && (
               <div style={{ marginTop: "20px" }}>
                 <h2 style={jobDetailHeadingStyle}>Submit Your Application</h2>
@@ -126,6 +113,7 @@ export default function PositionsPage() {
                     <input
                       type="text"
                       name="name"
+                      required
                       style={{
                         width: "100%",
                         padding: "8px",
@@ -134,12 +122,13 @@ export default function PositionsPage() {
                       }}
                     />
                   </div>
- 
+
                   <div style={{ marginBottom: "15px" }}>
                     <label style={jobDetailHeadingStyle}>Email:</label>
                     <input
                       type="email"
                       name="email"
+                      required
                       style={{
                         width: "100%",
                         padding: "8px",
@@ -148,25 +137,24 @@ export default function PositionsPage() {
                       }}
                     />
                   </div>
- 
+
                   <div style={{ marginBottom: "15px" }}>
                     <label style={jobDetailHeadingStyle}>Upload Resume:</label>
-                    <input type="file" name="resume" />
+                    <input type="file" name="resume" required />
                   </div>
- 
+
                   <button
                     type="submit"
                     style={{
                       ...applyButtonStyle,
-                      backgroundColor: "#FB923C", // Orange for the button
+                      backgroundColor: "#FB923C",
                       marginTop: "10px",
                     }}
                   >
                     Submit Application
                   </button>
                 </form>
- 
-                {/* Show success message after form submission */}
+
                 {formSubmitted && (
                   <p style={successMessageStyle}>
                     Your application has been submitted successfully!

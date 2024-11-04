@@ -2,9 +2,14 @@
 //Appointments page.js
 //recent addition by Hieu
 "use client";
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../components/navbar';
+=======
+import React, { useEffect, useState } from 'react'; //importing useState
+import Navbar from '../components/navbar'; //importing navbar
+>>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
 import { createAppointment } from '@/actions/appointments';
 
 export default function Appointment() {
@@ -17,6 +22,27 @@ export default function Appointment() {
   const [time, setTime] = useState('');
   const [message, setMessage] = useState('');
   const timeSlots = ['9:45 AM', '10:45 AM', '12:00 PM', '4:00 PM', '5:00 PM'];
+
+  // States to manage product data
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products'); // Fetch data from the products API
+        const data = await response.json();
+        setProducts(data); // Set the fetched products
+        setLoading(false); // Stop loading
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false); // Stop loading in case of error
+      }
+    };
+
+    fetchProducts(); // Call the fetch function
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,6 +104,7 @@ export default function Appointment() {
             </form>
             {message && <p style={{ color: message.includes('Failed') || message.includes('error') ? 'red' : 'green', fontSize: '1.5rem', textAlign: 'center', marginTop: '20px' }}>{message}</p>}
           </div>
+<<<<<<< HEAD
 
           <div style={{ width: '35%' }}>
             <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
@@ -119,6 +146,51 @@ export default function Appointment() {
                 <button onClick={() => handleLearnMore('circuitBreakerFinder')} className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
                   Learn More
                 </button>
+=======
+          
+          {/* ChatGPT used to create the scrollable product catalog section
+          Prompt: Add a product catalog section to this code */}
+          {/* New container for Contact Information and Equipment Section */}
+            <div style={{ width: '35%' }}>
+              {/* Equipment Catalog Section */}
+              <div>
+              <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
+              {loading ? (
+                <p>Loading products...</p>
+              ) : (
+                <div className="flex overflow-x-scroll space-x-6 pb-6">
+                  {products.map((product) => (
+                    <div key={product.id} className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
+                      <img src={product.image} alt={product.name} className="w-full h-30 object-cover rounded-t-lg" />
+                      <div>
+                        <h3 className="text-lg font-semibold mt-4">{product.name}</h3>
+                        <p className="text-gray-600 mt-2">{product.description}</p>
+                        <p className="font-bold mt-2">${product.price}</p>
+                      </div>
+                      <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                        <a href={`/product/${product.id}`}>View Details</a>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Contact Information Section */}
+              <div style={{
+                padding: '20px',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '10px',
+                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                marginTop: '10px',
+                marginBottom: '20px',
+              }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
+                <p>2308 Centre a St NE#107</p>
+                <p>Calgary, AB</p>
+                <p>T2E 2T7</p>
+                <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
+>>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
               </div>
             </div>
 
@@ -135,8 +207,12 @@ export default function Appointment() {
       </div>
     </>
   );
+<<<<<<< HEAD
 }
 
+=======
+}  
+>>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
 // Common styles for input fields
 const inputStyle = {
   padding: '10px',

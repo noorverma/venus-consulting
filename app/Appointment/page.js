@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'; //importing useState
+import React, { useEffect, useState } from 'react'; //importing useState
 import Navbar from '../components/navbar'; //importing navbar
 import { createAppointment } from '@/actions/appointments';
 
@@ -14,6 +14,27 @@ export default function Appointment() {
   const [message, setMessage] = useState('');
 
   const timeSlots = ['9:45 AM', '10:45 AM', '12:00 PM', '4:00 PM', '5:00 PM']; //I used chatgpt as i was not sure where i mentioned time so that user can choose.
+
+  // States to manage product data
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products'); // Fetch data from the products API
+        const data = await response.json();
+        setProducts(data); // Set the fetched products
+        setLoading(false); // Stop loading
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false); // Stop loading in case of error
+      }
+    };
+
+    fetchProducts(); // Call the fetch function
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,71 +226,50 @@ export default function Appointment() {
             <div style={{ width: '35%' }}>
               {/* Equipment Catalog Section */}
               <div>
-                <h2 class="text-2xl font-bold mb-4">Explore Our Equipment</h2>
-                <div class="flex overflow-x-scroll space-x-6 pb-6">
-                  {/* Example Product 1 */}
-                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="/voltagetester.png" alt="Equipment 1" class="w-full h-30 object-cover rounded-t-lg" />
-                    <div>
-                      <h3 class="text-lg font-semibold mt-4">Voltage Tester</h3>
-                      <p class="text-gray-600 mt-2">High-quality voltage tester for safe electrical inspections.</p>
-                      <p class="font-bold mt-2">$25.99</p>
+              <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
+              {loading ? (
+                <p>Loading products...</p>
+              ) : (
+                <div className="flex overflow-x-scroll space-x-6 pb-6">
+                  {products.map((product) => (
+                    <div key={product.id} className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
+                      <img src={product.image} alt={product.name} className="w-full h-30 object-cover rounded-t-lg" />
+                      <div>
+                        <h3 className="text-lg font-semibold mt-4">{product.name}</h3>
+                        <p className="text-gray-600 mt-2">{product.description}</p>
+                        <p className="font-bold mt-2">${product.price}</p>
+                      </div>
+                      <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                        <a href={`/product/${product.id}`}>View Details</a>
+                      </button>
                     </div>
-                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                      Buy Now
-                    </button>
-                  </div>
-
-                  {/* Example Product 2 */}
-                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="/insulatedgloves.jpeg" alt="Equipment 2" class="w-full h-30 object-cover rounded-t-lg" />
-                    <div>
-                      <h3 class="text-lg font-semibold mt-4">Insulated Gloves</h3>
-                      <p class="text-gray-600 mt-2">Electrical safety gloves with high insulation protection.</p>
-                      <p class="font-bold mt-2">$15.50</p>
-                    </div>
-                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                      Buy Now
-                    </button>
-                  </div>
-
-                  {/* Example Product 3 */}
-                  <div class="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                    <img src="/circuitbreakerfinder.png" alt="Equipment 3" class="w-full h-30 object-cover rounded-t-lg" />
-                    <div>
-                      <h3 class="text-lg font-semibold mt-4">Circuit Breaker Finder</h3>
-                      <p class="text-gray-600 mt-2">Accurate circuit breaker finder for quick electrical testing.</p>
-                      <p class="font-bold mt-2">$40.00</p>
-                    </div>
-                    <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                      Buy Now
-                    </button>
-                  </div>
+                  ))}
                 </div>
-                
-                {/* Contact Information Section */}
-                  <div style={{
-                    padding: '20px',
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '10px',
-                    boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
-                    marginTop: '10px',
-                    marginBottom: '20px',
-                  }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
-                  <p>2308 Centre a St NE#107</p>
-                  <p>Calgary, AB</p>
-                  <p>T2E 2T7</p>
-                  <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
-                </div>
+              )}
+
+              {/* Contact Information Section */}
+              <div style={{
+                padding: '20px',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '10px',
+                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+                marginTop: '10px',
+                marginBottom: '20px',
+              }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
+                <p>2308 Centre a St NE#107</p>
+                <p>Calgary, AB</p>
+                <p>T2E 2T7</p>
+                <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
               </div>
             </div>
           </div>
+        </div>
       </div>
     </>
   );
-}
+}  
 // Common styles for input fields
 const inputStyle = {
   padding: '10px',

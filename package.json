@@ -19,6 +19,7 @@
     "formidable": "^3.5.2",
     "mailer": "^0.6.6",
     "next": "14.2.10",
+    "next-auth": "^4.24.10",
     "node": "^20.18.0",
     "nodemailer": "^6.9.15",
     "react": "^18",

@@ -1,21 +1,22 @@
-// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String?          @unique
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  appointments   Appointment[] // Relationship with Appointment
-  JobApplication JobApplication[]
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String?              @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  appointments        Appointment[]
+  JobApplication      JobApplication[]
+  marketplaceListings MarketplaceListing[] @relation("UserListings")
+  sentMessages        MarketplaceMessage[] @relation("UserSender")
 }
 
 model Appointment {
@@ -26,20 +27,10 @@ model Appointment {
   reason    String
   date      DateTime
   time      String
-  userId    String? // Foreign key from User
-  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
   createdAt DateTime @default(now())
-  status    String   @default("Pending") // New status field
-}
-
-model Message {
-  id        Int       @id @default(autoincrement())
-  sender    String
-  message   String
-  timestamp DateTime  @default(now())
-  replyToId Int?
-  replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id])
-  replies   Message[] @relation("ReplyTo")
+  status    String   @default("Pending")
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model JobPosting {
@@ -58,11 +49,11 @@ model JobApplication {
   name         String
   email        String
   resume       String
-  jobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
   jobPostingId Int
   userId       String?
-  user         User?      @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now())
+  jobPosting   JobPosting @relation(fields: [jobPostingId], references: [id])
+  user         User?      @relation(fields: [userId], references: [id])
 }
 
 model Product {
@@ -73,4 +64,26 @@ model Product {
   image       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model MarketplaceListing {
+  id          Int                  @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  imageUrl    String
+  createdAt   DateTime             @default(now())
+  sellerId    String?
+  seller      User?                @relation("UserListings", fields: [sellerId], references: [id])
+  messages    MarketplaceMessage[] @relation("ListingMessages") // Added relation field
+}
+
+model MarketplaceMessage {
+  id        Int                @id @default(autoincrement())
+  content   String
+  timestamp DateTime           @default(now())
+  senderId  String
+  listingId Int
+  listing   MarketplaceListing @relation("ListingMessages", fields: [listingId], references: [id])
+  sender    User               @relation("UserSender", fields: [senderId], references: [id])
 }

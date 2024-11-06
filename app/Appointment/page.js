@@ -2,15 +2,10 @@
 //Appointments page.js
 //recent addition by Hieu
 "use client";
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Navbar from '../components/navbar';
-=======
 import React, { useEffect, useState } from 'react'; //importing useState
 import Navbar from '../components/navbar'; //importing navbar
->>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
 import { createAppointment } from '@/actions/appointments';
+import { useRouter } from 'next/navigation';
 
 export default function Appointment() {
   const router = useRouter();
@@ -62,7 +57,7 @@ export default function Appointment() {
   };
 
   const handleLearnMore = (productId) => {
-    router.push(`/products/${productId}`);
+    router.push(/products/${productId});
   };
 
   return (
@@ -104,49 +99,6 @@ export default function Appointment() {
             </form>
             {message && <p style={{ color: message.includes('Failed') || message.includes('error') ? 'red' : 'green', fontSize: '1.5rem', textAlign: 'center', marginTop: '20px' }}>{message}</p>}
           </div>
-<<<<<<< HEAD
-
-          <div style={{ width: '35%' }}>
-            <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
-            <div className="flex overflow-x-scroll space-x-6 pb-6">
-              {/* Product 1 */}
-              <div className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                <img src="/voltagetester.png" alt="Voltage Tester" className="w-full h-30 object-cover rounded-t-lg" />
-                <div>
-                  <h3 className="text-lg font-semibold mt-4">Voltage Tester</h3>
-                  <p className="text-gray-600 mt-2">High-quality voltage tester for safe electrical inspections.</p>
-                  <p className="font-bold mt-2">$25.99</p>
-                </div>
-                <button onClick={() => handleLearnMore('a9wktPgH3Nw5Whp0yJB0')} className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                  Learn More
-                </button>
-              </div>
-
-              {/* Product 2 */}
-              <div className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                <img src="/insulatedgloves.jpeg" alt="Insulated Gloves" className="w-full h-30 object-cover rounded-t-lg" />
-                <div>
-                  <h3 className="text-lg font-semibold mt-4">Insulated Gloves</h3>
-                  <p className="text-gray-600 mt-2">Electrical safety gloves with high insulation protection.</p>
-                  <p className="font-bold mt-2">$15.50</p>
-                </div>
-                <button onClick={() => handleLearnMore('insulatedGloves')} className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                  Learn More
-                </button>
-              </div>
-
-              {/* Product 3 */}
-              <div className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                <img src="/circuitbreakerfinder.png" alt="Circuit Breaker Finder" className="w-full h-30 object-cover rounded-t-lg" />
-                <div>
-                  <h3 className="text-lg font-semibold mt-4">Circuit Breaker Finder</h3>
-                  <p className="text-gray-600 mt-2">Accurate circuit breaker finder for quick electrical testing.</p>
-                  <p className="font-bold mt-2">$40.00</p>
-                </div>
-                <button onClick={() => handleLearnMore('circuitBreakerFinder')} className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                  Learn More
-                </button>
-=======
           
           {/* ChatGPT used to create the scrollable product catalog section
           Prompt: Add a product catalog section to this code */}
@@ -168,7 +120,7 @@ export default function Appointment() {
                         <p className="font-bold mt-2">${product.price}</p>
                       </div>
                       <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                        <a href={`/product/${product.id}`}>View Details</a>
+                        <a href={/product/${product.id}}>View Details</a>
                       </button>
                     </div>
                   ))}
@@ -190,7 +142,6 @@ export default function Appointment() {
                 <p>Calgary, AB</p>
                 <p>T2E 2T7</p>
                 <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
->>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
               </div>
             </div>
 
@@ -207,12 +158,7 @@ export default function Appointment() {
       </div>
     </>
   );
-<<<<<<< HEAD
-}
-
-=======
 }  
->>>>>>> be8cd625526d85703138e5cbcc1bce10e6f340fa
 // Common styles for input fields
 const inputStyle = {
   padding: '10px',
@@ -231,4 +177,4 @@ const submitButtonStyle = {
   border: 'none',
   borderRadius: '5px',
   cursor: 'pointer',
-};
+}; 

@@ -1,4 +1,5 @@
-/* Add styling in the learn more page the text should be black and bold and the project cards have images with same size and orange color title
+/* Took help from chat gpt to get animations for the styling  */
+/* prompt: Add styling in the learn more page the text should be black and bold and the project cards have images with same size and orange color title
 also add animations in which the project cards move from left to right */
 .container {
   padding: 3rem 1rem;
@@ -52,11 +53,11 @@ also add animations in which the project cards move from left to right */
 .serviceCard {
   background: white;
   padding: 1.5rem;
-  width: 200px; /* Adjust width as needed */
+  width: 250px; 
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  flex-shrink: 0; /* Prevent shrinking to keep space consistent */
+  flex-shrink: 0; 
 }
 
 .serviceCard h3 {

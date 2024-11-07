@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AddToCartButton from '@/app/components/AddToCartButton';
 import Navbar from '@/app/components/navbar';
+import Star from '@/app/components/star';
 
 export default function ProductDetail({ params }) {
   const { id } = params;
@@ -10,36 +11,31 @@ export default function ProductDetail({ params }) {
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(1);
+  const [hoverRating, setHoverRating] = useState(0); // New hover rating state
   const [comment, setComment] = useState("");
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProductAndReviews = async () => {
-      try {
-        const productRes = await fetch(`/api/products?id=${id}`);
-        const productData = await productRes.json();
-        setProduct(productData);
+      const productRes = await fetch(`/api/products?id=${id}`);
+      const productData = await productRes.json();
+      setProduct(productData);
 
-        const reviewRes = await fetch(`/api/reviews?id=${id}`);
-        const reviewData = await reviewRes.json();
-        setReviews(reviewData);
-      } catch (error) {
-        console.error('Error fetching product or reviews:', error);
-      }
+      const reviewRes = await fetch(`/api/reviews?id=${id}`);
+      const reviewData = await reviewRes.json();
+      setReviews(reviewData);
     };
     fetchProductAndReviews();
   }, [id]);
 
   const handleReviewSubmit = async () => {
-    console.log('Submitting review:', { productId: id, rating, comment });
-  
     try {
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: parseInt(id), rating, comment }),
       });
-  
+
       if (response.ok) {
         const newReview = await response.json();
         setReviews([newReview, ...reviews]);
@@ -52,7 +48,21 @@ export default function ProductDetail({ params }) {
       console.error('Error submitting review:', error);
     }
   };
-  
+
+  // Handle star click
+  const handleStarClick = (starValue) => {
+    setRating(starValue);
+  };
+
+  // Handle star hover
+  const handleStarHover = (starValue) => {
+    setHoverRating(starValue);
+  };
+
+  // Reset hover rating when mouse leaves
+  const handleStarHoverLeave = () => {
+    setHoverRating(0);
+  };
 
   if (!product) {
     return <div>Loading...</div>;
@@ -85,15 +95,16 @@ export default function ProductDetail({ params }) {
         {/* Review Form */}
         <div style={{ marginTop: '40px' }}>
           <h3>Leave a Review</h3>
-          <div>
-            <label>Rating: </label>
-            <select value={rating} onChange={(e) => setRating(parseInt(e.target.value))}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <option key={star} value={star}>
-                  {star} Star{star > 1 ? 's' : ''}
-                </option>
-              ))}
-            </select>
+          <div style={{ display: 'flex', gap: '5px' }}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                filled={star <= (hoverRating || rating)} // Use hoverRating if it exists, otherwise use rating
+                onClick={() => handleStarClick(star)}
+                onMouseEnter={() => handleStarHover(star)}
+                onMouseLeave={handleStarHoverLeave}
+              />
+            ))}
           </div>
           <textarea
             placeholder="Leave a comment (optional)"
@@ -112,7 +123,11 @@ export default function ProductDetail({ params }) {
           {reviews.length > 0 ? (
             reviews.map((review) => (
               <div key={review.id} style={{ borderBottom: '1px solid #ddd', padding: '10px 0' }}>
-                <p>Rating: {review.rating} Star{review.rating > 1 ? 's' : ''}</p>
+                <div style={{ display: 'flex', gap: '5px' }}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} filled={star <= review.rating} />
+                  ))}
+                </div>
                 {review.comment && <p>{review.comment}</p>}
               </div>
             ))

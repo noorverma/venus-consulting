@@ -4,8 +4,8 @@ import fs from 'fs'; //importing fs and path modules//
 import path from 'path';
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { title, description, price, imageUrl, userId } = req.body;
+  if (req.method === 'POST') { //Check if the request method is POST"
+    const { title, description, price, imageUrl, userId } = req.body; //Extracting the listing details"
 
     // Define the directory to save the images
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
@@ -13,7 +13,8 @@ export default async function handler(req, res) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Save the image as a file
+    // Defining the directory to save uploaded images"//
+    //Using Formidable before and my data was not saving tp database so i asked chatgpt"Is there any other way in Next.js to upload files as formidable is not working"//
     const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, '');
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.png`;
     const filePath = path.join(uploadDir, fileName);

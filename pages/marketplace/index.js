@@ -75,7 +75,7 @@ const sellButtonStyle = {
   borderRadius: '5px',
   cursor: 'pointer',
 };
-
+//Asked chatgpt "I want that my all the listing that come sets as a container which differentiate from another container"//
 const listingContainerStyle = {
   display: 'flex',
   flexWrap: 'wrap',
@@ -83,7 +83,7 @@ const listingContainerStyle = {
   padding: '20px',
   justifyContent: 'center',
 };
-
+//Done by chatgpt but it was unsatisfactory so used CSS Tailwind cheatsheet for reference"
 const listingCardStyle = {
   width: '250px',
   backgroundColor: '#f5f5f5',
@@ -92,8 +92,8 @@ const listingCardStyle = {
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between', // Ensures button is aligned at the bottom
-  minHeight: '400px', // Sets a minimum height for consistent layout
+  justifyContent: 'space-between', // This is ensuring that button is aligned at the bottom//
+  minHeight: '400px', // setting up the minimum height for consistency//
 };
 
 const imageContainerStyle = {

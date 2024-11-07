@@ -4,13 +4,13 @@ import Link from 'next/link'; //Importing Link to navigate Client-side navigatio
 //Asked Chatgpt " I am getting the error while initializing, can you fix that error for me?"//
 const Marketplace = () => {
   const [listings, setListings] = useState([]); //setting up the listing//
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //To store loading data//
 //Did by myself but checked chatgpt code for reference as it provided me code in the beginning"//
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchListings = async () => { //Defining async feature//
       try {
         const response = await fetch('/api/marketplace/allListings');
-        const data = await response.json();
+        const data = await response.json(); //Parsing json response data./
         setListings(data.listings);
         setLoading(false);
       } catch (error) {
@@ -22,7 +22,7 @@ const Marketplace = () => {
     fetchListings();
   }, []);
 
-  return (
+  return ( //Done by me//
     <div>
       <nav style={navbarStyle}>
         <h1 style={{ color: '#fff' }}>Marketplace</h1>
@@ -31,9 +31,9 @@ const Marketplace = () => {
         </Link>
       </nav>
 
-      <div style={listingContainerStyle}>
+      <div style={listingContainerStyle}> 
         {loading ? (
-          <p>Loading listings...</p>
+          <p>Loading listings...</p> //Asked chatgpt "Can you add CSS styling in my code"?
         ) : listings.length > 0 ? (
           listings.map((listing) => (
             <div key={listing.id} style={listingCardStyle}>
@@ -58,7 +58,7 @@ const Marketplace = () => {
   );
 };
 
-// Updated Styles
+//Used Tailwind CSS for styling"//
 const navbarStyle = {
   display: 'flex',
   justifyContent: 'space-between',

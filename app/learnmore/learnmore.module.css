@@ -1,3 +1,5 @@
+/* Add styling in the learn more page the text should be black and bold and the project cards have images with same size and orange color title
+also add animations in which the project cards move from left to right */
 .container {
   padding: 3rem 1rem;
   background: linear-gradient(145deg, #f7f7f7, #e3e3e3);

@@ -6,7 +6,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
   id                  String               @id @default(cuid())
   name                String?
@@ -18,7 +17,7 @@ model User {
   marketplaceListings MarketplaceListing[] @relation("UserListings")
   sentMessages        MarketplaceMessage[] @relation("UserSender")
 }
-
+ 
 model Appointment {
   id        Int      @id @default(autoincrement())
   name      String
@@ -32,7 +31,7 @@ model Appointment {
   status    String   @default("Pending")
   user      User?    @relation(fields: [userId], references: [id])
 }
-
+ 
 model JobPosting {
   id              Int              @id @default(autoincrement())
   title           String
@@ -43,7 +42,7 @@ model JobPosting {
   createdAt       DateTime         @default(now())
   jobApplications JobApplication[]
 }
-
+ 
 model JobApplication {
   id           Int        @id @default(autoincrement())
   name         String

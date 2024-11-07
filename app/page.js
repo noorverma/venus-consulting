@@ -1,66 +1,131 @@
 "use client";
-import { auth } from "./Lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import Head from "next/head";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/dist/server/api-utils";
-/* Page.js doesn't contain any code because when you open the website,
-it redirects to the page in sign-in folder. */
+import { motion } from "framer-motion";
+import styles from "./page.module.css";
 
-export default function Page() {
+export default function LandingPage() {
+  const initialYear = 2000;
+  const currentYear = new Date().getFullYear();
+  const [displayedYear, setDisplayedYear] = useState(initialYear);
+  const [showContent, setShowContent] = useState(false);
+  const images = [
+    "/innovation.png",
+    "/commerce-solution.png",
+    "/budget.png",
+    "/workers.png",
+  ];
+  
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const backgroundImageRef = useRef(null); // Create a ref for the background image
+
+  useEffect(() => {
+    let year = initialYear;
+    let imageIndex = 0;
+
+    const interval = setInterval(() => {
+      if (year < currentYear) {
+        year++;
+        setDisplayedYear(year);
+
+        if ((year - initialYear) % 5 === 0) {
+          imageIndex = (imageIndex + 1) % images.length;
+          setCurrentImageIndex(imageIndex);
+          if (backgroundImageRef.current) {
+            backgroundImageRef.current.src = images[imageIndex]; // Update the image source
+          }
+        }
+      } else {
+        clearInterval(interval);
+        setShowContent(true);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [currentYear, initialYear]);
+
   return (
-    <div>
-      {/* <div className="bg-[url('/login-background.jpeg')] bg-cover bg-center min-h-screen flex items-center justify-center"> */}
-        <div>
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-14 absolute top-5 left-5"
+    <div className={styles.landingPage}>
+      {!showContent ? (
+        <div className={styles.yearContainer}>
+          <Image
+            ref={backgroundImageRef} // Attach the ref
+            src={images[currentImageIndex]}
+            alt="Background"
+            className={styles.backgroundImage}
+            width={300}
+            height={300}
           />
-          <img
-            src="/name.png"
-            alt="Electrical Consulting"
-            className="h-8 absolute top-9 left-20"
-          />
-            {/* <Link
-              className="absolute top-4 right-20 font-bold p-3 bg-gray-900 rounded-xl text-center transition-all duration-150 text-orange-500 hover:bg-slate-700"
-              href={"/sign-in"}
-            >
-              Sign-In
-            </Link> */}
+          <div className={styles.yearText}>{displayedYear}</div>
         </div>
-        <div className="relative m-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8">
-          <div className="max-w-xl ltr:sm:text-left rtl:sm:text-right">
-            <h1 className="text-3xl font-extrabold sm:text-5xl">
-              Your Vision
-              <strong className="block font-extrabold text-gray-900">
-                Wired to Perfection
-              </strong>
-            </h1>
- 
-            <p className="mt-4 max-w-lg sm:text-xl/relaxed">
+      ) : (
+        <motion.div
+          className={styles.mainContent}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.div
+            className={styles.logoContainer}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.7 }}
+          >
+            <Image src="/logo.png" alt="Logo" width={56} height={56} />
+            <span className={styles.companyName}>Electrical Consulting</span>
+          </motion.div>
+
+          <motion.h1
+            className={styles.title}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          >
+            Your Vision{" "}
+            <motion.span
+              className={styles.highlight}
+              initial={{ backgroundPosition: "100% 0" }}
+              animate={{ backgroundPosition: "0 0" }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+            >
+              Wired to Perfection
+            </motion.span>
+          </motion.h1>
+
+          <motion.p
+            className={styles.subtitle}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.7 }}
+          >
             Delivering Advanced Electrical Engineering Solutions to Power your Success.
-            </p>
- 
-            <div className="mt-8 ml-16 flex flex-wrap gap-4 text-center">
-              <Link
-                href="/SignIn"
-                className="block w-full rounded bg-gray-900 px-12 py-3 text-lg font-medium text-orange-500 shadow-lg hover:bg-orange-700 focus:outline-none focus:ring active:bg-rose-500 sm:w-auto"
+          </motion.p>
+
+          <div className={styles.buttonContainer}>
+            <Link href="/SignIn" legacyBehavior>
+              <motion.a
+                className={`${styles.button} ${styles.getStarted}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 Get Started
-              </Link>
- 
-              <Link
-                href="/learnmore"
-                className="block w-full rounded bg-white px-12 py-3 text-lg font-medium text-orange-500 shadow hover:text-rose-700 focus:outline-none focus:ring active:text-rose-500 sm:w-auto"
+              </motion.a>
+            </Link>
+            <Link href="/learnmore" legacyBehavior>
+              <motion.a
+                className={`${styles.button} ${styles.learnMore}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 Learn More
-              </Link>
-            </div>
+              </motion.a>
+            </Link>
           </div>
-        </div>
-      </div>
-    // </div>
+        </motion.div>
+      )}
+    </div>
   );
 }

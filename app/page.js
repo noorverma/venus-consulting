@@ -1,3 +1,6 @@
+//Used chatGPT to get an idea on how to changes the nummber of the years displayed and here is the prompt that I added 
+//Give me code to create animation, years will display from 2000 to 2024 only the last digits of the years should change
+//and the rest should stauy in place and also add background images in it, 4 images should be good and should change after every 5 years
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";

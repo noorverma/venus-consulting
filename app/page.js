@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import styles from "./page.module.css";
 
 export default function LandingPage() {
-  const initialYear = 2000;
+  const initialYear = 2000; //Intial year for the year animation
   const currentYear = new Date().getFullYear();
   const [displayedYear, setDisplayedYear] = useState(initialYear);
   const [showContent, setShowContent] = useState(false);
@@ -21,7 +21,7 @@ export default function LandingPage() {
   ];
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const backgroundImageRef = useRef(null); // Create a ref for the background image
+  const backgroundImageRef = useRef(null); 
 
   useEffect(() => {
     let year = initialYear;
@@ -36,7 +36,7 @@ export default function LandingPage() {
           imageIndex = (imageIndex + 1) % images.length;
           setCurrentImageIndex(imageIndex);
           if (backgroundImageRef.current) {
-            backgroundImageRef.current.src = images[imageIndex]; // Update the image source
+            backgroundImageRef.current.src = images[imageIndex]; 
           }
         }
       } else {
@@ -53,7 +53,7 @@ export default function LandingPage() {
       {!showContent ? (
         <div className={styles.yearContainer}>
           <Image
-            ref={backgroundImageRef} // Attach the ref
+            ref={backgroundImageRef} 
             src={images[currentImageIndex]}
             alt="Background"
             className={styles.backgroundImage}

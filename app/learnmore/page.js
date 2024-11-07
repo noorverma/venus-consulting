@@ -1,10 +1,14 @@
+//Took help from chatGPT
+//prompt used: Can you give me code for learn more page in this I want to showcase the services that the company provides
+//and I want to add animations in that. So the services should scroll from left to right in an animation and the service cards 
+//should have hover effect on them I also want to insert images and use react typed for services we offer text that will be written on the top.
 "use client";
 import React from "react";
 import styles from "./learnmore.module.css";
 import { motion } from "framer-motion";
-import { ReactTyped } from "react-typed";
+import { ReactTyped } from "react-typed"; //Install the dependency 
 
-// Service data with images
+ 
 const services = [
   {
     title: "Wall Painting",

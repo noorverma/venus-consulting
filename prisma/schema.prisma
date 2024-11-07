@@ -64,6 +64,16 @@ model Product {
   image       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  reviews     Review[]  // Relation to Review model
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  rating    Int      // Rating from 1 to 5
+  comment   String?  // Optional comment
+  createdAt DateTime @default(now())
 }
 
 model MarketplaceListing {

@@ -1,4 +1,8 @@
-/* Remove background gradient from landingPage */
+/* Used chagpt to get idea of the styling and adjusted it accordingly
+Here is the prompt: For styling make sure that the text allign of the years alligns in the centre of the page and the background 
+images should be at the top of the year not behind the year and add animations for the gradient background on the landing page
+and the main colors in that should be orange, peach and white */
+
 .landingPage {
   min-height: 100vh;
   display: flex;

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'; //importing useState
 import Navbar from '../components/navbar'; //importing navbar
 import { createAppointment } from '@/actions/appointments';
+import { useRouter } from 'next/navigation';
 
 export default function Appointment() {
     // Initializing the states for the form
@@ -68,7 +69,11 @@ export default function Appointment() {
       setMessage('An unexpected error occurred. Please try again.');
     }
   };
-// Now the code will show the Navbar at the top of image which i imported in the beginning.
+
+  const handleLearnMore = (productId) => {
+    router.push(`/products/${productId}`);
+  };
+
   return (
     <>
      {/*Navbar at the top*/}
@@ -287,4 +292,4 @@ const submitButtonStyle = {
   border: 'none',
   borderRadius: '5px',
   cursor: 'pointer',
-};
+}; 

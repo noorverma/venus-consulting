@@ -45,7 +45,7 @@ and the main colors in that should be orange, peach and white */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(45deg, #f97316, #fff, #FFE5D5, #f97316); 
+  background: linear-gradient(45deg, #f97316, #fff, #FFE5D5, #f97316); /* Gradient for the main page with primary color to be orange, white and peach */
   background-size: 300% 300%;
   animation: gradientShift 10s ease infinite;
 }

@@ -5,8 +5,8 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import styles from "./page.module.css";
+import { motion } from "framer-motion"; //Install framer motion dependency
+import styles from "./page.module.css"; //Import styles from the css file
 
 export default function LandingPage() {
   const initialYear = 2000; //Intial year for the year animation

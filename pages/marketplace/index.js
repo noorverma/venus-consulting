@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+//Asked Chatgpt and prompt is" I want to make a marketplace in my website, how can i do that?"
+import React, { useEffect, useState } from 'react';//Importing React, useState and useEffect from react.
 import Link from 'next/link';
 
 const Marketplace = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(''); // Search input state
-  const [filteredResults, setFilteredResults] = useState([]); // Filtered listings state
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -13,7 +12,6 @@ const Marketplace = () => {
         const response = await fetch('/api/marketplace/allListings');
         const data = await response.json();
         setListings(data.listings);
-        setFilteredResults(data.listings); // Initialize filtered results
         setLoading(false);
       } catch (error) {
         console.error('Error fetching listings:', error);
@@ -24,17 +22,8 @@ const Marketplace = () => {
     fetchListings();
   }, []);
 
-  // Filter listings based on the search query
-  useEffect(() => {
-    const filtered = listings.filter((listing) =>
-      listing.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredResults(filtered);
-  }, [searchQuery, listings]);
-
   return (
     <div>
-      {/* Navbar with orange color and "Want to Sell Your Product" button */}
       <nav style={navbarStyle}>
         <h1 style={{ color: '#fff' }}>Marketplace</h1>
         <Link href="/marketplace/createListing">
@@ -42,23 +31,11 @@ const Marketplace = () => {
         </Link>
       </nav>
 
-      {/* Search Bar */}
-      <div style={searchContainerStyle}>
-        <input
-          type="text"
-          placeholder="Search for items, e.g., 'tiffin'"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={searchInputStyle}
-        />
-      </div>
-
-      {/* Listings Section */}
       <div style={listingContainerStyle}>
         {loading ? (
           <p>Loading listings...</p>
-        ) : filteredResults.length > 0 ? (
-          filteredResults.map((listing) => (
+        ) : listings.length > 0 ? (
+          listings.map((listing) => (
             <div key={listing.id} style={listingCardStyle}>
               <div style={imageContainerStyle}>
                 <img src={listing.imageUrl} alt={listing.title} style={imageStyle} />
@@ -81,22 +58,7 @@ const Marketplace = () => {
   );
 };
 
-// Styles for the search bar
-const searchContainerStyle = {
-  padding: '10px 20px',
-  textAlign: 'center',
-};
-
-const searchInputStyle = {
-  padding: '10px',
-  width: '100%',
-  maxWidth: '400px',
-  fontSize: '16px',
-  borderRadius: '5px',
-  border: '1px solid #ccc',
-};
-
-// Existing styles for components
+// Updated Styles
 const navbarStyle = {
   display: 'flex',
   justifyContent: 'space-between',
@@ -128,6 +90,10 @@ const listingCardStyle = {
   borderRadius: '10px',
   overflow: 'hidden',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between', // Ensures button is aligned at the bottom
+  minHeight: '400px', // Sets a minimum height for consistent layout
 };
 
 const imageContainerStyle = {
@@ -152,6 +118,10 @@ const titleOverlayStyle = {
 
 const descriptionStyle = {
   padding: '15px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between', // Ensures the content and button are spaced correctly
+  height: '100%',
 };
 
 const priceStyle = {
@@ -163,12 +133,12 @@ const priceStyle = {
 const askButtonStyle = {
   marginTop: '10px',
   padding: '10px',
-  width: '100%',
   backgroundColor: '#FB923C',
   color: '#fff',
   border: 'none',
   borderRadius: '5px',
   cursor: 'pointer',
+  width: '100%',
 };
 
 export default Marketplace;

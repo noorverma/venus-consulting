@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
     // Define the directory to save the images
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
+    if (!fs.existsSync(uploadDir)) { //Creating the directory if it doesnot exists in the system//
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
@@ -22,15 +22,14 @@ export default async function handler(req, res) {
     try {
       fs.writeFileSync(filePath, base64Data, 'base64');
       const imageFileUrl = `/uploads/${fileName}`; // Public path to the image
-
-      // Save listing in the database
+      //It will save listing in my database. Done by me//
       const listing = await prisma.marketplaceListing.create({
         data: {
-          title,
-          description,
-          price,
-          imageUrl: imageFileUrl,
-          seller: { connect: { id: userId } },
+          title, //Listing title//
+          description, //Listing description//
+          price, //Listing price//
+          imageUrl: imageFileUrl, //Lisitng imageUrl in database//
+          seller: { connect: { id: userId } }, //Associating listing with the seller//
         },
       });
       res.status(201).json({ success: true, listing });

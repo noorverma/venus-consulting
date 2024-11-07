@@ -1,3 +1,4 @@
+//admin job applicants page
 import AdminJobApplications from "../components/AdminJobApplicants";
 
 const AdminJobApplicantsPage = () => {

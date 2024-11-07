@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id                 String               @id @default(cuid())
-  name               String?
-  email              String?              @unique
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  appointments       Appointment[]
-  JobApplication     JobApplication[]
-  MarketplaceListing MarketplaceListing[]
-  MarketplaceMessage MarketplaceMessage[]
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String?              @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  appointments        Appointment[]
+  JobApplication      JobApplication[]
+  marketplaceListings MarketplaceListing[] @relation("UserListings")
+  sentMessages        MarketplaceMessage[] @relation("UserSender")
 }
 
 model Appointment {
@@ -31,16 +31,6 @@ model Appointment {
   createdAt DateTime @default(now())
   status    String   @default("Pending")
   user      User?    @relation(fields: [userId], references: [id])
-}
-
-model Message {
-  id        Int       @id @default(autoincrement())
-  sender    String
-  message   String
-  timestamp DateTime  @default(now())
-  replyToId Int?
-  replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id])
-  replies   Message[] @relation("ReplyTo")
 }
 
 model JobPosting {
@@ -87,23 +77,23 @@ model Review {
 }
 
 model MarketplaceListing {
-  id                 Int                  @id @default(autoincrement())
-  title              String
-  description        String
-  price              Float
-  imageUrl           String
-  createdAt          DateTime             @default(now())
-  sellerId           String
-  User               User                 @relation(fields: [sellerId], references: [id])
-  MarketplaceMessage MarketplaceMessage[]
+  id          Int                  @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  imageUrl    String
+  createdAt   DateTime             @default(now())
+  sellerId    String?
+  seller      User?                @relation("UserListings", fields: [sellerId], references: [id])
+  messages    MarketplaceMessage[] @relation("ListingMessages") // Added relation field
 }
 
 model MarketplaceMessage {
-  id                 Int                @id @default(autoincrement())
-  content            String
-  timestamp          DateTime           @default(now())
-  senderId           String
-  listingId          Int
-  MarketplaceListing MarketplaceListing @relation(fields: [listingId], references: [id])
-  User               User               @relation(fields: [senderId], references: [id])
+  id        Int                @id @default(autoincrement())
+  content   String
+  timestamp DateTime           @default(now())
+  senderId  String
+  listingId Int
+  listing   MarketplaceListing @relation("ListingMessages", fields: [listingId], references: [id])
+  sender    User               @relation("UserSender", fields: [senderId], references: [id])
 }

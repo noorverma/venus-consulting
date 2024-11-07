@@ -1,24 +1,23 @@
-"use client"; // Ensures that the component is rendered on the client side
+"use client";
 
 import { useEffect, useState } from 'react';
 
 const AdminJobApplications = () => {
-  const [applications, setApplications] = useState([]); // State to store applications
-  const [error, setError] = useState(null); // State to store any errors
+  const [applications, setApplications] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Fetch applications from the API when the component is mounted
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         const response = await fetch('/api/jobApplication', {
-          method: 'GET',  // Ensure the method is GET
+          method: 'GET',
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         if (data.success) {
-          setApplications(data.applications); // Store the fetched applications in state
+          setApplications(data.applications);
         } else {
           setError(data.error || 'Failed to fetch applications');
         }
@@ -28,9 +27,8 @@ const AdminJobApplications = () => {
       }
     };
     fetchApplications();
-  }, []); // Empty dependency array to run the effect only once when the component mounts
+  }, []);
 
-  // Display error if there's an issue fetching the applications
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -38,38 +36,65 @@ const AdminJobApplications = () => {
   return (
     <div>
       <h1>Job Applications</h1>
-      <table>
+      <table style={tableStyle}>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Job Title</th>
-            <th>Resume</th>
+            <th style={thStyle}>Name</th>
+            <th style={thStyle}>Email</th>
+            <th style={thStyle}>Job Title</th>
+            <th style={thStyle}>Resume</th>
           </tr>
         </thead>
         <tbody>
           {applications.length > 0 ? (
             applications.map((application) => (
               <tr key={application.id}>
-                <td>{application.name}</td>
-                <td>{application.email}</td>
-                <td>{application.jobPosting?.title || 'N/A'}</td>
-                <td>
-                  <a href={application.resume} target="_blank" rel="noreferrer">
-                    View Resume
-                  </a>
+                <td style={tdStyle}>{application.name}</td>
+                <td style={tdStyle}>{application.email}</td>
+                <td style={tdStyle}>{application.jobPostingId || 'N/A'}</td>
+                <td style={tdStyle}>
+                  {application.resumeURL ? (
+                    <a href={application.resumeURL} target="_blank" rel="noreferrer" style={linkStyle}>
+                      View Resume
+                    </a>
+                  ) : (
+                    'No resume uploaded'
+                  )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4">No job applications found.</td>
+              <td colSpan="4" style={tdStyle}>No job applications found.</td>
             </tr>
           )}
         </tbody>
       </table>
     </div>
   );
+};
+
+const tableStyle = {
+  width: '100%',
+  borderCollapse: 'collapse',
+  marginTop: '20px',
+};
+
+const thStyle = {
+  backgroundColor: '#f2f2f2',
+  border: '1px solid #ddd',
+  padding: '12px',
+  textAlign: 'left',
+};
+
+const tdStyle = {
+  border: '1px solid #ddd',
+  padding: '12px',
+};
+
+const linkStyle = {
+  color: '#0066cc',
+  textDecoration: 'none',
 };
 
 export default AdminJobApplications;

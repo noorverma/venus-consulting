@@ -11,22 +11,31 @@ export default function ProductDetail({ params }) {
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(1);
-  const [hoverRating, setHoverRating] = useState(0); // New hover rating state
+  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProductAndReviews = async () => {
-      const productRes = await fetch(`/api/products?id=${id}`);
-      const productData = await productRes.json();
-      setProduct(productData);
+      try {
+        const productRes = await fetch(`/api/products?id=${id}`);
+        const productData = await productRes.json();
+        setProduct(productData);
 
-      const reviewRes = await fetch(`/api/reviews?id=${id}`);
-      const reviewData = await reviewRes.json();
-      setReviews(reviewData);
+        const reviewRes = await fetch(`/api/reviews?id=${id}`);
+        const reviewData = await reviewRes.json();
+        setReviews(reviewData);
+      } catch (error) {
+        console.error('Error fetching product or reviews:', error);
+      }
     };
     fetchProductAndReviews();
   }, [id]);
+
+  // Calculate average rating
+  const averageRating = reviews.length
+    ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+    : 0;
 
   const handleReviewSubmit = async () => {
     try {
@@ -49,17 +58,14 @@ export default function ProductDetail({ params }) {
     }
   };
 
-  // Handle star click
   const handleStarClick = (starValue) => {
     setRating(starValue);
   };
 
-  // Handle star hover
   const handleStarHover = (starValue) => {
     setHoverRating(starValue);
   };
 
-  // Reset hover rating when mouse leaves
   const handleStarHoverLeave = () => {
     setHoverRating(0);
   };
@@ -74,6 +80,21 @@ export default function ProductDetail({ params }) {
 
       <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '90px' }}>
         <h1 style={{ fontWeight: 'bold', fontSize: '26px' }}>{product.name}</h1>
+        
+        {/* Display Average Rating */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+          <span style={{ fontSize: '1.2rem', marginRight: '10px' }}>Average Rating:</span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {[1, 2, 3, 4, 5].map((star) => {
+              const fillPercentage = Math.min(Math.max(averageRating - star + 1, 0), 1) * 100;
+              return <Star key={star} filled={fillPercentage > 0} fillPercentage={fillPercentage} />;
+            })}
+          </div>
+          <span style={{ marginLeft: '10px', fontSize: '1.2rem', color: '#FB923C' }}>
+            {averageRating > 0 ? `${averageRating.toFixed(1)} / 5` : 'No ratings yet'}
+          </span>
+        </div>
+
         <img src={product.image} alt={product.name} style={{ width: '300px', height: '300px', objectFit: 'cover' }} />
         <p>{product.description}</p>
         <p style={{ fontWeight: 'bold' }}>${product.price}</p>

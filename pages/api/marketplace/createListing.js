@@ -1,6 +1,6 @@
 // pages/api/marketplace/createListing.js
-import prisma from '@/app/Lib/prisma';
-import fs from 'fs';
+import prisma from '@/app/Lib/prisma';//Asked chatgpt that "I want to make marketplace for my website, Can you help me to do that?"
+import fs from 'fs'; //importing fs and path modules//
 import path from 'path';
 
 export default async function handler(req, res) {

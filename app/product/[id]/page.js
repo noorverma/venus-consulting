@@ -37,6 +37,9 @@ export default function ProductDetail({ params }) {
     ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
     : 0;
 
+  // Number of ratings
+  const ratingCount = reviews.length;
+
   const handleReviewSubmit = async () => {
     try {
       const response = await fetch('/api/reviews', {
@@ -91,7 +94,7 @@ export default function ProductDetail({ params }) {
             })}
           </div>
           <span style={{ marginLeft: '10px', fontSize: '1.2rem', color: '#FB923C' }}>
-            {averageRating > 0 ? `${averageRating.toFixed(1)} / 5` : 'No ratings yet'}
+            {ratingCount > 0 ? `${averageRating.toFixed(1)} / 5 (${ratingCount} ratings)` : 'No ratings yet'}
           </span>
         </div>
 

@@ -95,11 +95,11 @@ const listingCardStyle = {
   justifyContent: 'space-between', // This is ensuring that button is aligned at the bottom//
   minHeight: '400px', // setting up the minimum height for consistency//
 };
-
+//Styling for image container//
 const imageContainerStyle = {
   position: 'relative',
 };
-
+//Image styling for listing created by user and seting up the dimensions"//
 const imageStyle = {
   width: '100%',
   height: '200px',
@@ -120,16 +120,16 @@ const descriptionStyle = {
   padding: '15px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between', // Ensures the content and button are spaced correctly
+  justifyContent: 'space-between', // It ensures that space and button are aligned correctly//
   height: '100%',
 };
-
+//Styling for the price that is set by user and is visible to another user//
 const priceStyle = {
   fontWeight: 'bold',
   color: '#FB923C',
   marginTop: '10px',
 };
-
+//Styling for Ask-if-Availaible button//
 const askButtonStyle = {
   marginTop: '10px',
   padding: '10px',
@@ -140,5 +140,5 @@ const askButtonStyle = {
   cursor: 'pointer',
   width: '100%',
 };
-
+//Exporting Marketplace component to use it in another part//
 export default Marketplace;

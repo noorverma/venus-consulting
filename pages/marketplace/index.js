@@ -1,11 +1,11 @@
-//Asked Chatgpt and prompt is" I want to make a marketplace in my website, how can i do that?"
+//Asked Chatgpt and prompt is" I want to make a marketplace in my website, how can i do that?"//
 import React, { useEffect, useState } from 'react';//Importing React, useState and useEffect from react.
-import Link from 'next/link';
-
+import Link from 'next/link'; //Importing Link to navigate Client-side navigation//
+//Asked Chatgpt " I am getting the error while initializing, can you fix that error for me?"//
 const Marketplace = () => {
-  const [listings, setListings] = useState([]);
+  const [listings, setListings] = useState([]); //setting up the listing//
   const [loading, setLoading] = useState(true);
-
+//Did by myself but checked chatgpt code for reference as it provided me code in the beginning"//
   useEffect(() => {
     const fetchListings = async () => {
       try {

@@ -59,14 +59,14 @@ const Marketplace = () => {
 };
 
 //Used Tailwind CSS for styling"//
-const navbarStyle = {
+const navbarStyle = { //Navbar styling for background color with the text "Marketplace"//
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   backgroundColor: '#FB923C',
   padding: '15px 20px',
 };
-
+//Styling for the Sell you product  button" Asked chatgpt "I want that my button has some effect, can you adjust it?"
 const sellButtonStyle = {
   padding: '10px 20px',
   backgroundColor: '#fff',

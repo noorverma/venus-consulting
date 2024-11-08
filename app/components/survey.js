@@ -1,7 +1,8 @@
 // used Perplexity AI for reference
 // components/survey.js
-'use client';
-import React, { useState, useEffect } from 'react'; // Import React and required hooks
+'use client'; // Declares that this component should run on the client side
+
+import React, { useState, useEffect } from 'react'; // Import React and necessary hooks
 import { auth } from '../Lib/firebase'; // Import Firebase client-side authentication instance
 import { submitSurvey } from '@/actions/surveyActions'; // Import submitSurvey function for form submission
 
@@ -9,25 +10,27 @@ import { submitSurvey } from '@/actions/surveyActions'; // Import submitSurvey f
 export default function Survey({ onSurveyCompleted, userId }) {
   const [responses, setResponses] = useState({}); // State to store survey responses
   const [submitted, setSubmitted] = useState(false); // State to track if survey was successfully submitted
-  const [user, setUser] = useState(null); // State to track authenticated user
+  const [user, setUser] = useState(null); // State to store authenticated user information
   const [error, setError] = useState(null); // State to store error messages
   const [isSubmitting, setIsSubmitting] = useState(false); // New state to track if submission is in progress
+  const [surveyLimitReached, setSurveyLimitReached] = useState(false); // New state to track if the survey limit has been reached
 
-  // Listen for changes in authentication state and set user information
+  // useEffect hook to run on component mount and listen for changes in authentication state
   useEffect(() => {
+    // Set up a listener to detect authentication changes
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUser(user); // Set user if authenticated
+        setUser(user); // If user is authenticated, set user state
       } else {
-        setUser(null); // Set user to null if not authenticated
+        setUser(null); // If user logs out or is unauthenticated, set user to null
       }
     });
-    return () => unsubscribe(); // Clean up listener when component unmounts
+    return () => unsubscribe(); // Clean up listener on component unmount
   }, []);
 
   // Handle input changes in the survey form, storing responses with question IDs as keys
   const handleChange = (questionId, value) => {
-    setResponses((prev) => ({ ...prev, [questionId]: value }));
+    setResponses((prev) => ({ ...prev, [questionId]: value })); // Update responses state by adding or updating the specified question
   };
 
   // Handle form submission
@@ -37,7 +40,7 @@ export default function Survey({ onSurveyCompleted, userId }) {
     setIsSubmitting(true); // Set isSubmitting to true to disable the submit button
 
     if (!user) { // Check if user is authenticated
-      setError("User is not authenticated. Please log in.");
+      setError("User is not authenticated. Please log in."); // Show error if user is not logged in
       setIsSubmitting(false); // Re-enable submit button if authentication fails
       return;
     }
@@ -51,6 +54,8 @@ export default function Survey({ onSurveyCompleted, userId }) {
       if (result.success) { // If submission is successful
         setSubmitted(true); // Mark survey as submitted
         onSurveyCompleted(); // Notify parent component of completion
+      } else if (result.message === 'Survey limit reached for this month.') {
+        setSurveyLimitReached(true); // Set surveyLimitReached if monthly limit is hit
       } else {
         setError(result.message || "Error submitting survey"); // Display error message if submission fails
       }
@@ -71,7 +76,9 @@ export default function Survey({ onSurveyCompleted, userId }) {
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
       <h2 className="text-2xl font-bold text-orange-500 mb-4">Complete this survey and earn points!</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>} {/* Display error message if present */}
-      {!submitted ? ( // Render form if survey hasn't been submitted
+      {surveyLimitReached ? ( // Display message if survey limit is reached
+        <p className="text-red-500 font-semibold text-center mt-4">You have reached the survey limit for this month.</p>
+      ) : !submitted ? ( // Render form if survey hasn't been submitted
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700">How satisfied are you with the overall app experience?</label>

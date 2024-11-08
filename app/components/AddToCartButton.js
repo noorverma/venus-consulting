@@ -2,10 +2,10 @@
 
 import { addToCart } from "../Lib/cart";  // Import cart logic
 
-const AddToCartButton = ({ product }) => {
+const AddToCartButton = ({ product, quantity }) => {
   const handleAddToCart = () => {
-    addToCart(product);  // Add the product to the cart
-    alert(`${product.name} added to cart!`);
+    addToCart(product, quantity);  // Pass product and quantity to addToCart
+    alert(`${quantity} of ${product.name} added to cart!`);
   };
 
   return (

@@ -1,4 +1,5 @@
-////Use perplexity AI for reference but the code was written myself
+// lib/prisma.js
+// Use perplexity AI for reference but the code was written myself
 
 import { PrismaClient } from "@prisma/client";
 
@@ -14,3 +15,5 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export default prisma;
+
+

@@ -33,6 +33,7 @@ const AdminNavbar = () => {
       <div style={linkStyle} onClick={() => router.push('/adminJobPostings')}>Postings</div>
       <div style={linkStyle} onClick={() => router.push('/adminJobApplicants')}>Applicants</div>
       <div style={linkStyle} onClick={() => router.push('/adminProducts')}>Products</div>
+      <div style={linkStyle} onClick={() => router.push('/reports')}>Reports</div>
       <div style={logoutStyle} onClick={handleLogout}>Log out</div>
     </nav>
   );

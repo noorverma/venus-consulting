@@ -26,3 +26,49 @@ body {
     text-wrap: balance;
   }
 }
+@keyframes wind {
+   0% {
+    transform: scale(1) translateX(0);
+     }
+  50% {
+    transform: scale(1.05) translateX(2%);
+     }
+ 100% {
+   transform: scale(1) translateX(0);
+     }
+}
+.animate-wind {  animation: wind 20s ease-in-out infinite;
+}
+/*this is the animations of the main page */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}

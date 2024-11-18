@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^7.10.0",
+    "@opentelemetry/api": "^1.9.0",
     "@prisma/client": "^5.22.0",
     "@stripe/react-stripe-js": "^2.8.0",
     "@stripe/stripe-js": "^4.5.0",
@@ -18,7 +20,7 @@
     "firebase": "^10.13.2",
     "firebase-admin": "^12.7.0",
     "formidable": "^3.5.2",
-    "framer-motion": "^11.11.11",
+    "framer-motion": "^11.11.17",
     "mailer": "^0.6.6",
     "next": "14.2.10",
     "next-auth": "^4.24.10",
@@ -29,6 +31,7 @@
     "react-icons": "^5.3.0",
     "react-intersection-observer": "^9.13.1",
     "react-typed": "^2.0.12",
+    "recharts": "^2.13.3",
     "resend": "^4.0.0",
     "stream-chat": "^8.41.0",
     "stream-chat-react": "^12.2.2",

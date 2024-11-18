@@ -3,6 +3,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app"; // Import functions to initialize and manage Firebase apps
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth"; // Import Firebase Auth functions
 import { getFirestore } from "firebase/firestore"; // Import Firestore for database operations
+import { getStorage } from "firebase/storage"; // Import Firebase Storage for file storage operations
 
 // Firebase configuration object containing keys and identifiers for the project
 const firebaseConfig = {
@@ -15,32 +16,31 @@ const firebaseConfig = {
   measurementId: "G-QBFVJD5H94"
 };
 
-// Declare variables for the app, authentication, and database instances
-let app, auth, db;
+// Declare variables for the app, authentication, Firestore database, and storage instances
+let app, auth, db, storage;
 
-// Check if the code is running in a browser environment (client-side)
+// Initialize Firebase app if it hasn’t been initialized already
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig); // Initialize the Firebase app with the configuration
+} else {
+  app = getApp(); // If an app is already initialized, use the existing instance
+}
+
+// Initialize Firebase services
+auth = getAuth(app); // Initialize Firebase Authentication
+db = getFirestore(app); // Initialize Firestore database
+storage = getStorage(app); // Initialize Firebase Storage
+
+// Enable persistence for authentication sessions in the browser (client-side)
 if (typeof window !== 'undefined') {
-  // Check if there are already initialized Firebase apps
-  if (!getApps().length) {
-    // Initialize the Firebase app with the configuration
-    app = initializeApp(firebaseConfig);
-  } else {
-    // If an app is already initialized, use the existing instance
-    app = getApp();
-  }
-  // Initialize Firebase Authentication and Firestore for the app
-  auth = getAuth(app);
-  db = getFirestore(app);
-
-  // Set persistence for the authentication session to browser local storage
   setPersistence(auth, browserLocalPersistence)
     .then(() => {
-      console.log("Persistence set successfully"); // Log success message
+      console.log("Authentication persistence set to browser local storage."); // Log success
     })
     .catch((error) => {
-      console.error("Error setting persistence:", error); // Log error if setting persistence fails
+      console.error("Error setting authentication persistence:", error); // Log any errors
     });
 }
 
-// Export the initialized auth and db instances for use in other parts of the app
-export { auth, db };
+// Export the initialized instances for use in other parts of the app
+export { auth, db, storage };

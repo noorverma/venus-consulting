@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'; //importing useState
 import Navbar from '../components/navbar'; //importing navbar
 import { createAppointment } from '@/actions/appointments';
-import { useRouter } from 'next/navigation';
 
 export default function Appointment() {
     // Initializing the states for the form

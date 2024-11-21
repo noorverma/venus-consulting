@@ -93,7 +93,7 @@ const AdminJobApplications = () => {
       </table>
       <div className="mt-6 flex justify-center">
         <button
-          onClick={() => router.push("/admin")} // Redirect back to the admin page
+          onClick={() => router.push("/Admin")} // Redirect back to the admin page
           className="bg-orange-500 text-white px-6 py-3 font-bold rounded-lg hover:bg-orange-600 transition duration-300"
         >
           Back to Admin Page

@@ -8,6 +8,7 @@ import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore'; // Firestor
 import { useUserAuth } from '../Lib/auth-context'; // Custom authentication context
 import { db } from '../Lib/firebase'; // Firestore instance
 import Image from 'next/image'; // Import the Next.js Image component
+import { auth } from '../Lib/firebase';
 
 const Profile = () => {
   const router = useRouter(); // Initialize router for navigation
@@ -98,14 +99,17 @@ const Profile = () => {
   const handleChangePassword = async () => {
     try {
       if (user) {
+        // Ensure the auth object is being imported and used correctly
         await firebaseSendPasswordResetEmail(auth, user.email);
         alert('Password reset email sent!');
+      } else {
+        alert('User is not authenticated.');
       }
     } catch (error) {
-      console.error('Error sending password reset email:', error);
-      alert('Failed to send password reset email.');
+      console.error('Error sending password reset email:', error.message);
+      alert('Failed to send password reset email: ' + error.message);
     }
-  };
+  };  
 
   if (loading || authLoading) {
     return <div>Loading...</div>;

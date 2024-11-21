@@ -87,17 +87,14 @@ export const logOutUser = async () => {
 
 // Send a password reset email
 export const sendPasswordResetEmail = async (email) => {
-  // Check if the email is provided
   if (!email) {
-    throw new Error("Email is required."); // Throw an error if the email field is missing
+    throw new Error("Email is required."); // Validate email input
   }
 
   try {
-    // Send a password reset email using Firebase Authentication
-    await firebaseSendPasswordResetEmail(auth, email);
-    return true; // Optionally return true to indicate success
+    await firebaseSendPasswordResetEmail(auth, email); // Use the auth instance correctly
+    return true; // Indicate success
   } catch (error) {
-    // Log the error to the console and throw a custom error message
     console.error("Password Reset Error:", error.message);
     throw new Error("Failed to send password reset email. Please try again.");
   }

@@ -31,12 +31,19 @@ const Marketplace = () => {
 
   return (
     <div>
-      {/* Navbar with a button to create a new listing */}
+      {/* Navbar with buttons aligned to the right */}
       <nav style={navbarStyle}>
-        <h1 style={{ color: "#fff" }}>Marketplace</h1>
-        <Link href="/marketplace/createListing">
-          <button style={sellButtonStyle}>Want to Sell Your Product?</button>
-        </Link>
+        <div style={buttonContainerStyle}>
+          {/* Back to Main Button */}
+          <Link href="/Main">
+            <button style={backButtonStyle}>Back to Home</button>
+          </Link>
+
+          {/* Want to Sell Button */}
+          <Link href="/marketplace/createListing">
+            <button style={sellButtonStyle}>Want to Sell Your Product?</button>
+          </Link>
+        </div>
       </nav>
 
       {/* Container to display all listings */}
@@ -75,10 +82,26 @@ const Marketplace = () => {
 // Styling for the navbar
 const navbarStyle = {
   display: "flex",
-  justifyContent: "space-between",
+  justifyContent: "flex-end", // Align all items to the right
   alignItems: "center",
   backgroundColor: "#FB923C",
   padding: "15px 20px",
+};
+
+// Styling for the button container to group the buttons on the right
+const buttonContainerStyle = {
+  display: "flex",
+  gap: "10px", // Add space between buttons
+};
+
+// Styling for the "Back to Main" button
+const backButtonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#fff",
+  color: "#FB923C",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
 };
 
 // Styling for the "Sell Your Product" button

@@ -1,5 +1,5 @@
 //Most of the code I wrote myself but I asked Perplexity AI what to do
-
+'use client'
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth'; 

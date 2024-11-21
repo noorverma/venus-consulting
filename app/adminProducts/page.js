@@ -1,5 +1,5 @@
 "use client";
-
+import AdminNavbar from '../components/AdminNavbar';
 import { useState, useEffect } from 'react';
 
 export default function AdminProducts() {
@@ -50,6 +50,7 @@ export default function AdminProducts() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif' }}>
+      <AdminNavbar />
       <h1>Admin Products</h1>
 
       {/* Add New Product Form */}

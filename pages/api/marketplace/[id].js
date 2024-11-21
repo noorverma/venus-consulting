@@ -1,44 +1,47 @@
 // pages/api/marketplace/[id].js
-import prisma from "@/app/Lib/prisma";
+import { adminDb } from "@/actions/firebase-admin"; // Use Firebase Admin for server-side operations
 
 export default async function handler(req, res) {
   const { id } = req.query;
 
-  if (req.method === 'GET') {
-    // Fetch single listing details
+  if (req.method === "GET") {
     try {
-      const listing = await prisma.marketplaceListing.findUnique({
-        where: { id: parseInt(id) },
-        include: { messages: true }, // Include related messages if they exist
-      });
+      console.log("Fetching document with ID:", id);
 
-      if (!listing) {
-        return res.status(404).json({ error: 'Listing not found' });
+      // Fetch the listing from the `marketItems` collection using Firebase Admin SDK
+      const docRef = adminDb.collection("marketItems").doc(id);
+      const marketItemDoc = await docRef.get();
+
+      if (!marketItemDoc.exists) {
+        console.error(`Listing with ID ${id} not found.`);
+        return res.status(404).json({ error: "Listing not found" });
       }
 
-      res.status(200).json({ listing });
+      const listing = marketItemDoc.data();
+      console.log("Listing found:", listing);
+
+      // Fetch the seller's information from the `users` collection
+      const sellerRef = adminDb.collection("users").doc(listing.sellerId); // Use sellerId as the document ID
+      const sellerDoc = await sellerRef.get();
+
+      if (!sellerDoc.exists) {
+        console.error(`Seller with ID ${listing.sellerId} not found.`);
+        return res.status(406).json({ error: "Seller not found" });
+      }
+
+      const sellerData = sellerDoc.data();
+      console.log("Seller data retrieved:", sellerData);
+
+      // Include seller's email in the response
+      const sellerEmail = sellerData.email;
+
+      res.status(200).json({ listing: { ...listing, sellerEmail } });
     } catch (error) {
-      console.error('Error fetching listing:', error);
-      res.status(500).json({ error: 'Failed to fetch listing' });
-    }
-  } else if (req.method === 'POST') {
-    // Handle message creation
-    const { message } = req.body;
-    try {
-      const newMessage = await prisma.marketplaceMessage.create({
-        data: {
-          content: message,
-          listingId: parseInt(id),
-          createdAt: new Date(),
-        },
-      });
-      res.status(201).json({ success: true, message: newMessage });
-    } catch (error) {
-      console.error('Error creating message:', error);
-      res.status(500).json({ success: false, error: 'Failed to send message' });
+      console.error("Error fetching listing:", error.message);
+      res.status(500).json({ error: "Failed to fetch listing" });
     }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader("Allow", ["GET"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

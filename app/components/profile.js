@@ -6,6 +6,7 @@ import { updateProfile, sendPasswordResetEmail as firebaseSendPasswordResetEmail
 import { useRouter } from 'next/navigation'; // Next.js router for navigation
 import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore'; // Firestore functions
 import { useUserAuth } from '../Lib/auth-context'; // Custom authentication context
+import { db } from '../Lib/firebase'; // Firestore instance
 import Image from 'next/image'; // Import the Next.js Image component
 
 const Profile = () => {

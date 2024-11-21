@@ -7,7 +7,7 @@ import convertToSubcurrency from "../Lib/convertToSubcurrency";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSearchParams } from "next/navigation";
-
+import Navbar from "../components/navbar";
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined");
 }
@@ -20,6 +20,7 @@ export default function Payment() {
 
     return(
         <main className="max-w-4xl mx-auto p-10 text-center bg-white rounded-lg shadow-lg mt-10">
+            <Navbar />
             <div className="mb-10">
                 <h1 className="text-4xl font-extrabold mb-2 text-orange-500">Payment Request</h1>
                 <h2 className="text-2xl font-medium text-gray-700">

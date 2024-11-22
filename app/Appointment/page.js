@@ -1,45 +1,61 @@
 "use client";
-import React, { useEffect, useState } from 'react'; //importing useState
-import Navbar from '../components/navbar'; //importing navbar
-import { createAppointment } from '@/actions/appointments';
+
+import React, { useEffect, useState } from "react"; // Import React hooks
+import Navbar from "../components/navbar"; // Import Navbar component
+import { createAppointment } from "@/actions/appointments"; // Import the createAppointment function
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
 
 export default function Appointment() {
-    // Initializing the states for the form
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [reason, setReason] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [message, setMessage] = useState('');
+  const { user, authLoading } = useUserAuth(); // Get user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
 
-  const timeSlots = ['9:45 AM', '10:45 AM', '12:00 PM', '4:00 PM', '5:00 PM']; //I used chatgpt as i was not sure where i mentioned time so that user can choose.
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
 
-  // States to manage product data
+  // State management for form fields
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [reason, setReason] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Predefined time slots for appointment booking
+  const timeSlots = ["9:45 AM", "10:45 AM", "12:00 PM", "4:00 PM", "5:00 PM"];
+
+  // State management for product data
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products from API
+  // Fetch product data when the component mounts
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/products'); // Fetch data from the products API
+        const response = await fetch("/api/products"); // Fetch data from API
         const data = await response.json();
-        setProducts(data); // Set the fetched products
+        setProducts(data); // Set fetched products
         setLoading(false); // Stop loading
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setLoading(false); // Stop loading in case of error
+        console.error("Error fetching products:", error); // Log error if fetch fails
+        setLoading(false); // Stop loading
       }
     };
 
-    fetchProducts(); // Call the fetch function
+    fetchProducts(); // Call fetch function
   }, []);
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('');
+    e.preventDefault(); // Prevent default form submission
+    setMessage("");
 
+    // Collect form data
     const formData = {
       name,
       email,
@@ -47,91 +63,98 @@ export default function Appointment() {
       reason,
       date,
       time,
-      userId: 'USER_ID_HERE',  
+      userId: user?.uid || "Unknown", // Use the logged-in user's UID
     };
 
     try {
-      const result = await createAppointment(formData);
+      const result = await createAppointment(formData); // Send form data to API
       if (result.success) {
-        setMessage('Appointment booked successfully!');
+        setMessage("Appointment booked successfully!");
         // Reset form fields
-        setName('');
-        setEmail('');
-        setPhone('');
-        setReason('');
-        setDate('');
-        setTime('');
+        setName("");
+        setEmail("");
+        setPhone("");
+        setReason("");
+        setDate("");
+        setTime("");
       } else {
-        setMessage('Failed to book appointment. Please try again.');
+        setMessage("Failed to book appointment. Please try again.");
       }
     } catch (error) {
-      setMessage('An unexpected error occurred. Please try again.');
+      setMessage("An unexpected error occurred. Please try again.");
     }
   };
 
+  // Handle "Learn More" button click
   const handleLearnMore = (productId) => {
-    router.push(`/products/${productId}`);
+    router.push(`/products/${productId}`); // Navigate to product details page
   };
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-     {/*Navbar at the top*/}
+      {/* Navbar */}
       <Navbar />
 
-      <div style={{ fontFamily: 'Poppins, Arial, sans-serif' }}>
-        {/*This image code is generated by chatgpt as i asked the chatgpt that i want image and i want grey overlay and i want to write a text "Book an appointment"on the image*/}
-        <div style={{ position: 'relative', width: '100%', textAlign: 'center', marginBottom: '20px' }}>
+      <div style={{ fontFamily: "Poppins, Arial, sans-serif" }}>
+        {/* Header Section */}
+        <div style={{ position: "relative", width: "100%", textAlign: "center", marginBottom: "20px" }}>
           <img
             src="/Consulting.png"
             alt="Appointment Page"
-            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+            style={{ width: "100%", height: "auto", objectFit: "cover" }}
           />
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(105, 105, 105, 0.7)',  // Dark grey with 70% opacity
-          }}></div>
-          {/* Text on top of the image */}
-          <h2 style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: '#fff',
-            fontSize: '3rem',
-            fontWeight: 'bold',
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(105, 105, 105, 0.7)", // Dark grey overlay
+            }}
+          ></div>
+          <h2
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "#fff",
+              fontSize: "3rem",
+              fontWeight: "bold",
+            }}
+          >
             Book an Appointment
           </h2>
         </div>
-         {/* "Fill in your details" */}
-        <h2 style={{ fontWeight: 'bold',
-           textAlign: 'left',
-            fontSize: '2rem',
-             margin: '20px 0 0 20%' }}>{/* CSS Tailwind is used*/}
-          Fill in your details
-        </h2>
-        {/* Form layout and used CSS Tailwind for reference */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          padding: '0 10%',
-          alignItems: 'flex-start',
-          marginTop: '20px',
-        }}>
-          {/* Form Section and uses CSS Tailwind for reference */}
-          <div style={{
-            width: '60%',
-            padding: '20px',
-            borderRadius: '10px',
-            boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
-            backgroundColor: '#fff',
-          }}>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* Form fields, used chat gpt for form field to correct errors as my code was not runnning.  */}
+
+        {/* Main Content */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0 10%",
+            alignItems: "flex-start",
+            marginTop: "20px",
+          }}
+        >
+          {/* Form Section */}
+          <div
+            style={{
+              width: "60%",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+              backgroundColor: "#fff",
+            }}
+          >
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+              {/* Form Fields */}
               <label>Reason for Visit</label>
               <input
                 type="text"
@@ -182,24 +205,21 @@ export default function Appointment() {
                 style={inputStyle}
                 required
               />
-              {/* Time Slot Selection, used CSS Tailwind*/}
+
+              {/* Time Slot Buttons */}
               <label>Select Time</label>
-              <p style={{ color: '#555', fontSize: '14px', marginBottom: '10px' }}>
-                *You can only book from the available times below*:
-              </p>
-               {/*Used Chatgpt for this time array as i asked chatgpt that i want slots of time which i already initialized, can you make it?*/}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
                 {timeSlots.map((slot, index) => (
                   <button
                     key={index}
                     type="button"
                     style={{
-                      padding: '10px 20px',
-                      borderRadius: '5px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      backgroundColor: time === slot ? '#FB923C' : '#f0f0f0',
-                      color: time === slot ? '#fff' : '#000',
+                      padding: "10px 20px",
+                      borderRadius: "5px",
+                      border: "none",
+                      cursor: "pointer",
+                      backgroundColor: time === slot ? "#FB923C" : "#f0f0f0",
+                      color: time === slot ? "#fff" : "#000",
                     }}
                     onClick={() => setTime(slot)}
                   >
@@ -207,88 +227,90 @@ export default function Appointment() {
                   </button>
                 ))}
               </div>
-               {/* Submit button */}
+
               <button type="submit" style={submitButtonStyle}>
                 Book Now
               </button>
             </form>
+
+            {/* Message */}
             {message && (
-              <p style={{
-                color: message.includes('Failed') || message.includes('error') ? 'red' : 'green',
-                fontSize: '1.5rem',
-                textAlign: 'center',
-                marginTop: '20px'
-              }}>
+              <p
+                style={{
+                  color: message.includes("Failed") || message.includes("error") ? "red" : "green",
+                  fontSize: "1.5rem",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              >
                 {message}
               </p>
             )}
           </div>
-          
-          {/* ChatGPT used to create the scrollable product catalog section
-          Prompt: Add a product catalog section to this code */}
-          {/* New container for Contact Information and Equipment Section */}
-            <div style={{ width: '35%' }}>
-              {/* Equipment Catalog Section */}
-              <div>
-              <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
-              {loading ? (
-                <p>Loading products...</p>
-              ) : (
-                <div className="flex overflow-x-scroll space-x-6 pb-6">
-                  {products.map((product) => (
-                    <div key={product.id} className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between">
-                      <img src={product.image} alt={product.name} className="w-full h-30 object-cover rounded-t-lg" />
-                      <div>
-                        <h3 className="text-lg font-semibold mt-4">{product.name}</h3>
-                        <p className="text-gray-600 mt-2">{product.description}</p>
-                        <p className="font-bold mt-2">${product.price}</p>
-                      </div>
-                      <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                        <a href={`/product/${product.id}`}>View Details</a>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
 
-              {/* Contact Information Section */}
-              <div style={{
-                padding: '20px',
-                backgroundColor: '#f9f9f9',
-                borderRadius: '10px',
-                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
-                marginTop: '10px',
-                marginBottom: '20px',
-              }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>VENUS Electrical Consulting</h2>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>Headquarters</h3>
-                <p>2308 Centre a St NE#107</p>
-                <p>Calgary, AB</p>
-                <p>T2E 2T7</p>
-                <p><strong>Phone:</strong> <span style={{ color: 'orange' }}>(403) 603-0639</span></p>
+          {/* Product Section */}
+          <div style={{ width: "35%" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "10px" }}>Explore Our Equipment</h2>
+            {loading ? (
+              <p>Loading products...</p>
+            ) : (
+              <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
+                {products.map((product) => (
+                  <div
+                    key={product.id}
+                    style={{
+                      width: "200px",
+                      padding: "10px",
+                      borderRadius: "10px",
+                      boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    <img src={product.image} alt={product.name} style={{ width: "100%", borderRadius: "10px" }} />
+                    <h3 style={{ fontSize: "1rem", fontWeight: "bold", marginTop: "10px" }}>{product.name}</h3>
+                    <p style={{ fontSize: "0.9rem", color: "#555" }}>{product.description}</p>
+                    <p style={{ fontWeight: "bold", marginTop: "10px" }}>${product.price}</p>
+                    <button
+                      onClick={() => handleLearnMore(product.id)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "10px",
+                        backgroundColor: "#FB923C",
+                        color: "#fff",
+                        borderRadius: "5px",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Learn More
+                    </button>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
     </>
   );
-}  
+}
+
 // Common styles for input fields
 const inputStyle = {
-  padding: '10px',
-  marginBottom: '20px',
-  fontSize: '16px',
-  borderRadius: '5px',
-  border: '1px solid #ccc',
+  padding: "10px",
+  marginBottom: "20px",
+  fontSize: "16px",
+  borderRadius: "5px",
+  border: "1px solid #ccc",
 };
-// Common style for submit button, used tailwind CSS for reference
+
+// Common style for the submit button
 const submitButtonStyle = {
-  padding: '15px',
-  backgroundColor: '#FB923C',
-  color: '#fff',
-  fontSize: '16px',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-}; 
+  padding: "15px",
+  backgroundColor: "#FB923C",
+  color: "#fff",
+  fontSize: "16px",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+};

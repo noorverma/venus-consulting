@@ -1,11 +1,29 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import ProjectCard from "../components/project-card";
 import Navbar from "../components/navbar";
 import ChatWithAdmin from "../components/chatWithAdmin";
 import Image from "next/image";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
 
 const Projects = () => {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
+
   const [selectedProject, setSelectedProject] = useState(null);
 
   // Sample projects data. Replace this with your actual data source.
@@ -13,19 +31,22 @@ const Projects = () => {
     {
       title: "Modular Signal Processing System for Commercial Electrical Setup",
       shortDescription: "Advanced Modular Synthesis System for Custom Signal Processing",
-      description: "This project focused on designing and integrating a modular signal processing system to optimize commercial electrical operations. The setup featured an advanced control panel for real-time monitoring and precise adjustments, enhancing system efficiency and scalability for future needs. The intuitive interface with LED indicators allowed for easy operation, ensured optimal performance, and offered flexibility for potential expansions and upgrades.",
+      description:
+        "This project focused on designing and integrating a modular signal processing system to optimize commercial electrical operations. The setup featured an advanced control panel for real-time monitoring and precise adjustments, enhancing system efficiency and scalability for future needs. The intuitive interface with LED indicators allowed for easy operation, ensured optimal performance, and offered flexibility for potential expansions and upgrades.",
       imageSrc: "/project1.jpg",
     },
     {
       title: "High Voltage Substation Design for Enhanced Grid Reliability",
       shortDescription: "Designed and built a high voltage substation for improved grid reliability.",
-      description: "This project involved the design and implementation of a high voltage substation to support reliable power distribution across a large grid. The system included advanced insulators, transformers, and breakers to ensure safe and efficient handling of electricity. This substation was built to handle significant load capacities while incorporating safety features to minimize risks during power surges or maintenance.",
+      description:
+        "This project involved the design and implementation of a high voltage substation to support reliable power distribution across a large grid. The system included advanced insulators, transformers, and breakers to ensure safe and efficient handling of electricity. This substation was built to handle significant load capacities while incorporating safety features to minimize risks during power surges or maintenance.",
       imageSrc: "/project2.jpg",
     },
     {
       title: "Marine Cable Management System for Offshore Operations",
       shortDescription: "Engineered a robust cable management system for marine offshore operations.",
-      description: "This project involved designing a marine cable management system for efficient routing and secure placement of power and communication cables. Built to withstand harsh marine conditions, it used corrosion-resistant materials and strategic pathways to improve safety, reduce maintenance, and ensure long-term reliability for offshore operations. The system also allowed for easy future expansions as operational needs grow",
+      description:
+        "This project involved designing a marine cable management system for efficient routing and secure placement of power and communication cables. Built to withstand harsh marine conditions, it used corrosion-resistant materials and strategic pathways to improve safety, reduce maintenance, and ensure long-term reliability for offshore operations. The system also allowed for easy future expansions as operational needs grow",
       imageSrc: "/project3.png",
     },
   ];
@@ -115,4 +136,4 @@ const Projects = () => {
     </>
   );
 };
-export default Projects; 
+export default Projects;

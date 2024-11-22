@@ -1,25 +1,60 @@
 // Used perplexity AI for reference but I wrote the code myself
-
 "use client";
+
 import React, { useState, useEffect } from "react";
 import AdminNavbar from "../components/AdminNavbar";
 import { fetchAppointments, updateAppointmentStatus } from "@/actions/appointments";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
 
 const AdminDashboard = () => {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
   const [appointments, setAppointments] = useState([]);
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
 
-  // Fetch appointments when the page loads
+  // Check user role and authorization
   useEffect(() => {
-    async function loadAppointments() {
-      const response = await fetchAppointments();
-      if (response.success) {
-        setAppointments(response.appointments);
-      } else {
-        console.error("Failed to fetch appointments");
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
       }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
+
+  // Fetch appointments when the user is authorized
+  useEffect(() => {
+    if (isAuthorized) {
+      const loadAppointments = async () => {
+        const response = await fetchAppointments();
+        if (response.success) {
+          setAppointments(response.appointments);
+        } else {
+          console.error("Failed to fetch appointments");
+        }
+      };
+
+      loadAppointments();
     }
-    loadAppointments();
-  }, []);
+  }, [isAuthorized]);
 
   const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
@@ -38,6 +73,11 @@ const AdminDashboard = () => {
 
     await Promise.all(updatePromises);
   };
+
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex min-h-screen">

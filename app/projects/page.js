@@ -12,19 +12,7 @@ const Projects = () => {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
 
-  // Redirect unauthenticated users to the SignIn page
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
-    }
-  }, [user, authLoading, router]);
-
-  // Show loading message if authentication is being checked
-  if (authLoading || !user) {
-    return <div>Loading...</div>;
-  }
-
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null); // State for selected project
 
   // Sample projects data. Replace this with your actual data source.
   const projects = [
@@ -59,6 +47,18 @@ const Projects = () => {
   const closeProjectDetails = () => {
     setSelectedProject(null);
   };
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -136,4 +136,5 @@ const Projects = () => {
     </>
   );
 };
+
 export default Projects;

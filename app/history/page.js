@@ -3,23 +3,66 @@
 import React, { useState, useEffect } from "react";
 import AdminNavbar from "../components/AdminNavbar";
 import { fetchAppointments } from "@/actions/appointments";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
 
 const HistoryPage = () => {
-  const [appointments, setAppointments] = useState([]);
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [appointments, setAppointments] = useState([]); // State to store appointment history
 
+  // Check user role and authorization
   useEffect(() => {
-    async function loadHistory() {
-      const response = await fetchAppointments();
-      if (response.success) {
-        setAppointments(
-          response.appointments.filter(
-            (appointment) => appointment.status !== "Pending"
-          )
-        );
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
       }
-    }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
+
+  // Fetch appointment history
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (isAuthorized) {
+        const response = await fetchAppointments();
+        if (response.success) {
+          setAppointments(
+            response.appointments.filter(
+              (appointment) => appointment.status !== "Pending"
+            )
+          );
+        } else {
+          console.error("Failed to fetch appointments history.");
+        }
+      }
+    };
+
     loadHistory();
-  }, []);
+  }, [isAuthorized]);
+
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -66,10 +109,7 @@ const HistoryPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan="5"
-                      className="text-center py-4 text-gray-500"
-                    >
+                    <td colSpan="5" className="text-center py-4 text-gray-500">
                       No appointments found
                     </td>
                   </tr>

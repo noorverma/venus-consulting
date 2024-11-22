@@ -1,8 +1,16 @@
 "use client";
+
 import { useState, useEffect } from "react";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
 
 const AdminJobPostings = () => {
-  const [jobPostings, setJobPostings] = useState([]);
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [jobPostings, setJobPostings] = useState([]); // State for job postings
   const [newJob, setNewJob] = useState({
     title: "",
     description: "",
@@ -10,9 +18,34 @@ const AdminJobPostings = () => {
     location: "",
     requirements: "",
   });
+  const [error, setError] = useState(""); // State for form error handling
 
-  const [error, setError] = useState(""); // For form error handling
+  // Check user role and authorization
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
 
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+      }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
+
+  // Fetch job postings
   const fetchJobPostings = async () => {
     const response = await fetch("/api/jobPostings");
     const data = await response.json();
@@ -24,8 +57,10 @@ const AdminJobPostings = () => {
   };
 
   useEffect(() => {
-    fetchJobPostings();
-  }, []);
+    if (isAuthorized) {
+      fetchJobPostings();
+    }
+  }, [isAuthorized]);
 
   const handleChange = (e) => {
     setNewJob({
@@ -60,6 +95,11 @@ const AdminJobPostings = () => {
       console.error("Failed to add job posting");
     }
   };
+
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div style={containerStyle}>
@@ -110,7 +150,9 @@ const AdminJobPostings = () => {
             onChange={handleChange}
             style={inputStyle}
           />
-          <button type="submit" style={submitButtonStyle}>Add Job Posting</button>
+          <button type="submit" style={submitButtonStyle}>
+            Add Job Posting
+          </button>
         </form>
 
         {error && <p style={errorStyle}>{error}</p>} {/* Display validation errors */}

@@ -1,26 +1,65 @@
 // used Perplexity AI for reference but code was manually written
 // app/adminProducts/page.js
-
 "use client";
-import AdminNavbar from "../components/AdminNavbar";
+
 import { useState, useEffect } from "react";
+import AdminNavbar from "../components/AdminNavbar";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
 
 export default function AdminProducts() {
-  const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [image, setImage] = useState("");
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [products, setProducts] = useState([]); // State for products
+  const [name, setName] = useState(""); // State for new product name
+  const [description, setDescription] = useState(""); // State for new product description
+  const [price, setPrice] = useState(""); // State for new product price
+  const [image, setImage] = useState(""); // State for new product image
+
+  // Check user role and authorization
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+      }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
 
   // Fetch existing products on page load
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch("/api/products");
-      const data = await response.json();
-      setProducts(data);
+      if (isAuthorized) {
+        try {
+          const response = await fetch("/api/products");
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error("Failed to fetch products:", error);
+        }
+      }
     };
+
     fetchProducts();
-  }, []);
+  }, [isAuthorized]);
 
   // Add new product to the database
   const handleAddProduct = async (e) => {
@@ -50,6 +89,11 @@ export default function AdminProducts() {
       console.error("Error adding product:", error);
     }
   };
+
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">

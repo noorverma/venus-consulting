@@ -1,10 +1,25 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Importing useRouter for navigation
-import { getCart, removeFromCart } from '@/app/Lib/cart'; // Import cart logic
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Importing useRouter for navigation
+import { getCart, removeFromCart } from "@/app/Lib/cart"; // Import cart logic
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
 
 const CartPage = () => {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
 
   const [cartItems, setCartItems] = useState([]);
 
@@ -51,8 +66,8 @@ const CartPage = () => {
               </div>
               <div className="flex items-center">
                 <p className="text-lg font-bold text-orange-500 mr-4">${(item.price * item.quantity).toFixed(2)}</p>
-                <button 
-                  onClick={() => handleRemoveFromCart(item.id)} 
+                <button
+                  onClick={() => handleRemoveFromCart(item.id)}
                   className="text-white bg-red-500 hover:bg-red-600 rounded-lg px-4 py-2 transition duration-300"
                 >
                   Remove
@@ -68,8 +83,8 @@ const CartPage = () => {
           </div>
 
           {/* Checkout button */}
-          <button 
-            onClick={handleCheckout} 
+          <button
+            onClick={handleCheckout}
             className="bg-orange-500 text-white text-lg font-bold py-3 px-8 rounded-lg hover:bg-orange-600 transition duration-300"
           >
             Proceed to Checkout

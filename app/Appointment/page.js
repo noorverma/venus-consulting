@@ -87,7 +87,7 @@ export default function Appointment() {
 
   // Handle "Learn More" button click
   const handleLearnMore = (productId) => {
-    router.push(`/products/${productId}`); // Navigate to product details page
+    router.push(`/product/${productId}`); // Navigate to product details page
   };
 
   // Show loading message if authentication is being checked
@@ -156,34 +156,13 @@ export default function Appointment() {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
               {/* Form Fields */}
               <label>Reason for Visit</label>
-              <input
-                type="text"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder="Reason for visit"
-                style={inputStyle}
-                required
-              />
+              <input type="text" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason for visit" style={inputStyle} required />
 
               <label>Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                style={inputStyle}
-                required
-              />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" style={inputStyle} required />
 
               <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                style={inputStyle}
-                required
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" style={inputStyle} required />
 
               <label>Phone Number</label>
               <input
@@ -198,15 +177,8 @@ export default function Appointment() {
               />
 
               <label>Select Appointment Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                style={inputStyle}
-                required
-              />
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} required />
 
-              {/* Time Slot Buttons */}
               <label>Select Time</label>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
                 {timeSlots.map((slot, index) => (
@@ -235,14 +207,7 @@ export default function Appointment() {
 
             {/* Message */}
             {message && (
-              <p
-                style={{
-                  color: message.includes("Failed") || message.includes("error") ? "red" : "green",
-                  fontSize: "1.5rem",
-                  textAlign: "center",
-                  marginTop: "20px",
-                }}
-              >
+              <p style={{ color: message.includes("Failed") || message.includes("error") ? "red" : "green", fontSize: "1.5rem", textAlign: "center", marginTop: "20px" }}>
                 {message}
               </p>
             )}
@@ -256,16 +221,7 @@ export default function Appointment() {
             ) : (
               <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
                 {products.map((product) => (
-                  <div
-                    key={product.id}
-                    style={{
-                      width: "200px",
-                      padding: "10px",
-                      borderRadius: "10px",
-                      boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-                      backgroundColor: "#fff",
-                    }}
-                  >
+                  <div key={product.id} style={{ width: "200px", padding: "10px", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0,0,0,0.1)", backgroundColor: "#fff" }}>
                     <img src={product.image} alt={product.name} style={{ width: "100%", borderRadius: "10px" }} />
                     <h3 style={{ fontSize: "1rem", fontWeight: "bold", marginTop: "10px" }}>{product.name}</h3>
                     <p style={{ fontSize: "0.9rem", color: "#555" }}>{product.description}</p>

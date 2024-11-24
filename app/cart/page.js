@@ -9,6 +9,9 @@ const CartPage = () => {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
 
+  // State to manage cart items
+  const [cartItems, setCartItems] = useState([]);
+
   // Redirect unauthenticated users to the SignIn page
   useEffect(() => {
     if (!authLoading && !user) {
@@ -16,18 +19,23 @@ const CartPage = () => {
     }
   }, [user, authLoading, router]);
 
+  // Load cart items from localStorage on component mount
+  useEffect(() => {
+    if (!authLoading && user) {
+      const items = getCart(); // Fetch the cart items from localStorage
+      setCartItems(items);
+    }
+  }, [authLoading, user]); // Ensure hooks are consistent regardless of authentication state
+
   // Show loading message if authentication is being checked
-  if (authLoading || !user) {
+  if (authLoading) {
     return <div>Loading...</div>;
   }
 
-  const [cartItems, setCartItems] = useState([]);
-
-  // Load cart items from localStorage on component mount
-  useEffect(() => {
-    const items = getCart(); // Fetch the cart items from localStorage
-    setCartItems(items);
-  }, []);
+  // Redirect to SignIn page if the user is not authenticated
+  if (!user) {
+    return null; // Avoid rendering further UI if redirecting
+  }
 
   // Function to calculate total price
   const calculateTotal = () => {

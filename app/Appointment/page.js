@@ -7,8 +7,6 @@ import { useUserAuth } from "../Lib/auth-context"; // Import authentication cont
 import { useRouter } from "next/navigation"; // Import Next.js router
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
-
-
 export default function Appointment() {
   const { user, authLoading } = useUserAuth(); // Get user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
@@ -37,29 +35,27 @@ export default function Appointment() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch product data when the component mounts
+  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/products"); // Fetch data from API
+        const response = await fetch("/api/products"); // Fetch data from the products API
         const data = await response.json();
-        setProducts(data); // Set fetched products
+        setProducts(data); // Set the fetched products
         setLoading(false); // Stop loading
       } catch (error) {
-        console.error("Error fetching products:", error); // Log error if fetch fails
-        setLoading(false); // Stop loading
+        console.error("Error fetching products:", error);
+        setLoading(false); // Stop loading in case of error
       }
     };
 
-    fetchProducts(); // Call fetch function
+    fetchProducts(); // Call the fetch function
   }, []);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     setMessage("");
 
-    // Collect form data
     const formData = {
       name,
       email,
@@ -71,7 +67,7 @@ export default function Appointment() {
     };
 
     try {
-      const result = await createAppointment(formData); // Send form data to API
+      const result = await createAppointment(formData);
       if (result.success) {
         setMessage("Appointment booked successfully!");
         setShowConfetti(true); //trigger confetti 
@@ -92,19 +88,14 @@ export default function Appointment() {
     }
   };
 
-  // Handle "Learn More" button click
-  const handleLearnMore = (productId) => {
-    router.push(`/product/${productId}`); // Navigate to product details page
-  };
-
-  // Show loading message if authentication is being checked
+  // Redirect unauthenticated users to SignIn page
   if (authLoading || !user) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      {/* Navbar */}
+      {/* Navbar at the top */}
       <Navbar />
       <div style={{ fontFamily: "Poppins, Arial, sans-serif" }}>
         {/* Header Section */}
@@ -121,9 +112,10 @@ export default function Appointment() {
               left: 0,
               width: "100%",
               height: "100%",
-              backgroundColor: "rgba(105, 105, 105, 0.7)", // Dark grey overlay
+              backgroundColor: "rgba(105, 105, 105, 0.7)", // Dark grey with 70% opacity
             }}
           ></div>
+          {/* Text on top of the image */}
           <h2
             style={{
               position: "absolute",
@@ -139,7 +131,17 @@ export default function Appointment() {
           </h2>
         </div>
 
-        {/* Main Content */}
+        <h2
+          style={{
+            fontWeight: "bold",
+            textAlign: "left",
+            fontSize: "2rem",
+            margin: "20px 0 0 20%",
+          }}
+        >
+          Fill in your details
+        </h2>
+
         <div
           style={{
             display: "flex",
@@ -169,15 +171,35 @@ export default function Appointment() {
             />
             )}
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
-              {/* Form Fields */}
               <label>Reason for Visit</label>
-              <input type="text" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason for visit" style={inputStyle} required />
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Reason for visit"
+                style={inputStyle}
+                required
+              />
 
               <label>Name</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" style={inputStyle} required />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                style={inputStyle}
+                required
+              />
 
               <label>Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" style={inputStyle} required />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                style={inputStyle}
+                required
+              />
 
               <label>Phone Number</label>
               <input
@@ -192,9 +214,18 @@ export default function Appointment() {
               />
 
               <label>Select Appointment Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} required />
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                style={inputStyle}
+                required
+              />
 
               <label>Select Time</label>
+              <p style={{ color: "#555", fontSize: "14px", marginBottom: "10px" }}>
+                *You can only book from the available times below*:
+              </p>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
                 {timeSlots.map((slot, index) => (
                   <button
@@ -219,46 +250,69 @@ export default function Appointment() {
                 Book Now
               </button>
             </form>
-
-            {/* Message */}
             {message && (
-              <p style={{ color: message.includes("Failed") || message.includes("error") ? "red" : "green", fontSize: "1.5rem", textAlign: "center", marginTop: "20px" }}>
+              <p
+                style={{
+                  color: message.includes("Failed") || message.includes("error") ? "red" : "green",
+                  fontSize: "1.5rem",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              >
                 {message}
               </p>
             )}
           </div>
 
-          {/* Product Section */}
+          {/* Product and Contact Info Section */}
           <div style={{ width: "35%" }}>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "10px" }}>Explore Our Equipment</h2>
-            {loading ? (
-              <p>Loading products...</p>
-            ) : (
-              <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
-                {products.map((product) => (
-                  <div key={product.id} style={{ width: "200px", padding: "10px", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0,0,0,0.1)", backgroundColor: "#fff" }}>
-                    <img src={product.image} alt={product.name} style={{ width: "100%", borderRadius: "10px" }} />
-                    <h3 style={{ fontSize: "1rem", fontWeight: "bold", marginTop: "10px" }}>{product.name}</h3>
-                    <p style={{ fontSize: "0.9rem", color: "#555" }}>{product.description}</p>
-                    <p style={{ fontWeight: "bold", marginTop: "10px" }}>${product.price}</p>
-                    <button
-                      onClick={() => handleLearnMore(product.id)}
-                      style={{
-                        marginTop: "10px",
-                        padding: "10px",
-                        backgroundColor: "#FB923C",
-                        color: "#fff",
-                        borderRadius: "5px",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
+            {/* Product List */}
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
+              {loading ? (
+                <p>Loading products...</p>
+              ) : (
+                <div className="flex overflow-x-scroll space-x-6 pb-6">
+                  {products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between"
                     >
-                      Learn More
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                      <img src={product.image} alt={product.name} className="w-full h-30 object-cover rounded-t-lg" />
+                      <div>
+                        <h3 className="text-lg font-semibold mt-4">{product.name}</h3>
+                        <p className="text-gray-600 mt-2">{product.description}</p>
+                        <p className="font-bold mt-2">${product.price}</p>
+                      </div>
+                      <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                        <a href={`/product/${product.id}`}>View Details</a>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Contact Info Section */}
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#f9f9f9",
+                borderRadius: "10px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                marginTop: "10px",
+                marginBottom: "20px",
+              }}
+            >
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "10px" }}>VENUS Electrical Consulting</h2>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "10px" }}>Headquarters</h3>
+              <p>2308 Centre a St NE#107</p>
+              <p>Calgary, AB</p>
+              <p>T2E 2T7</p>
+              <p>
+                <strong>Phone:</strong> <span style={{ color: "orange" }}>(403) 603-0639</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -275,7 +329,7 @@ const inputStyle = {
   border: "1px solid #ccc",
 };
 
-// Common style for the submit button
+// Common style for submit button
 const submitButtonStyle = {
   padding: "15px",
   backgroundColor: "#FB923C",

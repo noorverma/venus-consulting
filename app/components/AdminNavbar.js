@@ -67,7 +67,7 @@ const navbarStyle = {
   position: 'fixed', // Fix the sidebar to the left of the viewport
   top: 0, // Align the sidebar to the top
   left: 0, // Align the sidebar to the left
-  backgroundColor: '#FB923C', // Sidebar background color
+  backgroundColor: '#ff790c', // Sidebar background color
   color: '#fff', // Text color
   display: 'flex', // Flexbox layout for easy vertical alignment
   flexDirection: 'column', // Stack items vertically

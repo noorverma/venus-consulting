@@ -196,7 +196,7 @@ const containerStyle = {
 };
 
 const navbarStyle = {
-  backgroundColor: "#FB923C", // Orange navbar
+  backgroundColor: "#ff790c", // Orange navbar
   padding: "15px",
   textAlign: "center",
   marginBottom: "20px",
@@ -228,7 +228,7 @@ const inputStyle = {
 
 const submitButtonStyle = {
   padding: "10px 20px",
-  backgroundColor: "#FB923C",
+  backgroundColor: "#ff790c",
   color: "#fff",
   border: "none",
   borderRadius: "5px",

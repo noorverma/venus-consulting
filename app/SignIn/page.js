@@ -187,7 +187,7 @@ export default function SignIn() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="text-sm text-center text-gray-300"
             >
-              <Link href="/SignUp" className="font-medium text-orange-500 hover:text-orange-400">Don't have an account? Sign up</Link>
+              <Link href="/SignUp" className="font-medium text-orange-500 hover:text-orange-400">Do not have an account? Sign up</Link>
             </motion.p>
           </div>
         </motion.div>

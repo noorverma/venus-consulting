@@ -5,6 +5,9 @@ import Navbar from "../components/navbar"; // Import Navbar component
 import { createAppointment } from "@/actions/appointments"; // Import the createAppointment function
 import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
 import { useRouter } from "next/navigation"; // Import Next.js router
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+
 
 export default function Appointment() {
   const { user, authLoading } = useUserAuth(); // Get user and loading state from authentication context
@@ -25,7 +28,8 @@ export default function Appointment() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [message, setMessage] = useState("");
-
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { width, height } = useWindowSize();
   // Predefined time slots for appointment booking
   const timeSlots = ["9:45 AM", "10:45 AM", "12:00 PM", "4:00 PM", "5:00 PM"];
 
@@ -70,6 +74,7 @@ export default function Appointment() {
       const result = await createAppointment(formData); // Send form data to API
       if (result.success) {
         setMessage("Appointment booked successfully!");
+        setShowConfetti(true); //trigger confetti 
         // Reset form fields
         setName("");
         setEmail("");
@@ -77,6 +82,8 @@ export default function Appointment() {
         setReason("");
         setDate("");
         setTime("");
+         // Hide confetti after 5 seconds
+         setTimeout(() => setShowConfetti(false), 5000);
       } else {
         setMessage("Failed to book appointment. Please try again.");
       }
@@ -99,7 +106,6 @@ export default function Appointment() {
     <>
       {/* Navbar */}
       <Navbar />
-
       <div style={{ fontFamily: "Poppins, Arial, sans-serif" }}>
         {/* Header Section */}
         <div style={{ position: "relative", width: "100%", textAlign: "center", marginBottom: "20px" }}>
@@ -146,6 +152,7 @@ export default function Appointment() {
           {/* Form Section */}
           <div
             style={{
+              position: "relative",
               width: "60%",
               padding: "20px",
               borderRadius: "10px",
@@ -153,6 +160,14 @@ export default function Appointment() {
               backgroundColor: "#fff",
             }}
           >
+            {showConfetti && (
+              <Confetti
+              width={width * 0.6}
+              height={height * 0.8}
+              recycle={false}
+              style={{ position: "absolute", top: 0, left: 0 }}
+            />
+            )}
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
               {/* Form Fields */}
               <label>Reason for Visit</label>

@@ -1,203 +1,148 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import AdminNavbar from '../components/AdminNavbar';
-import { fetchAppointments, updateAppointmentStatus } from '@/actions/appointments';
+// Used perplexity AI for reference but I wrote the code myself
+"use client";
+
+import React, { useState, useEffect } from "react";
+import AdminNavbar from "../components/AdminNavbar";
+import { fetchAppointments, updateAppointmentStatus } from "@/actions/appointments";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
 
 const AdminDashboard = () => {
-  const router = useRouter();
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
   const [appointments, setAppointments] = useState([]);
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
 
-  // Fetch appointments when the page loads
+  // Check user role and authorization
   useEffect(() => {
-    async function loadAppointments() {
-      const response = await fetchAppointments();
-      if (response.success) {
-        setAppointments(response.appointments);
-      } else {
-        console.error('Failed to fetch appointments');
-      }
-    }
-    loadAppointments();
-  }, []);
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
 
-  // Handle approve/deny actions locally
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+      }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
+
+  // Fetch appointments when the user is authorized
+  useEffect(() => {
+    if (isAuthorized) {
+      const loadAppointments = async () => {
+        const response = await fetchAppointments();
+        if (response.success) {
+          setAppointments(response.appointments);
+        } else {
+          console.error("Failed to fetch appointments");
+        }
+      };
+
+      loadAppointments();
+    }
+  }, [isAuthorized]);
+
   const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
       prevAppointments.map((app) =>
         app.id === appointment.id ? { ...app, status: action } : app
       )
     );
-
-    // Make sure to pass 'appointment.time' here
-    sendEmail(appointment.email, appointment.reason, appointment.date, appointment.time, action);
   };
 
-  // Sending the email function which contains async and await
-  const sendEmail = async (email, reason, date, time, action) => {
-    try {
-      const response = await fetch('/api/SendAppointmentEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email, // recipient's email
-          reason, // reason for the appointment
-          date,  // appointment date
-          time,  // appointment time
-          status: action, 
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        console.log('Email sent successfully');
-      } else {
-        console.error('Failed to send email');
-      }
-    } catch (error) {
-      console.error('Error sending email:', error);
-    }
-  };
-
-  // Handle submit to update server and navigate to history
   const handleSubmit = async () => {
     const updatePromises = appointments.map(async (appointment) => {
-      if (appointment.status === 'Approved' || appointment.status === 'Denied') {
+      if (appointment.status === "Approved" || appointment.status === "Denied") {
         await updateAppointmentStatus(appointment.id, appointment.status);
-        return null; // Return null for approved or denied appointments
       }
-      return appointment; // Return other appointments unchanged
     });
 
-    const results = await Promise.all(updatePromises);
-    // Filter out null results (those that were approved or denied)
-    const filteredAppointments = results.filter(appointment => appointment !== null);
-    setAppointments(filteredAppointments); // Update state with remaining appointments
-
-    router.push('/history'); // Navigate to the history page
+    await Promise.all(updatePromises);
   };
 
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div className="flex min-h-screen">
       <AdminNavbar />
-      <div style={mainContentStyle}>
-        <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Admin Dashboard - Appointments</h1>
+      <div className="flex-1 ml-[220px] p-6 bg-gray-100">
+        <h1 className="text-3xl font-bold text-orange-500 mb-6 text-center">
+          Admin Dashboard - Appointments
+        </h1>
 
-        {/* Scrollable table container */}
-        <div style={tableContainerStyle}>
-          <table style={tableStyle}>
-            <thead>
-              <tr style={{ backgroundColor: '#f9f9f9' }}>
-                <th style={tableHeaderStyle}>ID</th>
-                <th style={tableHeaderStyle}>Email</th>
-                <th style={tableHeaderStyle}>Date</th>
-                <th style={tableHeaderStyle}>Reason for Visit</th>
-                <th style={tableHeaderStyle}>Status</th>
-                <th style={tableHeaderStyle}>Time</th> {/* Add Time Column */}
-                <th style={tableHeaderStyle}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((appointment) => (
-                <tr key={appointment.id}>
-                  <td style={tableCellStyle}>{appointment.id}</td>
-                  <td style={tableCellStyle}>{appointment.email}</td>
-                  <td style={tableCellStyle}>{new Date(appointment.date).toLocaleDateString()}</td>
-                  <td style={tableCellStyle}>{appointment.reason}</td>
-                  <td style={tableCellStyle}>{appointment.status}</td>
-                  <td style={tableCellStyle}>{appointment.time || 'N/A'}</td> {/* Display Time */}
-                  <td style={tableCellStyle}>
-                    <button
-                      style={approveButtonStyle}
-                      onClick={() => handleAction(appointment, 'Approved')}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      style={denyButtonStyle}
-                      onClick={() => handleAction(appointment, 'Denied')}
-                    >
-                      Deny
-                    </button>
-                  </td>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-orange-500 text-white">
+                  <th className="px-4 py-2 border border-gray-300">ID</th>
+                  <th className="px-4 py-2 border border-gray-300">Email</th>
+                  <th className="px-4 py-2 border border-gray-300">Date</th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    Reason for Visit
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Status</th>
+                  <th className="px-4 py-2 border border-gray-300">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {appointments.map((appointment) => (
+                  <tr key={appointment.id}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {appointment.id}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {appointment.email}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {new Date(appointment.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {appointment.reason}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {appointment.status}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                        onClick={() => handleAction(appointment, "Approved")}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="bg-red-500 text-white px-4 py-2 rounded"
+                        onClick={() => handleAction(appointment, "Denied")}
+                      >
+                        Deny
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-
-        <div style={{ textAlign: 'center', margin: '20px' }}>
-          <button style={submitButtonStyle} onClick={handleSubmit}>Submit Changes</button>
-        </div>
-        
       </div>
     </div>
   );
-};
-
-// Styling
-const mainContentStyle = {
-  flexGrow: 1,
-  padding: '40px',
-  backgroundColor: '#f5f5f5',
-};
-
-const tableContainerStyle = {
-  maxHeight: '400px', // Limit table height to 400px and allow scrolling
-  overflowY: 'scroll',
-  border: '1px solid #ddd',
-  marginTop: '20px',
-};
-
-const tableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const tableHeaderStyle = {
-  padding: '12px',
-  border: '1px solid #ddd',
-  backgroundColor: '#FB923C',
-  textAlign: 'center',
-  color: '#fff',
-  fontWeight: 'bold',
-};
-
-const tableCellStyle = {
-  padding: '12px',
-  border: '1px solid #ddd',
-  textAlign: 'center',
-};
-
-const approveButtonStyle = {
-  padding: '8px 12px',
-  backgroundColor: 'green',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  marginRight: '10px',
-};
-
-const denyButtonStyle = {
-  padding: '8px 12px',
-  backgroundColor: 'red',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-};
-
-const submitButtonStyle = {
-  padding: '15px 30px',
-  backgroundColor: '#FB923C',
-  color: '#fff',
-  fontSize: '16px',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
 };
 
 export default AdminDashboard;

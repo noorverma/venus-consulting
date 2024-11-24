@@ -7,10 +7,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const AdminJobApplications = () => {
-  const [applications, setApplications] = useState([]);
-  const [error, setError] = useState(null);
+  const [applications, setApplications] = useState([]); // State to store job applications
+  const [error, setError] = useState(null); // State to store error messages
   const router = useRouter(); // For navigation
 
+  // Fetch applications on component mount
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -22,7 +23,7 @@ const AdminJobApplications = () => {
         }
         const data = await response.json();
         if (data.success) {
-          setApplications(data.applications);
+          setApplications(data.applications); // Set fetched applications
         } else {
           setError(data.error || "Failed to fetch applications");
         }
@@ -34,6 +35,7 @@ const AdminJobApplications = () => {
     fetchApplications();
   }, []);
 
+  // If an error occurs, display it
   if (error) {
     return (
       <div className="bg-gray-100 text-center p-4 text-red-600 font-bold">
@@ -50,10 +52,19 @@ const AdminJobApplications = () => {
       <table className="w-full border-collapse table-auto text-left">
         <thead>
           <tr>
-            <th className="bg-gray-200 text-gray-600 font-semibold p-4 border-b">Name</th>
-            <th className="bg-gray-200 text-gray-600 font-semibold p-4 border-b">Email</th>
-            <th className="bg-gray-200 text-gray-600 font-semibold p-4 border-b">Job Title</th>
-            <th className="bg-gray-200 text-gray-600 font-semibold p-4 border-b">Resume</th>
+            {/* Updated the background to orange and text to white */}
+            <th className="bg-orange-500 text-white font-semibold p-4 border-b">
+              Name
+            </th>
+            <th className="bg-orange-500 text-white font-semibold p-4 border-b">
+              Email
+            </th>
+            <th className="bg-orange-500 text-white font-semibold p-4 border-b">
+              Job Title
+            </th>
+            <th className="bg-orange-500 text-white font-semibold p-4 border-b">
+              Resume
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -62,7 +73,9 @@ const AdminJobApplications = () => {
               <tr key={application.id} className="hover:bg-gray-50">
                 <td className="p-4 border-b">{application.name}</td>
                 <td className="p-4 border-b">{application.email}</td>
-                <td className="p-4 border-b">{application.jobPostingId || "N/A"}</td>
+                <td className="p-4 border-b">
+                  {application.jobPostingId || "N/A"}
+                </td>
                 <td className="p-4 border-b">
                   {application.resumeURL ? (
                     <a
@@ -91,14 +104,6 @@ const AdminJobApplications = () => {
           )}
         </tbody>
       </table>
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={() => router.push("/Admin")} // Redirect back to the admin page
-          className="bg-orange-500 text-white px-6 py-3 font-bold rounded-lg hover:bg-orange-600 transition duration-300"
-        >
-          Back to Admin Page
-        </button>
-      </div>
     </div>
   );
 };

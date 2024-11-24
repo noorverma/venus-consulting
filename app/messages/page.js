@@ -1,3 +1,4 @@
+// app/messages/page.js
 "use client";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
@@ -15,12 +16,14 @@ import { useUserAuth } from "../Lib/auth-context"; // Import authentication cont
 import { useRouter } from "next/navigation"; // Import Next.js router
 import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
 import { db } from "../Lib/firebase"; // Firestore instance
+import AdminNavbar from "../components/AdminNavbar"; // Import AdminNavbar component
 
 const AdminMessages = () => {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
   const [client, setClient] = useState(null); // State to hold StreamChat client
   const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [chatInitialized, setChatInitialized] = useState(false); // Track if the chat client is initialized
 
   // Check user role and authorization
   useEffect(() => {
@@ -50,39 +53,50 @@ const AdminMessages = () => {
   // Initialize StreamChat client
   useEffect(() => {
     const initChat = async () => {
-      if (isAuthorized) {
-        const chatClient = StreamChat.getInstance(
-          process.env.NEXT_PUBLIC_STREAM_API_KEY
-        );
+      if (isAuthorized && !chatInitialized) {
+        try {
+          // Disconnect the previous client instance if it exists
+          if (client) {
+            await client.disconnectUser();
+          }
 
-        // Fetch the token for the admin user
-        const response = await fetch("/api/stream/token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: "admin" }),
-        });
+          const chatClient = StreamChat.getInstance(
+            process.env.NEXT_PUBLIC_STREAM_API_KEY
+          );
 
-        const { token } = await response.json();
+          // Fetch the token for the admin user
+          const response = await fetch("/api/stream/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: "admin" }),
+          });
 
-        // Connect the admin user
-        await chatClient.connectUser(
-          {
-            id: "admin",
-            name: "Admin",
-          },
-          token
-        );
+          const { token } = await response.json();
 
-        setClient(chatClient); // Set the chat client once connected
+          // Connect the admin user
+          await chatClient.connectUser(
+            {
+              id: "admin",
+              name: "Admin",
+            },
+            token
+          );
+
+          setClient(chatClient); // Set the chat client once connected
+          setChatInitialized(true); // Mark chat as initialized
+        } catch (error) {
+          console.error("Error initializing chat:", error);
+        }
       }
     };
 
     initChat();
 
     return () => {
-      if (client) client.disconnectUser(); // Clean up the chat client on component unmount
+      // Disconnect the client when the component unmounts
+      if (client) client.disconnectUser();
     };
-  }, [isAuthorized, client]);
+  }, [isAuthorized, client, chatInitialized]); // Dependencies ensure proper execution
 
   // Show loading message if authentication or authorization is being checked
   if (authLoading || (!user && !isAuthorized)) {
@@ -93,16 +107,33 @@ const AdminMessages = () => {
   if (!client) return <div>Loading chat...</div>;
 
   return (
-    <Chat client={client} theme="messaging light">
-      <ChannelList filters={{ members: { $in: ["admin"] } }} sort={{ last_message_at: -1 }} />
-      <Channel>
-        <Window>
-          <ChannelHeader />
-          <MessageList />
-          <MessageInput />
-        </Window>
-      </Channel>
-    </Chat>
+    <div className="flex min-h-screen bg-gray-100">
+      <AdminNavbar /> {/* Sidebar Navbar */}
+      {/* Main Content */}
+      <div className="flex-1 ml-[220px] p-6">
+        <Chat client={client} theme="messaging light">
+          <div className="flex">
+            {/* Channel List */}
+            <div className="w-1/3">
+              <ChannelList
+                filters={{ members: { $in: ["admin"] } }}
+                sort={{ last_message_at: -1 }}
+              />
+            </div>
+            {/* Chat Window */}
+            <div className="w-2/3">
+              <Channel>
+                <Window>
+                  <ChannelHeader />
+                  <MessageList />
+                  <MessageInput />
+                </Window>
+              </Channel>
+            </div>
+          </div>
+        </Chat>
+      </div>
+    </div>
   );
 };
 

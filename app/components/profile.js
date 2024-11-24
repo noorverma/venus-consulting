@@ -1,28 +1,29 @@
 // Used perplexity AI for reference
 // app/components/profile.js
-'use client';
-import React, { useState, useEffect } from 'react';
-import { updateProfile, sendPasswordResetEmail as firebaseSendPasswordResetEmail, updateEmail } from 'firebase/auth'; // Firebase Auth functions
-import { useRouter } from 'next/navigation'; // Next.js router for navigation
-import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore'; // Firestore functions
-import { useUserAuth } from '../Lib/auth-context'; // Custom authentication context
-import { db } from '../Lib/firebase'; // Firestore instance
-import Image from 'next/image'; // Import the Next.js Image component
-import { auth } from '../Lib/firebase';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { updateProfile, sendPasswordResetEmail as firebaseSendPasswordResetEmail, updateEmail } from "firebase/auth"; // Firebase Auth functions
+import { useRouter } from "next/navigation"; // Next.js router for navigation
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore"; // Firestore functions
+import { useUserAuth } from "../Lib/auth-context"; // Custom authentication context
+import { db } from "../Lib/firebase"; // Firestore instance
+import Image from "next/image"; // Import the Next.js Image component
+import { auth } from "../Lib/firebase";
 
 const Profile = () => {
   const router = useRouter(); // Initialize router for navigation
   const { user, authLoading } = useUserAuth(); // Get user and loading state from custom auth context
-  const [displayName, setDisplayName] = useState(''); // State for user's display name
-  const [newDisplayName, setNewDisplayName] = useState(''); // State for updated display name input
-  const [email, setEmail] = useState(''); // State for user's email
-  const [newEmail, setNewEmail] = useState(''); // State for updated email input
+  const [displayName, setDisplayName] = useState(""); // State for user's display name
+  const [newDisplayName, setNewDisplayName] = useState(""); // State for updated display name input
+  const [email, setEmail] = useState(""); // State for user's email
+  const [newEmail, setNewEmail] = useState(""); // State for updated email input
   const [editing, setEditing] = useState(false); // State to toggle editing mode
   const [loading, setLoading] = useState(true); // State to manage loading status
-  const [address, setAddress] = useState(''); // State for user's address
-  const [newAddress, setNewAddress] = useState(''); // State for updated address input
-  const [phoneNumber, setPhoneNumber] = useState(''); // State for user's phone number
-  const [newPhoneNumber, setNewPhoneNumber] = useState(''); // State for updated phone number input
+  const [address, setAddress] = useState(""); // State for user's address
+  const [newAddress, setNewAddress] = useState(""); // State for updated address input
+  const [phoneNumber, setPhoneNumber] = useState(""); // State for user's phone number
+  const [newPhoneNumber, setNewPhoneNumber] = useState(""); // State for updated phone number input
   const [imageError, setImageError] = useState(false); // State to handle image loading errors
 
   // Fetch user data when the component mounts or user/authLoading state changes
@@ -30,34 +31,34 @@ const Profile = () => {
     const fetchUserData = async () => {
       if (user) {
         try {
-          setEmail(user.email || '');
-          setNewEmail(user.email || '');
-          setDisplayName(user.displayName || user.email.split('@')[0]);
-          setNewDisplayName(user.displayName || user.email.split('@')[0]);
+          setEmail(user.email || "");
+          setNewEmail(user.email || "");
+          setDisplayName(user.displayName || user.email.split("@")[0]);
+          setNewDisplayName(user.displayName || user.email.split("@")[0]);
 
           // Fetch user document from Firestore
-          const userDocRef = doc(db, 'users', user.uid);
+          const userDocRef = doc(db, "users", user.uid);
           const userDoc = await getDoc(userDocRef);
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            setAddress(userData.address || '');
-            setPhoneNumber(userData.phoneNumber || '');
+            setAddress(userData.address || "");
+            setPhoneNumber(userData.phoneNumber || "");
           } else {
             // If user document does not exist, create a new one
             await setDoc(userDocRef, {
               email: user.email,
-              displayName: user.displayName || user.email.split('@')[0],
-              address: '',
-              phoneNumber: '',
-              role: 'user',
+              displayName: user.displayName || user.email.split("@")[0],
+              address: "",
+              phoneNumber: "",
+              role: "user",
             });
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error("Error fetching user data:", error);
         }
       } else if (!authLoading) {
-        router.push('/SignIn'); // Redirect to SignIn if user is not authenticated
+        router.push("/SignIn"); // Redirect to SignIn if user is not authenticated
       }
       setLoading(false); // Set loading to false once data is fetched
     };
@@ -76,7 +77,7 @@ const Profile = () => {
           await updateEmail(user, newEmail);
         }
 
-        await updateDoc(doc(db, 'users', user.uid), {
+        await updateDoc(doc(db, "users", user.uid), {
           displayName: newDisplayName || displayName,
           email: newEmail || email,
           address: newAddress || address,
@@ -88,11 +89,11 @@ const Profile = () => {
         setAddress(newAddress || address);
         setPhoneNumber(newPhoneNumber || phoneNumber);
 
-        alert('Profile updated successfully!');
+        alert("Profile updated successfully!");
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Failed to update profile: ' + error.message);
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile: " + error.message);
     }
   };
 
@@ -101,15 +102,15 @@ const Profile = () => {
       if (user) {
         // Ensure the auth object is being imported and used correctly
         await firebaseSendPasswordResetEmail(auth, user.email);
-        alert('Password reset email sent!');
+        alert("Password reset email sent!");
       } else {
-        alert('User is not authenticated.');
+        alert("User is not authenticated.");
       }
     } catch (error) {
-      console.error('Error sending password reset email:', error.message);
-      alert('Failed to send password reset email: ' + error.message);
+      console.error("Error sending password reset email:", error.message);
+      alert("Failed to send password reset email: " + error.message);
     }
-  };  
+  };
 
   if (loading || authLoading) {
     return <div>Loading...</div>;
@@ -120,12 +121,21 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
+    <div
+      className="min-h-screen flex items-center justify-center relative bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/profile-background.jpg')", // Add the background image
+      }}
+    >
+      {/* Overlay for opacity */}
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-50 z-0"></div>
+
+      {/* Content */}
+      <div className="relative z-10 bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/3 text-center mb-4 md:mb-0">
             <Image
-              src={imageError ? '/default-avatar.png' : user.photoURL || '/default-avatar.png'} // Use user's Google profile picture or fallback to default
+              src={imageError ? "/default-avatar.png" : user.photoURL || "/default-avatar.png"} // Use user's Google profile picture or fallback to default
               alt="Profile"
               width={128}
               height={128}
@@ -182,8 +192,12 @@ const Profile = () => {
               </div>
             ) : (
               <>
-                <p><strong>Address:</strong> {address || 'Not provided'}</p>
-                <p><strong>Phone:</strong> {phoneNumber || 'Not provided'}</p>
+                <p>
+                  <strong>Address:</strong> {address || "Not provided"}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {phoneNumber || "Not provided"}
+                </p>
                 <button
                   onClick={handleChangePassword}
                   className="bg-orange-500 text-white py-2 px-6 rounded-md hover:bg-orange-600 mt-2 w-full"
@@ -191,7 +205,7 @@ const Profile = () => {
                   Change Password
                 </button>
                 <button
-                  onClick={() => router.push('/Main')}
+                  onClick={() => router.push("/Main")}
                   className="bg-orange-500 text-white py-2 px-6 rounded-md hover:bg-orange-600 mt-4 w-full"
                 >
                   Return to Main Page

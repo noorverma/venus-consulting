@@ -1,7 +1,9 @@
+// app/adminJobApplicants/page.js
 "use client";
 
 import { useEffect, useState } from "react";
-import AdminJobApplications from "../components/AdminJobApplicants";
+import AdminJobApplications from "../components/AdminJobApplicants"; // Import AdminJobApplications component
+import AdminNavbar from "../components/AdminNavbar"; // Import AdminNavbar component
 import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
 import { useRouter } from "next/navigation"; // Import Next.js router
 import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
@@ -43,8 +45,11 @@ const AdminJobApplicantsPage = () => {
   }
 
   return (
-    <div>
-      <AdminJobApplications />
+    <div className="flex min-h-screen">
+      <AdminNavbar /> {/* Sidebar navigation */}
+      <div className="flex-1 ml-[220px] p-6 bg-gray-100">
+        <AdminJobApplications /> {/* Main content */}
+      </div>
     </div>
   );
 };

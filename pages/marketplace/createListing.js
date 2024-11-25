@@ -28,7 +28,7 @@ export default function CreateListing() {
       description,
       price: parseFloat(price),
       imageUrl: imageBase64,
-      userId: 'cm36i2acn0000sdnkb9hm30e3', // Replace with the actual user ID
+      userId: 'cm3kp1eum0000zz7hkg9cxgot', // Replace with the actual user ID
     };
 
     try {
@@ -159,4 +159,3 @@ const messageStyle = {
   textAlign: 'center',
   marginTop: '20px',
 };
-

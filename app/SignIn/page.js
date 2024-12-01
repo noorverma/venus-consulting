@@ -107,7 +107,7 @@ export default function SignIn() {
       </Head>
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[url('/login-background.jpeg')] bg-cover bg-center animate-wind" />
+          <div className="absolute inset-0 bg-[url('/login-background.jpeg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/10" />
         </div>
         {isLoading && <Spinner />} {/* Add spinner when loading */}

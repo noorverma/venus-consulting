@@ -24,7 +24,7 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="h-full">
+    <div className="h-full overflow-x-hidden">
       <Navbar />
 
       {/* Slideshow Section */}
@@ -93,7 +93,11 @@ const MainPage = () => {
           {/* Decorative Circle */}
           <div
             className="absolute top-0 right-0 w-64 h-64 bg-orange-200 rounded-full opacity-30"
-            style={{ transform: "translate(50%, -50%)" }}
+            style={{
+              transform: "translate(50%, -50%)",
+              maxWidth: "100%",
+              overflow: "hidden",
+            }}
           ></div>
 
           {/* Icon Section */}

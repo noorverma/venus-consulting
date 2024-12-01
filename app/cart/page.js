@@ -1,18 +1,42 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Importing useRouter for navigation
-import { getCart, removeFromCart } from '@/app/Lib/cart'; // Import cart logic
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Importing useRouter for navigation
+import { getCart, removeFromCart } from "@/app/Lib/cart"; // Import cart logic
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import Navbar from "../components/navbar"; // Importing Navbar component
 
 const CartPage = () => {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
 
+  // State to manage cart items
   const [cartItems, setCartItems] = useState([]);
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
 
   // Load cart items from localStorage on component mount
   useEffect(() => {
-    const items = getCart(); // Fetch the cart items from localStorage
-    setCartItems(items);
-  }, []);
+    if (!authLoading && user) {
+      const items = getCart(); // Fetch the cart items from localStorage
+      setCartItems(items);
+    }
+  }, [authLoading, user]); // Ensure hooks are consistent regardless of authentication state
+
+  // Show loading message if authentication is being checked
+  if (authLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // Redirect to SignIn page if the user is not authenticated
+  if (!user) {
+    return null; // Avoid rendering further UI if redirecting
+  }
 
   // Function to calculate total price
   const calculateTotal = () => {
@@ -33,50 +57,67 @@ const CartPage = () => {
   };
 
   return (
-    <main className="max-w-4xl mx-auto p-10 text-center bg-gray-100 rounded-lg shadow-lg mt-10">
-      <h1 className="text-4xl font-bold mb-10">Your Cart</h1>
+    <>
+      <Navbar /> {/* Include the Navbar component */}
+      <main className="max-w-4xl mx-auto p-10 text-center bg-gray-100 rounded-lg shadow-lg mt-40">
+        <h1 className="text-4xl font-bold mb-10">Your Cart</h1>
 
-      {cartItems.length === 0 ? (
-        <p className="text-2xl text-gray-700">Your cart is empty.</p>
-      ) : (
-        <div className="space-y-6">
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex items-center">
-                <img src={item.image} alt={item.name} className="h-16 w-16 object-cover rounded-lg mr-4" />
-                <div className="text-left">
-                  <h2 className="text-xl font-semibold">{item.name}</h2>
-                  <p className="text-gray-500">Quantity: {item.quantity}</p>
+        {cartItems.length === 0 ? (
+          <p className="text-2xl text-gray-700">Your cart is empty.</p>
+        ) : (
+          <div className="space-y-6">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm"
+              >
+                {/* Product details */}
+                <div className="flex items-center">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="h-16 w-16 object-cover rounded-lg mr-4"
+                  />
+                  <div className="text-left">
+                    <h2 className="text-xl font-semibold">{item.name}</h2>
+                    <p className="text-gray-500">Quantity: {item.quantity}</p>
+                  </div>
+                </div>
+
+                {/* Product price and remove button */}
+                <div className="flex items-center">
+                  <p className="text-lg font-bold text-orange-500 mr-4">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </p>
+                  <button
+                    onClick={() => handleRemoveFromCart(item.id)}
+                    className="text-white bg-red-500 hover:bg-red-600 rounded-lg px-4 py-2 transition duration-300"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center">
-                <p className="text-lg font-bold text-orange-500 mr-4">${(item.price * item.quantity).toFixed(2)}</p>
-                <button 
-                  onClick={() => handleRemoveFromCart(item.id)} 
-                  className="text-white bg-red-500 hover:bg-red-600 rounded-lg px-4 py-2 transition duration-300"
-                >
-                  Remove
-                </button>
-              </div>
+            ))}
+
+            {/* Cart total section */}
+            <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
+              <p className="text-xl font-bold">Total:</p>
+              <p className="text-xl font-bold text-orange-500">
+                ${calculateTotal()}
+              </p>
             </div>
-          ))}
 
-          {/* Cart total section */}
-          <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
-            <p className="text-xl font-bold">Total:</p>
-            <p className="text-xl font-bold text-orange-500">${calculateTotal()}</p>
+            {/* Checkout button */}
+            <button
+              onClick={handleCheckout}
+              className="bg-orange-500 text-white text-lg font-bold py-3 px-8 rounded-lg hover:bg-orange-600 transition duration-300"
+            >
+              Proceed to Checkout
+            </button>
           </div>
-
-          {/* Checkout button */}
-          <button 
-            onClick={handleCheckout} 
-            className="bg-orange-500 text-white text-lg font-bold py-3 px-8 rounded-lg hover:bg-orange-600 transition duration-300"
-          >
-            Proceed to Checkout
-          </button>
-        </div>
-      )}
-    </main>
+        )}
+      </main>
+    </>
   );
 };
 

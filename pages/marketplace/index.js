@@ -1,20 +1,21 @@
-//Asked Chatgpt and prompt is" I want to make a marketplace in my website, how can i do that?"//
-import React, { useEffect, useState } from 'react';//Importing React, useState and useEffect from react.
-import Link from 'next/link'; //Importing Link to navigate Client-side navigation//
-//Asked Chatgpt " I am getting the error while initializing, can you fix that error for me?"//
+"use client"
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion"; // Importing Framer Motion for animations
+
 const Marketplace = () => {
-  const [listings, setListings] = useState([]); //setting up the listing//
-  const [loading, setLoading] = useState(true); //To store loading data//
-//Did by myself but checked chatgpt code for reference as it provided me code in the beginning"//
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchListings = async () => { //Defining async feature//
+    const fetchListings = async () => {
       try {
-        const response = await fetch('/api/marketplace/allListings');
-        const data = await response.json(); //Parsing json response data./
-        setListings(data.listings);
-        setLoading(false);
+        const response = await fetch("/api/marketplace/allListings");
+        const data = await response.json();
+        setListings(data.listings || []);
       } catch (error) {
-        console.error('Error fetching listings:', error);
+        console.error("Error fetching listings:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -22,30 +23,61 @@ const Marketplace = () => {
     fetchListings();
   }, []);
 
-  return ( //Done by me//
-    <div>
+  return (
+    <div style={pageStyle}>
+      {/* Navbar */}
       <nav style={navbarStyle}>
-        <h1 style={{ color: '#fff' }}>Marketplace</h1>
-        <Link href="/marketplace/createListing">
-          <button style={sellButtonStyle}>Want to Sell Your Product?</button>
-        </Link>
+        <div style={buttonContainerStyle}>
+          <Link href="/Main">
+            <button style={backButtonStyle}>Back to Home</button>
+          </Link>
+          <Link href="/marketplace/createListing">
+            <button style={sellButtonStyle}>Want to Sell Your Product?</button>
+          </Link>
+        </div>
       </nav>
 
-      <div style={listingContainerStyle}> 
+      {/* Hero Section */}
+      <section style={heroStyle}>
+        <motion.h2
+          style={heroTitleStyle}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          Explore Unique Listings
+        </motion.h2>
+        <motion.p
+          style={heroSubtitleStyle}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          Find the best deals and post your items for sale!
+        </motion.p>
+      </section>
+
+      {/* Listings Section */}
+      <div style={listingContainerStyle}>
         {loading ? (
-          <p>Loading listings...</p> //Asked chatgpt "Can you add CSS styling in my code"?
+          <p style={loadingStyle}>Loading listings...</p>
         ) : listings.length > 0 ? (
           listings.map((listing) => (
             <div key={listing.id} style={listingCardStyle}>
               <div style={imageContainerStyle}>
-                <img src={listing.imageUrl} alt={listing.title} style={imageStyle} />
+                <img
+                  src={listing.imageURL}
+                  alt={listing.title}
+                  style={imageStyle}
+                  onError={(e) => (e.target.src = "/default-placeholder.png")}
+                />
                 <h3 style={titleOverlayStyle}>{listing.title}</h3>
               </div>
               <div style={descriptionStyle}>
                 <p>{listing.description}</p>
                 <p style={priceStyle}>${listing.price}</p>
                 <Link href={`/marketplace/${listing.id}`}>
-                  <button style={askButtonStyle}>Ask if it’s Available</button>
+                  <button style={askButtonStyle}>Ask if it's Available</button>
                 </Link>
               </div>
             </div>
@@ -58,87 +90,155 @@ const Marketplace = () => {
   );
 };
 
-//Used Tailwind CSS for styling"//
-const navbarStyle = { //Navbar styling for background color with the text "Marketplace"//
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  backgroundColor: '#FB923C',
-  padding: '15px 20px',
+/* Page Styles */
+const pageStyle = {
+  fontFamily: "Arial, sans-serif",
+  backgroundColor: "#f8f8f8",
+  minHeight: "100vh",
 };
-//Styling for the Sell you product  button" Asked chatgpt "I want that my button has some effect, can you adjust it?"
+
+/* Navbar Styles */
+const navbarStyle = {
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  backgroundColor: "#FB923C", // Same orange color as your navbar
+  padding: "15px 30px",
+  color: "#fff",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+};
+
+const buttonContainerStyle = {
+  display: "flex",
+  gap: "15px",
+};
+
+const backButtonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#fff",
+  color: "#FB923C",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  transition: "all 0.3s ease",
+};
+
 const sellButtonStyle = {
-  padding: '10px 20px',
-  backgroundColor: '#fff',
-  color: '#FB923C',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
+  padding: "10px 20px",
+  backgroundColor: "#fff",
+  color: "#FB923C",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  transition: "all 0.3s ease",
 };
-//Asked chatgpt "I want that my all the listing that come sets as a container which differentiate from another container"//
+
+backButtonStyle["&:hover"] = sellButtonStyle["&:hover"] = {
+  backgroundColor: "#FFD1A9",
+  transform: "scale(1.05)",
+};
+
+/* Hero Section Styles */
+const heroStyle = {
+  textAlign: "center",
+  padding: "50px 20px",
+  background: "linear-gradient(to bottom, #FB923C, #FFD1A9)", // Darker orange to lighter gradient
+  color: "#fff",
+  marginBottom: "30px",
+};
+
+const heroTitleStyle = {
+  fontSize: "4rem", // Larger font size
+  marginBottom: "10px",
+};
+
+const heroSubtitleStyle = {
+  fontSize: "1.5rem",
+  fontWeight: "300",
+};
+
+/* Listing Container Styles */
 const listingContainerStyle = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '20px',
-  padding: '20px',
-  justifyContent: 'center',
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "20px",
+  padding: "20px",
+  justifyContent: "center",
 };
-//Done by chatgpt but it was unsatisfactory so used CSS Tailwind cheatsheet for reference"
+
+/* Individual Listing Card Styles */
 const listingCardStyle = {
-  width: '250px',
-  backgroundColor: '#f5f5f5',
-  borderRadius: '10px',
-  overflow: 'hidden',
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between', // This is ensuring that button is aligned at the bottom//
-  minHeight: '400px', // setting up the minimum height for consistency//
+  width: "250px",
+  backgroundColor: "#fff",
+  borderRadius: "10px",
+  overflow: "hidden",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  minHeight: "400px",
+  transition: "transform 0.3s ease, box-shadow 0.3s ease",
 };
-//Styling for image container//
+
 const imageContainerStyle = {
-  position: 'relative',
+  position: "relative",
 };
-//Image styling for listing created by user and seting up the dimensions"//
+
 const imageStyle = {
-  width: '100%',
-  height: '200px',
-  objectFit: 'cover',
+  width: "100%",
+  height: "200px",
+  objectFit: "cover",
 };
 
 const titleOverlayStyle = {
-  position: 'absolute',
-  top: '10px',
-  left: '10px',
-  color: '#fff',
-  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  padding: '5px 10px',
-  borderRadius: '5px',
+  position: "absolute",
+  top: "10px",
+  left: "10px",
+  color: "#fff",
+  backgroundColor: "rgba(0, 0, 0, 0.6)",
+  padding: "5px 10px",
+  borderRadius: "5px",
+  fontSize: "1rem",
 };
 
+/* Description and Button Styles */
 const descriptionStyle = {
-  padding: '15px',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between', // It ensures that space and button are aligned correctly//
-  height: '100%',
+  padding: "15px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  height: "100%",
 };
-//Styling for the price that is set by user and is visible to another user//
+
 const priceStyle = {
-  fontWeight: 'bold',
-  color: '#FB923C',
-  marginTop: '10px',
+  fontWeight: "bold",
+  color: "#FB923C",
+  marginTop: "10px",
+  fontSize: "1.2rem",
 };
-//Styling for Ask-if-Availaible button//
+
 const askButtonStyle = {
-  marginTop: '10px',
-  padding: '10px',
-  backgroundColor: '#FB923C',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  width: '100%',
+  marginTop: "10px",
+  padding: "10px",
+  backgroundColor: "#FB923C",
+  color: "#fff",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  width: "100%",
+  transition: "all 0.3s ease",
 };
-//Exporting Marketplace component to use it in another part//
+
+askButtonStyle["&:hover"] = {
+  backgroundColor: "#FF8F62",
+  transform: "scale(1.05)",
+};
+
+/* Loading Text */
+const loadingStyle = {
+  fontSize: "1.5rem",
+  color: "#FB923C",
+  textAlign: "center",
+};
+
 export default Marketplace;

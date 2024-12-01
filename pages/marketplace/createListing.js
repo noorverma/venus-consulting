@@ -1,68 +1,80 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+// pages/marketplace/createListing.js
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { auth, db, storage } from "@/app/Lib/firebase";
 
 export default function CreateListing() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const router = useRouter();
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0]; // Safely access the first file
+    if (!file) {
+      console.error("No file selected");
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.onloadend = () => {
       setImageBase64(reader.result); // Set Base64 image string
     };
+
     reader.readAsDataURL(file); // Convert image to Base64
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-
+    setMessage("");
+  
+    const user = auth.currentUser; // Use the initialized Firebase Auth instance
+  
+    if (!user) {
+      setMessage("You must be logged in to create a listing.");
+      return;
+    }
+  
     const formData = {
       title,
       description,
       price: parseFloat(price),
       imageUrl: imageBase64,
-      userId: 'cm3kp1eum0000zz7hkg9cxgot', // Replace with the actual user ID
+      userId: user.uid, // Use the authenticated user's UID
     };
-
+  
     try {
-      const response = await fetch('/api/marketplace/createListing', {
-        method: 'POST',
+      const response = await fetch("/api/marketplace/createListing", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
+  
       const result = await response.json();
       if (response.ok && result.success) {
-        setMessage('Listing created successfully!');
-        router.push('/marketplace');
+        setMessage("Listing created successfully!");
+        router.push("/marketplace");
       } else {
-        setMessage(`Failed to create listing: ${result.message || 'Unknown error'}`);
+        setMessage(`Failed to create listing: ${result.message || "Unknown error"}`);
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setMessage('An error occurred while creating the listing. Please try again.');
+      console.error("An error occurred:", error);
+      setMessage("An error occurred while creating the listing. Please try again.");
     }
   };
 
   return (
     <div style={containerStyle}>
-      {/* Navbar */}
       <nav style={navbarStyle}>
         <h2>Create Your Own Listing</h2>
       </nav>
-
-      {/* Form Container */}
       <div style={formContainerStyle}>
-        <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Create Listing</h1>
+        <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Create Listing</h1>
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Title:</label>
@@ -70,7 +82,7 @@ export default function CreateListing() {
           </div>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Description:</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required style={{ ...inputStyle, height: '80px' }} />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required style={{ ...inputStyle, height: "80px" }} />
           </div>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Price:</label>

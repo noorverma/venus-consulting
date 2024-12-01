@@ -1,8 +1,18 @@
+// app/adminJobPostings/page.js
 "use client";
+
 import { useState, useEffect } from "react";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "../Lib/firebase"; // Firestore instance
+import AdminNavbar from "../components/AdminNavbar"; // Import AdminNavbar component
 
 const AdminJobPostings = () => {
-  const [jobPostings, setJobPostings] = useState([]);
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+  const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [jobPostings, setJobPostings] = useState([]); // State for job postings
   const [newJob, setNewJob] = useState({
     title: "",
     description: "",
@@ -10,9 +20,34 @@ const AdminJobPostings = () => {
     location: "",
     requirements: "",
   });
+  const [error, setError] = useState(""); // State for form error handling
 
-  const [error, setError] = useState(""); // For form error handling
+  // Check user role and authorization
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      if (!authLoading && user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDoc = await getDoc(userDocRef);
 
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAuthorized(true); // Grant access if the user is an admin
+          } else {
+            router.push("/Main"); // Redirect to Main if the user is not an admin
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+          router.push("/Main"); // Redirect to Main on error
+        }
+      } else if (!authLoading && !user) {
+        router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+      }
+    };
+
+    checkAuthorization();
+  }, [user, authLoading, router]);
+
+  // Fetch job postings
   const fetchJobPostings = async () => {
     const response = await fetch("/api/jobPostings");
     const data = await response.json();
@@ -24,8 +59,10 @@ const AdminJobPostings = () => {
   };
 
   useEffect(() => {
-    fetchJobPostings();
-  }, []);
+    if (isAuthorized) {
+      fetchJobPostings();
+    }
+  }, [isAuthorized]);
 
   const handleChange = (e) => {
     setNewJob({
@@ -61,158 +98,103 @@ const AdminJobPostings = () => {
     }
   };
 
-  return (
-    <div style={containerStyle}>
-      {/* Navbar Section */}
-      <div style={navbarStyle}>
-        <h1 style={navbarTitle}>Admin Dashboard - Job Postings</h1>
-      </div>
+  // Show loading message if authentication or authorization is being checked
+  if (authLoading || (!user && !isAuthorized)) {
+    return <div>Loading...</div>;
+  }
 
-      <div style={contentContainer}>
-        <form onSubmit={handleAddJob} style={formStyle}>
-          <input
-            type="text"
-            name="title"
-            placeholder="Job Title"
-            value={newJob.title}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="description"
-            placeholder="Job Description"
-            value={newJob.description}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="salary"
-            placeholder="Salary"
-            value={newJob.salary}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={newJob.location}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="requirements"
-            placeholder="Requirements"
-            value={newJob.requirements}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <button type="submit" style={submitButtonStyle}>Add Job Posting</button>
+  return (
+    <div className="flex min-h-screen">
+      <AdminNavbar /> {/* Fixed Sidebar */}
+      {/* Main Content */}
+      <div className="flex-1 ml-[220px] p-6 bg-gray-100">
+        <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">Admin Job Postings</h1>
+
+        {/* Add Job Posting Form */}
+        <form onSubmit={handleAddJob} className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Add New Job Posting</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="title"
+              placeholder="Job Title"
+              value={newJob.title}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            />
+            <input
+              type="text"
+              name="description"
+              placeholder="Job Description"
+              value={newJob.description}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            />
+            <input
+              type="text"
+              name="salary"
+              placeholder="Salary"
+              value={newJob.salary}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            />
+            <input
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={newJob.location}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            />
+            <input
+              type="text"
+              name="requirements"
+              placeholder="Requirements"
+              value={newJob.requirements}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            />
+          </div>
+          <button className="mt-4 bg-orange-500 text-white py-2 px-6 rounded-md hover:bg-orange-600">
+            Add Job Posting
+          </button>
         </form>
 
-        {error && <p style={errorStyle}>{error}</p>} {/* Display validation errors */}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
-        {jobPostings.length === 0 ? (
-          <p>No job postings found</p>
-        ) : (
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={tableHeaderStyle}>Title</th>
-                <th style={tableHeaderStyle}>Description</th>
-                <th style={tableHeaderStyle}>Salary</th>
-                <th style={tableHeaderStyle}>Location</th>
-                <th style={tableHeaderStyle}>Requirements</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobPostings.map((job) => (
-                <tr key={job.id}>
-                  <td style={tableCellStyle}>{job.title}</td>
-                  <td style={tableCellStyle}>{job.description}</td>
-                  <td style={tableCellStyle}>{job.salary}</td>
-                  <td style={tableCellStyle}>{job.location}</td>
-                  <td style={tableCellStyle}>{job.requirements}</td>
+        {/* Job Postings Table */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Job Postings</h2>
+          {jobPostings.length === 0 ? (
+            <p>No job postings found</p>
+          ) : (
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-orange-500 text-white">
+                  <th className="px-4 py-2 border border-gray-300">Title</th>
+                  <th className="px-4 py-2 border border-gray-300">Description</th>
+                  <th className="px-4 py-2 border border-gray-300">Salary</th>
+                  <th className="px-4 py-2 border border-gray-300">Location</th>
+                  <th className="px-4 py-2 border border-gray-300">Requirements</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {jobPostings.map((job) => (
+                  <tr key={job.id}>
+                    <td className="px-4 py-2 border border-gray-300">{job.title}</td>
+                    <td className="px-4 py-2 border border-gray-300">{job.description}</td>
+                    <td className="px-4 py-2 border border-gray-300">{job.salary}</td>
+                    <td className="px-4 py-2 border border-gray-300">{job.location}</td>
+                    <td className="px-4 py-2 border border-gray-300">{job.requirements}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
   );
-};
-
-// CSS-in-JS styling
-const containerStyle = {
-  backgroundColor: "#FFFFFF", // White background for the container
-  padding: "20px",
-  minHeight: "100vh",
-};
-
-const navbarStyle = {
-  backgroundColor: "#FB923C", // Orange navbar
-  padding: "15px",
-  textAlign: "center",
-  marginBottom: "20px",
-};
-
-const navbarTitle = {
-  color: "#fff",
-  fontSize: "2rem",
-  margin: 0,
-};
-
-const contentContainer = {
-  padding: "20px",
-};
-
-const formStyle = {
-  display: "flex",
-  flexDirection: "column",
-  marginBottom: "20px",
-};
-
-const inputStyle = {
-  margin: "10px 0",
-  padding: "10px",
-  fontSize: "1rem",
-  borderRadius: "5px",
-  border: "1px solid #ccc",
-};
-
-const submitButtonStyle = {
-  padding: "10px 20px",
-  backgroundColor: "#FB923C",
-  color: "#fff",
-  border: "none",
-  borderRadius: "5px",
-  cursor: "pointer",
-};
-
-const errorStyle = {
-  color: "red",
-};
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  marginTop: "20px",
-};
-
-const tableHeaderStyle = {
-  padding: "10px",
-  borderBottom: "2px solid #FF8C00",
-  textAlign: "left",
-  color: "#333",
-};
-
-const tableCellStyle = {
-  padding: "10px",
-  borderBottom: "1px solid #ddd",
 };
 
 export default AdminJobPostings;

@@ -1,7 +1,28 @@
 // code referenced from https://www.youtube.com/watch?v=fgbEwVWlpsI
 // the code used in the video above used TypeScript and ChatGPT was used to change it to JavaScript
 // Prompt: check the following code from any TypeScript components and change it to JavaScript if any found
+"use client";
+
+import { useEffect } from "react";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
+
 export default function PaymentSuccess({ searchParams }) {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
+
   const { amount } = searchParams;
 
   return (

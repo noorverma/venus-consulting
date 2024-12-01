@@ -1,6 +1,9 @@
 // Positions/page.js
 "use client";
+
 import React, { useState, useEffect } from "react";
+import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
+import { useRouter } from "next/navigation"; // Import Next.js router
 
 // Fetch job postings from the backend API
 const fetchJobPostings = async () => {
@@ -10,6 +13,22 @@ const fetchJobPostings = async () => {
 };
 
 export default function PositionsPage() {
+  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
+  const router = useRouter(); // Initialize router for navigation
+
+  // Redirect unauthenticated users to the SignIn page
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading message if authentication is being checked
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
+
+  // Component state
   const [selectedJob, setSelectedJob] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -168,36 +187,36 @@ export default function PositionsPage() {
     </div>
   );
 }
- 
+
 // CSS-in-JS Styling
 const pageContainer = {
   display: "flex",
   flexDirection: "column",
   fontFamily: "Arial, sans-serif",
 };
- 
+
 const navbarStyle = {
   backgroundColor: "#FB923C", // Orange theme matching the website
   padding: "20px",
   textAlign: "center",
 };
- 
+
 const navbarTitle = {
   color: "#fff",
   fontSize: "2rem",
   margin: 0,
 };
- 
+
 const contentContainer = {
   display: "flex",
   justifyContent: "space-between",
   padding: "20px",
 };
- 
+
 const jobListContainer = {
   width: "45%",
 };
- 
+
 const jobItemStyle = {
   padding: "15px",
   marginBottom: "15px",
@@ -205,24 +224,24 @@ const jobItemStyle = {
   borderRadius: "8px",
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
 };
- 
+
 const jobTitleStyle = {
   fontSize: "1.5rem", // Increased size for better heading visibility
   color: "#333",
   fontWeight: "bold",
 };
- 
+
 const jobLocationStyle = {
   fontSize: "1rem",
   color: "#666",
 };
- 
+
 const jobDescriptionStyle = {
   fontSize: "0.9rem",
   color: "#555",
   marginBottom: "10px",
 };
- 
+
 const learnMoreButtonStyle = {
   backgroundColor: "#FF8C00", // Orange theme
   color: "#fff",
@@ -231,7 +250,7 @@ const learnMoreButtonStyle = {
   borderRadius: "5px",
   cursor: "pointer",
 };
- 
+
 const jobDetailsContainer = {
   width: "50%",
   padding: "20px",
@@ -239,20 +258,20 @@ const jobDetailsContainer = {
   borderRadius: "8px",
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
 };
- 
+
 const jobDetailHeadingStyle = {
   fontSize: "1.1rem", // Slightly larger font for headings
   color: "#333", // Proper black color
   fontWeight: "bold", // Bold only for the headings
   marginBottom: "8px",
 };
- 
+
 const jobDetailStyle = {
   fontSize: "1rem", // Normal font for main description
   color: "#555", // Proper black for the text
   marginBottom: "15px",
 };
- 
+
 const applyButtonStyle = {
   backgroundColor: "#28a745", // Green for apply button
   color: "#fff",
@@ -261,7 +280,7 @@ const applyButtonStyle = {
   borderRadius: "5px",
   cursor: "pointer",
 };
- 
+
 const successMessageStyle = {
   color: "green",
   fontWeight: "bold",

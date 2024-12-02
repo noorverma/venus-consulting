@@ -76,7 +76,8 @@ export default function ProductDetail({ params }) {
   };
 
   const handleBuyNow = () => {
-    router.push(`/payment?productId=${id}&quantity=${quantity}`);
+    const totalAmount = (product.price * quantity).toFixed(2);
+    router.push(`/payment?amount=${totalAmount}&productId=${id}&quantity=${quantity}`);
   };
 
   if (!product) {
@@ -112,7 +113,7 @@ export default function ProductDetail({ params }) {
           </div>
 
           <p>{product.description}</p>
-          <p style={{ fontWeight: 'bold' }}>${product.price}</p>
+          <p style={{ fontWeight: 'bold', fontSize: '24px' }}>${product.price}</p>
 
           <div style={{ margin: '10px 0' }}>
             <label htmlFor="quantity">Quantity: </label>

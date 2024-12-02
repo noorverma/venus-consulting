@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react"; // Import React hooks
-import Navbar from "../components/navbar"; // Import Navbar component
-import { createAppointment } from "@/actions/appointments"; // Import the createAppointment function
-import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
-import { useRouter } from "next/navigation"; // Import Next.js router
+import React, { useEffect, useState } from "react";
+import Navbar from "../components/navbar";
+import { createAppointment } from "@/actions/appointments";
+import { useUserAuth } from "../Lib/auth-context";
+import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { motion } from "framer-motion";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 export default function Appointment() {
-  const { user, authLoading } = useUserAuth(); // Get user and loading state from authentication context
-  const router = useRouter(); // Initialize router for navigation
+  const { user, authLoading } = useUserAuth();
+  const router = useRouter();
 
-  // Redirect unauthenticated users to the SignIn page
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
+      router.push("/SignIn");
     }
   }, [user, authLoading, router]);
 
-  // State management for form fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -28,28 +28,25 @@ export default function Appointment() {
   const [message, setMessage] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
-  // Predefined time slots for appointment booking
-  const timeSlots = ["9:45 AM", "10:45 AM", "12:00 PM", "4:00 PM", "5:00 PM"];
 
-  // State management for product data
+  const timeSlots = ["9:45 AM", "10:45 AM", "12:00 PM", "4:00 PM", "5:00 PM"];
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/products"); // Fetch data from the products API
+        const response = await fetch("/api/products");
         const data = await response.json();
-        setProducts(data); // Set the fetched products
-        setLoading(false); // Stop loading
+        setProducts(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
-        setLoading(false); // Stop loading in case of error
+        setLoading(false);
       }
     };
 
-    fetchProducts(); // Call the fetch function
+    fetchProducts();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -63,23 +60,21 @@ export default function Appointment() {
       reason,
       date,
       time,
-      userId: user?.uid || "Unknown", // Use the logged-in user's UID
+      userId: user?.uid || "Unknown",
     };
 
     try {
       const result = await createAppointment(formData);
       if (result.success) {
         setMessage("Appointment booked successfully!");
-        setShowConfetti(true); //trigger confetti 
-        // Reset form fields
+        setShowConfetti(true);
         setName("");
         setEmail("");
         setPhone("");
         setReason("");
         setDate("");
         setTime("");
-         // Hide confetti after 5 seconds
-         setTimeout(() => setShowConfetti(false), 5000);
+        setTimeout(() => setShowConfetti(false), 5000);
       } else {
         setMessage("Failed to book appointment. Please try again.");
       }
@@ -88,49 +83,51 @@ export default function Appointment() {
     }
   };
 
-  // Redirect unauthenticated users to SignIn page
   if (authLoading || !user) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      {/* Navbar at the top */}
       <Navbar />
       <div style={{ fontFamily: "Poppins, Arial, sans-serif" }}>
         {/* Header Section */}
-        <div style={{ position: "relative", width: "100%", textAlign: "center", marginBottom: "20px" }}>
+        <div className="relative w-full h-[70vh]">
           <img
             src="/Consulting.png"
             alt="Appointment Page"
-            style={{ width: "100%", height: "auto", objectFit: "cover" }}
+            className="absolute inset-0 w-full h-full object-cover"
           />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(105, 105, 105, 0.7)", // Dark grey with 70% opacity
-            }}
-          ></div>
-          {/* Text on top of the image */}
-          <h2
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              color: "#fff",
-              fontSize: "3rem",
-              fontWeight: "bold",
-            }}
-          >
-            Book an Appointment
-          </h2>
+          <div className="absolute inset-0 bg-gray-700 bg-opacity-70"></div>
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <motion.h2
+              className="text-5xl font-bold text-white"
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+            >
+              Book an Appointment
+            </motion.h2>
+            <motion.div
+              className="flex space-x-6 mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
+            >
+              <div className="w-16 h-16 bg-orange-400 text-white rounded-full flex items-center justify-center shadow-lg">
+                <i className="fas fa-bolt text-3xl"></i>
+              </div>
+              <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-lg">
+                <i className="fas fa-tools text-3xl"></i>
+              </div>
+              <div className="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center shadow-lg">
+                <i className="fas fa-lightbulb text-3xl"></i>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
+        {/* Main Content Section */}
         <h2
           style={{
             fontWeight: "bold",
@@ -164,13 +161,16 @@ export default function Appointment() {
           >
             {showConfetti && (
               <Confetti
-              width={width * 0.6}
-              height={height * 0.8}
-              recycle={false}
-              style={{ position: "absolute", top: 0, left: 0 }}
-            />
+                width={width * 0.6}
+                height={height * 0.8}
+                recycle={false}
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
             )}
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
               <label>Reason for Visit</label>
               <input
                 type="text"
@@ -223,10 +223,22 @@ export default function Appointment() {
               />
 
               <label>Select Time</label>
-              <p style={{ color: "#555", fontSize: "14px", marginBottom: "10px" }}>
+              <p
+                style={{
+                  color: "#555",
+                  fontSize: "14px",
+                  marginBottom: "10px",
+                }}
+              >
                 *You can only book from the available times below*:
               </p>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "20px",
+                }}
+              >
                 {timeSlots.map((slot, index) => (
                   <button
                     key={index}
@@ -236,7 +248,8 @@ export default function Appointment() {
                       borderRadius: "5px",
                       border: "none",
                       cursor: "pointer",
-                      backgroundColor: time === slot ? "#FB923C" : "#f0f0f0",
+                      backgroundColor:
+                        time === slot ? "#FB923C" : "#f0f0f0",
                       color: time === slot ? "#fff" : "#000",
                     }}
                     onClick={() => setTime(slot)}
@@ -253,7 +266,10 @@ export default function Appointment() {
             {message && (
               <p
                 style={{
-                  color: message.includes("Failed") || message.includes("error") ? "red" : "green",
+                  color: message.includes("Failed") ||
+                  message.includes("error")
+                    ? "red"
+                    : "green",
                   fontSize: "1.5rem",
                   textAlign: "center",
                   marginTop: "20px",
@@ -268,7 +284,9 @@ export default function Appointment() {
           <div style={{ width: "35%" }}>
             {/* Product List */}
             <div>
-              <h2 className="text-2xl font-bold mb-4">Explore Our Equipment</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                Explore Our Equipment
+              </h2>
               {loading ? (
                 <p>Loading products...</p>
               ) : (
@@ -278,10 +296,18 @@ export default function Appointment() {
                       key={product.id}
                       className="w-64 bg-white rounded-lg shadow-lg p-4 flex-shrink-0 flex flex-col justify-between"
                     >
-                      <img src={product.image} alt={product.name} className="w-full h-30 object-cover rounded-t-lg" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-30 object-cover rounded-t-lg"
+                      />
                       <div>
-                        <h3 className="text-lg font-semibold mt-4">{product.name}</h3>
-                        <p className="text-gray-600 mt-2">{product.description}</p>
+                        <h3 className="text-lg font-semibold mt-4">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-600 mt-2">
+                          {product.description}
+                        </p>
                         <p className="font-bold mt-2">${product.price}</p>
                       </div>
                       <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
@@ -304,13 +330,30 @@ export default function Appointment() {
                 marginBottom: "20px",
               }}
             >
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "10px" }}>VENUS Electrical Consulting</h2>
-              <h3 style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "10px" }}>Headquarters</h3>
+              <h2
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+              >
+                VENUS Electrical Consulting
+              </h2>
+              <h3
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+              >
+                Headquarters
+              </h3>
               <p>2308 Centre a St NE#107</p>
               <p>Calgary, AB</p>
               <p>T2E 2T7</p>
               <p>
-                <strong>Phone:</strong> <span style={{ color: "orange" }}>(403) 603-0639</span>
+                <strong>Phone:</strong>{" "}
+                <span style={{ color: "orange" }}>(403) 603-0639</span>
               </p>
             </div>
           </div>
@@ -332,7 +375,7 @@ const inputStyle = {
 // Common style for submit button
 const submitButtonStyle = {
   padding: "15px",
-  backgroundColor: "#FB923C",
+  backgroundColor: "#fc7303",
   color: "#fff",
   fontSize: "16px",
   border: "none",

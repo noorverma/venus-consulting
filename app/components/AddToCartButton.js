@@ -13,15 +13,15 @@ const AddToCartButton = ({ product, quantity }) => {
       onClick={handleAddToCart}
       style={{
         padding: '10px 20px',
-        backgroundColor: '#FB923C',
-        color: '#fff',
-        border: 'none',
+        backgroundColor: '#fff',
+        color: '#FB923C',
+        border: '2px solid #FB923C',
         borderRadius: '5px',
         cursor: 'pointer',
         marginTop: '20px',
       }}
     >
-      Add to Cart
+      <b>Add to Cart</b>
     </button>
   );
 };

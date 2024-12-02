@@ -1,13 +1,14 @@
-// app/components/AddToCartButton.js
 "use client";
 
 import { useState, useEffect } from 'react';
 import AddToCartButton from '@/app/components/AddToCartButton';
 import Navbar from '@/app/components/navbar';
 import Star from '@/app/components/star';
+import { useRouter } from 'next/navigation';
 
 export default function ProductDetail({ params }) {
   const { id } = params;
+  const router = useRouter();
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -74,6 +75,10 @@ export default function ProductDetail({ params }) {
     setHoverRating(0);
   };
 
+  const handleBuyNow = () => {
+    router.push(`/payment?productId=${id}&quantity=${quantity}`);
+  };
+
   if (!product) {
     return <div>Loading...</div>;
   }
@@ -82,41 +87,63 @@ export default function ProductDetail({ params }) {
     <>
       <Navbar />
 
-      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '90px' }}>
-        <h1 style={{ fontWeight: 'bold', fontSize: '26px' }}>{product.name}</h1>
-        
-        {/* Display Average Rating */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <span style={{ fontSize: '1.2rem', marginRight: '10px' }}>Average Rating:</span>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {[1, 2, 3, 4, 5].map((star) => {
-              const fillPercentage = Math.min(Math.max(averageRating - star + 1, 0), 1) * 100;
-              return <Star key={star} filled={fillPercentage > 0} fillPercentage={fillPercentage} />;
-            })}
+      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '90px', display: 'flex', gap: '40px' }}>
+        {/* Left Column: Product Image */}
+        <div style={{ flex: 1 }}>
+          <img src={product.image} alt={product.name} style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'cover' }} />
+        </div>
+
+        {/* Right Column: Product Details */}
+        <div style={{ flex: 1 }}>
+          <h1 style={{ fontWeight: 'bold', fontSize: '26px' }}>{product.name}</h1>
+          
+          {/* Display Average Rating */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+            <span style={{ fontSize: '1.2rem', marginRight: '10px' }}>Average Rating:</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {[1, 2, 3, 4, 5].map((star) => {
+                const fillPercentage = Math.min(Math.max(averageRating - star + 1, 0), 1) * 100;
+                return <Star key={star} filled={fillPercentage > 0} fillPercentage={fillPercentage} />;
+              })}
+            </div>
+            <span style={{ marginLeft: '10px', fontSize: '1.2rem', color: '#FB923C' }}>
+              {ratingCount > 0 ? `${averageRating.toFixed(1)} / 5 (${ratingCount} ratings)` : 'No ratings yet'}
+            </span>
           </div>
-          <span style={{ marginLeft: '10px', fontSize: '1.2rem', color: '#FB923C' }}>
-            {ratingCount > 0 ? `${averageRating.toFixed(1)} / 5 (${ratingCount} ratings)` : 'No ratings yet'}
-          </span>
+
+          <p>{product.description}</p>
+          <p style={{ fontWeight: 'bold' }}>${product.price}</p>
+
+          <div style={{ margin: '10px 0' }}>
+            <label htmlFor="quantity">Quantity: </label>
+            <input
+              type="number"
+              id="quantity"
+              value={quantity}
+              min="1"
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              style={{ width: '60px', textAlign: 'center' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button onClick={handleBuyNow}
+              style={{ padding: '10px 20px',
+                      backgroundColor: '#FB923C',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      marginTop: '20px' }}>
+              <b>Buy Now</b>
+            </button>
+            <AddToCartButton product={product} quantity={quantity} />
+          </div>
         </div>
+      </div>
 
-        <img src={product.image} alt={product.name} style={{ width: '300px', height: '300px', objectFit: 'cover' }} />
-        <p>{product.description}</p>
-        <p style={{ fontWeight: 'bold' }}>${product.price}</p>
-
-        <div style={{ margin: '10px 0' }}>
-          <label htmlFor="quantity">Quantity: </label>
-          <input
-            type="number"
-            id="quantity"
-            value={quantity}
-            min="1"
-            onChange={(e) => setQuantity(parseInt(e.target.value))}
-            style={{ width: '60px', textAlign: 'center' }}
-          />
-        </div>
-
-        <AddToCartButton product={product} quantity={quantity} />
-
+      {/* Review Section */}
+      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '40px' }}>
         {/* Review Form */}
         <div style={{ marginTop: '40px' }}>
           <h3>Leave a Review</h3>

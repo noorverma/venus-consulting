@@ -21,7 +21,7 @@ const AddToCartButton = ({ product, quantity }) => {
         marginTop: '20px',
       }}
     >
-      Add to Cart
+      <b>Add to Cart</b>
     </button>
   );
 };

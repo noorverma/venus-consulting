@@ -88,7 +88,7 @@ export default function ProductDetail({ params }) {
     <>
       <Navbar />
 
-      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '90px', display: 'flex', gap: '40px' }}>
+      <div style={{ padding: '20px 55px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '90px', display: 'flex', gap: '40px' }}>
         {/* Left Column: Product Image */}
         <div style={{ flex: 1 }}>
           <img src={product.image} alt={product.name} style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'cover' }} />
@@ -144,11 +144,15 @@ export default function ProductDetail({ params }) {
       </div>
 
       {/* Review Section */}
-      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '40px' }}>
+      <div style={{ padding: '20px', fontFamily: 'Poppins, Arial, sans-serif', marginTop: '40px', backgroundColor: '#f9fafb', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h3 className="text-3xl font-bold text-orange-500">Customer Reviews</h3>
+          <p className="text-gray-600">See what our customers are saying</p>
+        </div>
         {/* Review Form */}
-        <div style={{ marginTop: '40px' }}>
-          <h3>Leave a Review</h3>
-          <div style={{ display: 'flex', gap: '5px' }}>
+        <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+          <h4 className="text-2xl font-semibold mb-4">Leave a Review</h4>
+          <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
                 key={star}
@@ -163,29 +167,28 @@ export default function ProductDetail({ params }) {
             placeholder="Leave a comment (optional)"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            style={{ width: '100%', height: '80px', marginTop: '10px' }}
+            style={{ width: '100%', height: '100px', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '10px' }}
           />
-          <button onClick={handleReviewSubmit} style={{ marginTop: '10px' }}>
+          <button onClick={handleReviewSubmit} style={{ padding: '10px 20px', backgroundColor: '#FB923C', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 8px rgba(251, 146, 60, 0.4)' }}>
             Submit Review
           </button>
         </div>
 
         {/* Display Reviews */}
         <div style={{ marginTop: '40px' }}>
-          <h3>Reviews</h3>
           {reviews.length > 0 ? (
             reviews.map((review) => (
-              <div key={review.id} style={{ borderBottom: '1px solid #ddd', padding: '10px 0' }}>
-                <div style={{ display: 'flex', gap: '5px' }}>
+              <div key={review.id} style={{ borderBottom: '1px solid #ddd', padding: '20px 0', backgroundColor: '#fff', borderRadius: '10px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+                <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star key={star} filled={star <= review.rating} />
                   ))}
                 </div>
-                {review.comment && <p>{review.comment}</p>}
+                {review.comment && <p style={{ fontSize: '1.1rem', color: '#555' }}>{review.comment}</p>}
               </div>
             ))
           ) : (
-            <p>No reviews yet.</p>
+            <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>No reviews yet. Be the first to leave one!</p>
           )}
         </div>
       </div>

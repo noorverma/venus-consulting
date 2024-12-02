@@ -5,6 +5,8 @@ import AddToCartButton from '@/app/components/AddToCartButton';
 import Navbar from '@/app/components/navbar';
 import Star from '@/app/components/star';
 import { useRouter } from 'next/navigation';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function ProductDetail({ params }) {
   const { id } = params;
@@ -81,7 +83,20 @@ export default function ProductDetail({ params }) {
   };
 
   if (!product) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <Navbar />
+        <div style={{ padding: '20px 40px', marginTop: '90px' }}>
+          <Skeleton height={400} width="100%" style={{ marginBottom: '20px' }} />
+          <Skeleton height={30} width="60%" style={{ marginBottom: '10px' }} />
+          <Skeleton height={20} width="40%" style={{ marginBottom: '20px' }} />
+          <Skeleton height={15} width="80%" style={{ marginBottom: '10px' }} />
+          <Skeleton height={15} width="90%" style={{ marginBottom: '10px' }} />
+          <Skeleton height={15} width="70%" style={{ marginBottom: '20px' }} />
+          <Skeleton height={50} width="30%" />
+        </div>
+      </>
+    );
   }
 
   return (

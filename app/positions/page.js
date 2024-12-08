@@ -1,11 +1,9 @@
-// Positions/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
 import { useRouter } from "next/navigation"; // Import Next.js router
 
-// Fetch job postings from the backend API
 const fetchJobPostings = async () => {
   const response = await fetch("/api/jobPostings");
   const data = await response.json();
@@ -13,28 +11,20 @@ const fetchJobPostings = async () => {
 };
 
 export default function PositionsPage() {
-  const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
-  const router = useRouter(); // Initialize router for navigation
+  const { user, authLoading } = useUserAuth();
+  const router = useRouter();
 
-  // Redirect unauthenticated users to the SignIn page
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/SignIn"); // Redirect to SignIn if user is not logged in
-    }
-  }, [user, authLoading, router]);
-
-  // Show loading message if authentication is being checked
-  if (authLoading || !user) {
-    return <div>Loading...</div>;
-  }
-
-  // Component state
   const [selectedJob, setSelectedJob] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [jobPostings, setJobPostings] = useState([]);
 
-  // Fetch job postings on component mount
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/SignIn");
+    }
+  }, [user, authLoading, router]);
+
   useEffect(() => {
     const getJobPostings = async () => {
       const jobs = await fetchJobPostings();
@@ -43,34 +33,35 @@ export default function PositionsPage() {
     getJobPostings();
   }, []);
 
-  // Handle selecting a job
+  if (authLoading || !user) {
+    return <div>Loading...</div>;
+  }
+
   const handleLearnMore = (job) => {
     setSelectedJob(job);
     setShowForm(false);
     setFormSubmitted(false);
   };
 
-  // Handle form submission to apply for a job
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target);
     formData.append("jobPostingId", selectedJob.id);
 
     try {
-      const response = await fetch('/api/jobApplication', {
-        method: 'POST',
-        body: formData, // Send FormData with file included
+      const response = await fetch("/api/jobApplication", {
+        method: "POST",
+        body: formData,
       });
 
       const result = await response.json();
       if (result.success) {
         setFormSubmitted(true);
       } else {
-        console.error('Error submitting application:', result.error);
+        console.error("Error submitting application:", result.error);
       }
     } catch (error) {
-      console.error('Error submitting application:', error);
+      console.error("Error submitting application:", error);
     }
   };
 
@@ -86,7 +77,9 @@ export default function PositionsPage() {
             jobPostings.map((job) => (
               <div key={job.id} style={jobItemStyle}>
                 <h2 style={jobTitleStyle}>{job.title}</h2>
-                <p style={jobLocationStyle}><strong>Location:</strong> {job.location}</p>
+                <p style={jobLocationStyle}>
+                  <strong>Location:</strong> {job.location}
+                </p>
                 <p style={jobDescriptionStyle}>{job.description}</p>
                 <button
                   style={learnMoreButtonStyle}
@@ -106,23 +99,18 @@ export default function PositionsPage() {
             <h2 style={jobTitleStyle}>{selectedJob.title}</h2>
             <p style={jobDetailHeadingStyle}>Location:</p>
             <p style={jobDetailStyle}>{selectedJob.location}</p>
-
             <p style={jobDetailHeadingStyle}>Description:</p>
             <p style={jobDetailStyle}>{selectedJob.description}</p>
-
             <p style={jobDetailHeadingStyle}>Salary:</p>
             <p style={jobDetailStyle}>{selectedJob.salary}</p>
-
             <p style={jobDetailHeadingStyle}>Requirements:</p>
             <p style={jobDetailStyle}>{selectedJob.requirements}</p>
-
             <button
               style={applyButtonStyle}
               onClick={() => setShowForm(!showForm)}
             >
               Apply Now
             </button>
-
             {showForm && (
               <div style={{ marginTop: "20px" }}>
                 <h2 style={jobDetailHeadingStyle}>Submit Your Application</h2>
@@ -133,35 +121,22 @@ export default function PositionsPage() {
                       type="text"
                       name="name"
                       required
-                      style={{
-                        width: "100%",
-                        padding: "8px",
-                        borderRadius: "4px",
-                        border: "1px solid #ccc",
-                      }}
+                      style={inputStyle}
                     />
                   </div>
-
                   <div style={{ marginBottom: "15px" }}>
                     <label style={jobDetailHeadingStyle}>Email:</label>
                     <input
                       type="email"
                       name="email"
                       required
-                      style={{
-                        width: "100%",
-                        padding: "8px",
-                        borderRadius: "4px",
-                        border: "1px solid #ccc",
-                      }}
+                      style={inputStyle}
                     />
                   </div>
-
                   <div style={{ marginBottom: "15px" }}>
                     <label style={jobDetailHeadingStyle}>Upload Resume:</label>
                     <input type="file" name="resume" required />
                   </div>
-
                   <button
                     type="submit"
                     style={{
@@ -173,7 +148,6 @@ export default function PositionsPage() {
                     Submit Application
                   </button>
                 </form>
-
                 {formSubmitted && (
                   <p style={successMessageStyle}>
                     Your application has been submitted successfully!
@@ -196,7 +170,7 @@ const pageContainer = {
 };
 
 const navbarStyle = {
-  backgroundColor: "#FB923C", // Orange theme matching the website
+  backgroundColor: "#FB923C",
   padding: "20px",
   textAlign: "center",
 };
@@ -220,13 +194,13 @@ const jobListContainer = {
 const jobItemStyle = {
   padding: "15px",
   marginBottom: "15px",
-  backgroundColor: "#f2f2f2", // Lighter grey for inside job box
+  backgroundColor: "#f2f2f2",
   borderRadius: "8px",
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
 };
 
 const jobTitleStyle = {
-  fontSize: "1.5rem", // Increased size for better heading visibility
+  fontSize: "1.5rem",
   color: "#333",
   fontWeight: "bold",
 };
@@ -243,7 +217,7 @@ const jobDescriptionStyle = {
 };
 
 const learnMoreButtonStyle = {
-  backgroundColor: "#FF8C00", // Orange theme
+  backgroundColor: "#FF8C00",
   color: "#fff",
   padding: "8px 15px",
   border: "none",
@@ -254,31 +228,38 @@ const learnMoreButtonStyle = {
 const jobDetailsContainer = {
   width: "50%",
   padding: "20px",
-  backgroundColor: "#fefefe", // White background for details section
+  backgroundColor: "#fefefe",
   borderRadius: "8px",
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
 };
 
 const jobDetailHeadingStyle = {
-  fontSize: "1.1rem", // Slightly larger font for headings
-  color: "#333", // Proper black color
-  fontWeight: "bold", // Bold only for the headings
+  fontSize: "1.1rem",
+  color: "#333",
+  fontWeight: "bold",
   marginBottom: "8px",
 };
 
 const jobDetailStyle = {
-  fontSize: "1rem", // Normal font for main description
-  color: "#555", // Proper black for the text
+  fontSize: "1rem",
+  color: "#555",
   marginBottom: "15px",
 };
 
 const applyButtonStyle = {
-  backgroundColor: "#28a745", // Green for apply button
+  backgroundColor: "#28a745",
   color: "#fff",
   padding: "10px 20px",
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "8px",
+  borderRadius: "4px",
+  border: "1px solid #ccc",
 };
 
 const successMessageStyle = {

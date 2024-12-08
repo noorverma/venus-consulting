@@ -9,32 +9,34 @@ export default function ProductsPage() {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
 
-  // Redirect unauthenticated users to the SignIn page
+  // State and effect hooks must be called unconditionally
+  const [products, setProducts] = useState([]);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/SignIn"); // Redirect to SignIn if user is not logged in
     }
   }, [user, authLoading, router]);
 
+  useEffect(() => {
+    if (user) {
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch("/api/products");
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error("Failed to fetch products:", error);
+        }
+      };
+      fetchProducts();
+    }
+  }, [user]);
+
   // Show loading message if authentication is being checked
   if (authLoading || !user) {
     return <div>Loading...</div>;
   }
-
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch("/api/products");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-    fetchProducts();
-  }, []);
 
   return (
     <>

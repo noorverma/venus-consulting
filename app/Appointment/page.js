@@ -249,7 +249,7 @@ export default function Appointment() {
                       border: "none",
                       cursor: "pointer",
                       backgroundColor:
-                        time === slot ? "#FB923C" : "#f0f0f0",
+                        time === slot ? "#fc7303" : "#f0f0f0",
                       color: time === slot ? "#fff" : "#000",
                     }}
                     onClick={() => setTime(slot)}

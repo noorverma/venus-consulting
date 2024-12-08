@@ -66,7 +66,7 @@ const Marketplace = () => {
                 <p>{listing.description}</p>
                 <p style={priceStyle}>${listing.price}</p>
                 <Link href={`/marketplace/${listing.id}`}>
-                  <button style={askButtonStyle}>Ask if it's Available</button>
+                  <button style={askButtonStyle}>Ask if it is Available</button>
                 </Link>
               </div>
             </div>

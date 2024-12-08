@@ -5,8 +5,8 @@ import convertToSubcurrency from "../Lib/convertToSubcurrency";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Navbar from "../components/navbar";
-import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
-import { useRouter, useSearchParams } from "next/navigation"; // Import Next.js router
+import { useUserAuth } from "../Lib/auth-context";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Ensure the Stripe publishable key is set in the environment variables
@@ -19,12 +19,8 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 export default function PaymentPage() {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
-  const searchParams = useSearchParams();
 
-  // Retrieve amount from search parameters
-  const amount = searchParams?.get("amount") || 49.99;
-
-  // State for shipping information
+  const [amount, setAmount] = useState(49.99); // Default amount
   const [shippingInfo, setShippingInfo] = useState({
     fullName: "",
     address: "",
@@ -34,6 +30,21 @@ export default function PaymentPage() {
     country: "",
   });
 
+  // Handle input change for shipping information
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setShippingInfo({ ...shippingInfo, [name]: value });
+  };
+
+  // Retrieve amount from search parameters in a client-safe way
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const queryAmount = queryParams.get("amount");
+    if (queryAmount) {
+      setAmount(parseFloat(queryAmount));
+    }
+  }, []);
+
   // Redirect unauthenticated users to the SignIn page
   useEffect(() => {
     if (!authLoading && !user) {
@@ -41,13 +52,7 @@ export default function PaymentPage() {
     }
   }, [user, authLoading, router]);
 
-  // Handle input change for shipping information
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setShippingInfo({ ...shippingInfo, [name]: value });
-  };
-
-  // Prevent conditional hooks usage by returning early for loading
+  // Show loading message if authentication is being checked
   if (authLoading) {
     return <div>Loading...</div>;
   }

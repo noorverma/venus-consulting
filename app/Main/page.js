@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 import ChatWithAdmin from "../components/chatWithAdmin";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
+import Link from "next/link";
 const slideImages = [
   "/backgroundMain.jpg",
   "/slide2.jpg",
@@ -80,12 +80,13 @@ const MainPage = () => {
             Discover innovative solutions, services, and products to take your
             business to the next level.
           </p>
-          <a
-            href="/marketplace"
-            className="bg-orange-500 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-110 transition-transform duration-300 hover:bg-orange-600 animate-wind"
-          >
+          <Link href="/marketplace" legacyBehavior>
+             <a
+        className="bg-orange-500 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-110 transition-transform duration-300 hover:bg-orange-600 animate-wind"
+             >
             Visit the Marketplace
-          </a>
+            </a>
+         </Link>
         </div>
 
         {/* Right Content */}

@@ -1,6 +1,7 @@
+// /pages/marketplace/createListing.js
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { motion } from "framer-motion";
+import { auth } from "@/app/Lib/firebase"; // Ensure auth is correctly imported from your Firebase setup
 
 export default function CreateListing() {
   const [title, setTitle] = useState("");
@@ -11,24 +12,35 @@ export default function CreateListing() {
   const router = useRouter();
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
+    const file = e.target.files?.[0]; // Safely access the first file
+    if (!file) {
+      console.error("No file selected");
+      return;
+    }
 
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setImageBase64(reader.result);
+      setImageBase64(reader.result); // Set Base64 image string
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); // Convert image to Base64
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
+    const user = auth.currentUser; // Use the initialized Firebase Auth instance
+    if (!user) {
+      setMessage("You must be logged in to create a listing.");
+      return;
+    }
+
     const formData = {
       title,
       description,
       price: parseFloat(price),
       imageUrl: imageBase64,
+      userId: user.uid, // Use the authenticated user's UID
     };
 
     try {
@@ -54,33 +66,11 @@ export default function CreateListing() {
   };
 
   return (
-    <motion.div
-      style={containerStyle}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-    >
-      {/* Animated Header */}
-      <motion.h1
-        style={headerStyle}
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          duration: 1,
-          type: "spring",
-          stiffness: 50,
-        }}
-      >
-        Create Your Listing
-      </motion.h1>
-
-      {/* Form Container */}
-      <motion.div
-        style={formContainerStyle}
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
+    <div style={containerStyle}>
+      <div style={headerContainerStyle}>
+        <h1 style={headerStyle}>Create Your Listing</h1>
+      </div>
+      <div style={formContainerStyle}>
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Title:</label>
@@ -124,28 +114,13 @@ export default function CreateListing() {
               accept="image/*"
             />
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            style={submitButtonStyle}
-          >
+          <button type="submit" style={submitButtonStyle}>
             Create Listing
-          </motion.button>
+          </button>
         </form>
-
-        {message && (
-          <motion.p
-            style={messageStyle}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {message}
-          </motion.p>
-        )}
-      </motion.div>
-    </motion.div>
+        {message && <p style={messageStyle}>{message}</p>}
+      </div>
+    </div>
   );
 }
 
@@ -153,26 +128,29 @@ export default function CreateListing() {
 const containerStyle = {
   fontFamily: "Arial, sans-serif",
   minHeight: "100vh",
-  background: "linear-gradient(to bottom right, #FFF8E7, #FFDAB9)", // Light orange gradient
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
+  background: "linear-gradient(120deg, #FFF8E7, #FFD3A4)", // Animated gradient background
   padding: "20px",
+};
+
+const headerContainerStyle = {
+  width: "100%",
+  textAlign: "center",
+  marginBottom: "30px",
 };
 
 const headerStyle = {
   fontSize: "48px",
   fontWeight: "bold",
   color: "#FC7303",
-  marginBottom: "30px",
-  textAlign: "center",
   textShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
 };
 
 const formContainerStyle = {
   width: "100%",
-  maxWidth: "600px",
+  maxWidth: "500px",
   backgroundColor: "#fff",
   padding: "30px",
   borderRadius: "10px",
@@ -217,8 +195,7 @@ const submitButtonStyle = {
 
 const messageStyle = {
   marginTop: "20px",
-  color: "#28a745",
+  color: "green",
   textAlign: "center",
   fontSize: "16px",
 };
-

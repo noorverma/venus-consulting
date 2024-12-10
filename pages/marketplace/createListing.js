@@ -1,7 +1,6 @@
-// pages/marketplace/createListing.js
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { auth, db, storage } from "@/app/Lib/firebase";
+import { motion } from "framer-motion";
 
 export default function CreateListing() {
   const [title, setTitle] = useState("");
@@ -12,40 +11,26 @@ export default function CreateListing() {
   const router = useRouter();
 
   const handleImageChange = (e) => {
-    const file = e.target.files?.[0]; // Safely access the first file
-    if (!file) {
-      console.error("No file selected");
-      return;
-    }
-
+    const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setImageBase64(reader.result); // Set Base64 image string
+      setImageBase64(reader.result);
     };
-
-    reader.readAsDataURL(file); // Convert image to Base64
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-  
-    const user = auth.currentUser; // Use the initialized Firebase Auth instance
-  
-    if (!user) {
-      setMessage("You must be logged in to create a listing.");
-      return;
-    }
-  
+
     const formData = {
       title,
       description,
       price: parseFloat(price),
       imageUrl: imageBase64,
-      userId: user.uid, // Use the authenticated user's UID
     };
-  
+
     try {
       const response = await fetch("/api/marketplace/createListing", {
         method: "POST",
@@ -54,7 +39,7 @@ export default function CreateListing() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       const result = await response.json();
       if (response.ok && result.success) {
         setMessage("Listing created successfully!");
@@ -69,105 +54,171 @@ export default function CreateListing() {
   };
 
   return (
-    <div style={containerStyle}>
-      <nav style={navbarStyle}>
-        <h2>Create Your Own Listing</h2>
-      </nav>
-      <div style={formContainerStyle}>
-        <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Create Listing</h1>
+    <motion.div
+      style={containerStyle}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      {/* Animated Header */}
+      <motion.h1
+        style={headerStyle}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          duration: 1,
+          type: "spring",
+          stiffness: 50,
+        }}
+      >
+        Create Your Listing
+      </motion.h1>
+
+      {/* Form Container */}
+      <motion.div
+        style={formContainerStyle}
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Title:</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required style={inputStyle} />
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              style={inputStyle}
+              placeholder="Enter the title of your item"
+            />
           </div>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Description:</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required style={{ ...inputStyle, height: "80px" }} />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              style={{ ...inputStyle, height: "100px" }}
+              placeholder="Provide a detailed description"
+            />
           </div>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Price:</label>
-            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required style={inputStyle} />
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+              style={inputStyle}
+              placeholder="Enter the price"
+            />
           </div>
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Image:</label>
-            <input type="file" onChange={handleImageChange} required style={inputStyle} />
+            <input
+              type="file"
+              onChange={handleImageChange}
+              required
+              style={inputStyle}
+              accept="image/*"
+            />
           </div>
-          <button type="submit" style={submitButtonStyle}>Create Listing</button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            style={submitButtonStyle}
+          >
+            Create Listing
+          </motion.button>
         </form>
-        {message && <p style={messageStyle}>{message}</p>}
-      </div>
-    </div>
+
+        {message && (
+          <motion.p
+            style={messageStyle}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {message}
+          </motion.p>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
 
-// Styling for different elements
+// Styles
 const containerStyle = {
-  fontFamily: 'Arial, sans-serif',
-  backgroundColor: '#f8f8f8',
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  fontFamily: "Arial, sans-serif",
+  minHeight: "100vh",
+  background: "linear-gradient(to bottom right, #FFF8E7, #FFDAB9)", // Light orange gradient
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "20px",
 };
 
-const navbarStyle = {
-  width: '100%',
-  backgroundColor: '#FB923C',
-  padding: '20px',
-  color: '#fff',
-  textAlign: 'center',
-  fontSize: '1.5rem',
+const headerStyle = {
+  fontSize: "48px",
+  fontWeight: "bold",
+  color: "#FC7303",
+  marginBottom: "30px",
+  textAlign: "center",
+  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
 };
 
 const formContainerStyle = {
-  width: '100%',
-  maxWidth: '500px',
-  marginTop: '20px',
-  backgroundColor: '#fff',
-  padding: '30px',
-  borderRadius: '10px',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  width: "100%",
+  maxWidth: "600px",
+  backgroundColor: "#fff",
+  padding: "30px",
+  borderRadius: "10px",
+  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
 };
 
 const formStyle = {
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
+  gap: "15px",
 };
 
 const inputGroupStyle = {
-  marginBottom: '15px',
+  display: "flex",
+  flexDirection: "column",
 };
 
 const labelStyle = {
-  fontWeight: 'bold',
-  marginBottom: '5px',
-  display: 'block',
-  color: '#333',
+  fontSize: "16px",
+  color: "#333",
+  fontWeight: "bold",
+  marginBottom: "5px",
 };
 
 const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  fontSize: '16px',
-  borderRadius: '5px',
-  border: '1px solid #ccc',
+  padding: "10px",
+  fontSize: "16px",
+  borderRadius: "5px",
+  border: "1px solid #ddd",
 };
 
 const submitButtonStyle = {
-  width: '100%',
-  padding: '10px',
-  backgroundColor: '#FB923C',
-  color: '#fff',
-  fontSize: '16px',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  marginTop: '20px',
+  padding: "12px 20px",
+  backgroundColor: "#FC7303",
+  color: "#fff",
+  fontSize: "18px",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  marginTop: "10px",
 };
 
 const messageStyle = {
-  color: 'green',
-  fontSize: '1.1rem',
-  textAlign: 'center',
-  marginTop: '20px',
+  marginTop: "20px",
+  color: "#28a745",
+  textAlign: "center",
+  fontSize: "16px",
 };
+

@@ -1,6 +1,7 @@
-// /pages/marketplace/[id].js
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { FaShieldAlt, FaTags, FaHandHoldingUsd } from "react-icons/fa"; // React Icons for icons
 
 const ListingDetail = () => {
   const router = useRouter();
@@ -8,8 +9,9 @@ const ListingDetail = () => {
 
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [buyerEmail, setBuyerEmail] = useState(""); // State for buyer's email
-  const [emailSent, setEmailSent] = useState(false); // State for email status
+  const [buyerEmail, setBuyerEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -30,6 +32,9 @@ const ListingDetail = () => {
   }, [id]);
 
   const handleContactSeller = async () => {
+    setEmailSent(false);
+    setEmailError(false);
+
     if (!buyerEmail) {
       alert("Please enter your email to contact the seller.");
       return;
@@ -51,11 +56,11 @@ const ListingDetail = () => {
       if (response.ok) {
         setEmailSent(true);
       } else {
-        alert("Failed to send email. Please try again later.");
+        setEmailError(true);
       }
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("An error occurred while trying to contact the seller.");
+      setEmailError(true);
     }
   };
 
@@ -63,59 +68,181 @@ const ListingDetail = () => {
   if (!listing) return <p>Listing not found.</p>;
 
   return (
-    <div style={containerStyle}>
-      <h1 style={titleStyle}>{listing.title}</h1>
-      <img
-        src={listing.imageURL}
-        alt={listing.title}
-        style={imageStyle}
-        onError={(e) => (e.target.src = "/default-placeholder.png")}
-      />
-      <p style={descriptionStyle}>{listing.description}</p>
-      <p style={priceStyle}>
-        <strong>Price:</strong> ${listing.price}
-      </p>
-      <p style={emailStyle}>
-        <strong>Seller Email:</strong> {listing.sellerEmail}
-      </p>
+    <motion.div
+      style={containerStyle}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      {/* Back Button */}
+      <motion.button
+        onClick={() => router.push("/marketplace")}
+        style={backButtonStyle}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        ⬅ Back to Marketplace
+      </motion.button>
 
-      {/* Contact Seller Section */}
-      <div style={contactSellerStyle}>
-        <h3 style={sectionTitleStyle}>Contact the Seller</h3>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={buyerEmail}
-          onChange={(e) => setBuyerEmail(e.target.value)}
-          style={emailInputStyle}
-        />
-        <button onClick={handleContactSeller} style={contactButtonStyle}>
-          Contact Seller
-        </button>
-        {emailSent && <p style={successMessageStyle}>Email sent successfully!</p>}
+      <div style={contentWrapperStyle}>
+        {/* Sidebar for Images */}
+        <motion.div
+          style={sidebarStyle}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
+          <img
+            src={listing.imageURL}
+            alt={listing.title}
+            style={mainImageStyle}
+            onError={(e) => (e.target.src = "/default-placeholder.png")}
+          />
+        </motion.div>
+
+        {/* Main Details */}
+        <div style={detailsStyle}>
+          <h1 style={titleStyle}>{listing.title}</h1>
+          <p style={priceStyle}>${listing.price}</p>
+          <p style={descriptionStyle}>{listing.description}</p>
+
+          {/* Seller Information */}
+          <div style={sellerDetailsStyle}>
+            <h3 style={sellerHeadingStyle}>Seller Information</h3>
+            <p style={sellerInfoStyle}>
+              <strong>Email:</strong> {listing.sellerEmail}
+            </p>
+            <p style={sellerInfoStyle}>
+              <strong>Location:</strong> {listing.sellerLocation || "Not provided"}
+            </p>
+          </div>
+
+          {/* Contact Form */}
+          <div style={contactSellerStyle}>
+            <h3 style={sectionTitleStyle}>Contact the Seller</h3>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={buyerEmail}
+              onChange={(e) => setBuyerEmail(e.target.value)}
+              style={emailInputStyle}
+            />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={handleContactSeller}
+              style={contactButtonStyle}
+            >
+              Contact Seller
+            </motion.button>
+            {emailSent && (
+              <motion.p
+                style={successMessageStyle}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                Email sent successfully!
+              </motion.p>
+            )}
+            {emailError && (
+              <motion.p
+                style={errorMessageStyle}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                Failed to send email.
+              </motion.p>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Featured Benefits Section */}
+      <motion.div
+        style={featuredBenefitsStyle}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 1 }}
+      >
+        <h2 style={benefitsHeadingStyle}>Why Choose Our Marketplace?</h2>
+        <ul style={benefitsListStyle}>
+          <motion.li whileHover={{ scale: 1.1 }} style={benefitItemStyle}>
+            <div style={iconTextStyle}>
+              <FaShieldAlt style={iconStyle} />
+              <span>Secure Transactions</span>
+            </div>
+          </motion.li>
+          <motion.li whileHover={{ scale: 1.1 }} style={benefitItemStyle}>
+            <div style={iconTextStyle}>
+              <FaTags style={iconStyle} />
+              <span>Wide Variety of Listings</span>
+            </div>
+          </motion.li>
+          <motion.li whileHover={{ scale: 1.1 }} style={benefitItemStyle}>
+            <div style={iconTextStyle}>
+              <FaHandHoldingUsd style={iconStyle} />
+              <span>Easy-to-Use Platform</span>
+            </div>
+          </motion.li>
+        </ul>
+      </motion.div>
+    </motion.div>
   );
 };
 
 // Styles
 const containerStyle = {
-  maxWidth: "800px",
+  fontFamily: "Arial, sans-serif",
+  maxWidth: "1200px",
   margin: "0 auto",
   padding: "20px",
 };
 
-const titleStyle = {
-  fontSize: "24px",
-  color: "#333",
+const backButtonStyle = {
+  backgroundColor: "#FC7303",
+  color: "#fff",
+  border: "none",
+  borderRadius: "5px",
+  padding: "10px 15px",
+  cursor: "pointer",
   marginBottom: "20px",
 };
 
-const imageStyle = {
-  maxWidth: "100%",
-  height: "auto",
+const contentWrapperStyle = {
+  display: "flex",
+  gap: "20px",
+};
+
+const sidebarStyle = {
+  flex: "2",
+  textAlign: "center",
+};
+
+const mainImageStyle = {
+  width: "100%",
+  height: "500px",
   borderRadius: "10px",
-  marginBottom: "20px",
+  objectFit: "cover",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+};
+
+const detailsStyle = {
+  flex: "3",
+  backgroundColor: "#fff",
+  borderRadius: "10px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  padding: "20px",
+};
+
+const titleStyle = {
+  fontSize: "28px",
+  color: "#333",
+  marginBottom: "10px",
+};
+
+const priceStyle = {
+  fontSize: "24px",
+  color: "#FC7303",
+  fontWeight: "bold",
+  marginBottom: "10px",
 };
 
 const descriptionStyle = {
@@ -125,28 +252,37 @@ const descriptionStyle = {
   marginBottom: "20px",
 };
 
-const priceStyle = {
+const sellerDetailsStyle = {
+  marginTop: "20px",
+  padding: "20px",
+  borderRadius: "10px",
+  border: "1px solid #ddd",
+  backgroundColor: "#f9f9f9",
+};
+
+const sellerHeadingStyle = {
   fontSize: "18px",
-  color: "#FB923C",
+  color: "#333",
   marginBottom: "10px",
 };
 
-const emailStyle = {
+const sellerInfoStyle = {
   fontSize: "16px",
-  color: "#333",
+  color: "#666",
+  marginBottom: "10px",
 };
 
 const contactSellerStyle = {
-  marginTop: "30px",
+  marginTop: "20px",
   padding: "20px",
-  border: "1px solid #ddd",
   borderRadius: "10px",
+  border: "1px solid #ddd",
   backgroundColor: "#f9f9f9",
 };
 
 const sectionTitleStyle = {
   fontSize: "18px",
-  fontWeight: "bold",
+  color: "#333",
   marginBottom: "10px",
 };
 
@@ -154,23 +290,58 @@ const emailInputStyle = {
   width: "100%",
   padding: "10px",
   marginBottom: "10px",
-  border: "1px solid #ddd",
+  border: "1px solid #ccc",
   borderRadius: "5px",
 };
 
 const contactButtonStyle = {
   width: "100%",
   padding: "10px",
-  backgroundColor: "#FB923C",
+  backgroundColor: "#FC7303",
   color: "#fff",
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
 };
 
-const successMessageStyle = {
-  marginTop: "10px",
-  color: "green",
+const featuredBenefitsStyle = {
+  marginTop: "40px",
+  padding: "20px",
+  backgroundColor: "#FCF5E9",
+  borderRadius: "10px",
+  textAlign: "center",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+};
+
+const benefitsHeadingStyle = {
+  fontSize: "22px",
+  marginBottom: "20px",
+};
+
+const benefitsListStyle = {
+  listStyleType: "none",
+  padding: "0",
+  display: "flex",
+  justifyContent: "space-around",
+  alignItems: "center",
+};
+
+const benefitItemStyle = {
+  fontSize: "18px",
+  color: "#666",
+  textAlign: "center",
+};
+
+const iconTextStyle = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "10px",
+};
+
+const iconStyle = {
+  fontSize: "36px",
+  color: "#FC7303",
 };
 
 export default ListingDetail;

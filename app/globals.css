@@ -26,19 +26,8 @@ body {
     text-wrap: balance;
   }
 }
-@keyframes wind {
-   0% {
-    transform: scale(1) translateX(0);
-     }
-  50% {
-    transform: scale(1.05) translateX(2%);
-     }
- 100% {
-   transform: scale(1) translateX(0);
-     }
-}
-.animate-wind {  animation: wind 20s ease-in-out infinite;
-}
+
+
 /*this is the animations of the main page */
 @keyframes gradient {
   0% {
@@ -82,3 +71,146 @@ body {
   box-shadow: 0 4px 12px rgba(255, 121, 12, 0.2);
   background-color: #e66900;
 }
+.each-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.each-slide .h-full {
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.5s ease-in-out; /* Smooth transition */
+  background-color: #000; /* Fallback color */
+  opacity: 1;
+}
+
+.absolute {
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+  transform: translate3d(0, 0, 0); /* GPU acceleration for smoothness */
+}
+
+.arrow-prev,
+.arrow-next {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  transition: all 0.3s ease;
+}
+
+.arrow-prev:hover,
+.arrow-next:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.arrow-prev {
+  left: 20px;
+}
+
+.arrow-next {
+  right: 20px;
+}
+
+.text-shadow-lg {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth Fade-In Effect */
+/* Smooth Fade-In Effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+/* Slide-Up Effect */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 1s ease-out forwards;
+}
+
+/* Fade-In Effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+/* Floating Effect for Images */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Button Ripple Effect */
+.animate-wind {
+  animation: wind 3s ease-in-out infinite;
+}
+
+@keyframes wind {
+  0% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(2%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* Hover Effect on Images */
+.group:hover img {
+  transform: scale(1.05);
+}
+
+.group:hover .overlay {
+  opacity: 1;
+}
+

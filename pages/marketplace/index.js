@@ -1,10 +1,13 @@
-"use client"
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion"; // Importing Framer Motion for animations
+import { motion } from "framer-motion";
+import { FaHome } from "react-icons/fa";
 
 const Marketplace = () => {
   const [listings, setListings] = useState([]);
+  const [filteredListings, setFilteredListings] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +16,7 @@ const Marketplace = () => {
         const response = await fetch("/api/marketplace/allListings");
         const data = await response.json();
         setListings(data.listings || []);
+        setFilteredListings(data.listings || []);
       } catch (error) {
         console.error("Error fetching listings:", error);
       } finally {
@@ -23,46 +27,79 @@ const Marketplace = () => {
     fetchListings();
   }, []);
 
+  // Handle search and filter listings
+  useEffect(() => {
+    let updatedListings = [...listings];
+
+    // Filter based on search query
+    if (searchQuery) {
+      updatedListings = updatedListings.filter((listing) =>
+        listing.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply sorting if needed
+    if (sortOption === "price") {
+      updatedListings.sort((a, b) => a.price - b.price); // Sort by price (low to high)
+    } else if (sortOption === "alphabetical") {
+      updatedListings.sort((a, b) => a.title.localeCompare(b.title)); // Sort A-Z
+    }
+
+    setFilteredListings(updatedListings);
+  }, [searchQuery, sortOption, listings]);
+
   return (
     <div style={pageStyle}>
-      {/* Navbar */}
-      <nav style={navbarStyle}>
-        <div style={buttonContainerStyle}>
-          <Link href="/Main">
-            <button style={backButtonStyle}>Back to Home</button>
-          </Link>
-          <Link href="/marketplace/createListing">
-            <button style={sellButtonStyle}>Want to Sell Your Product?</button>
-          </Link>
+      {/* Home Icon */}
+      <Link href="/Main">
+        <div style={homeIconStyle}>
+          <FaHome size={30} />
         </div>
-      </nav>
+      </Link>
 
       {/* Hero Section */}
-      <section style={heroStyle}>
-        <motion.h2
-          style={heroTitleStyle}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
+      <motion.h1
+        style={heroTitleStyle}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        Find your best deal and post your items for sale!
+      </motion.h1>
+
+      {/* Search Bar */}
+      <div style={searchContainerStyle}>
+        <input
+          type="text"
+          placeholder="What are you looking for?"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={searchInputStyle}
+        />
+        <button style={searchButtonStyle} onClick={() => {}}>
+          Search
+        </button>
+      </div>
+
+      {/* Sort Dropdown */}
+      <div style={sortContainerStyle}>
+        <select
+          style={sortDropdownStyle}
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
         >
-          Explore Unique Listings
-        </motion.h2>
-        <motion.p
-          style={heroSubtitleStyle}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          Find the best deals and post your items for sale!
-        </motion.p>
-      </section>
+          <option value="">Sort By</option>
+          <option value="price">Price</option>
+          <option value="alphabetical">A-Z</option>
+        </select>
+      </div>
 
       {/* Listings Section */}
       <div style={listingContainerStyle}>
         {loading ? (
           <p style={loadingStyle}>Loading listings...</p>
-        ) : listings.length > 0 ? (
-          listings.map((listing) => (
+        ) : filteredListings.length > 0 ? (
+          filteredListings.map((listing) => (
             <div key={listing.id} style={listingCardStyle}>
               <div style={imageContainerStyle}>
                 <img
@@ -73,9 +110,11 @@ const Marketplace = () => {
                 />
                 <h3 style={titleOverlayStyle}>{listing.title}</h3>
               </div>
-              <div style={descriptionStyle}>
-                <p>{listing.description}</p>
-                <p style={priceStyle}>${listing.price}</p>
+              <div style={descriptionContainerStyle}>
+                <div style={descriptionStyle}>
+                  <p>{listing.description}</p>
+                  <p style={priceStyle}>${listing.price}</p>
+                </div>
                 <Link href={`/marketplace/${listing.id}`}>
                   <button style={askButtonStyle}>Ask if it's Available</button>
                 </Link>
@@ -86,89 +125,94 @@ const Marketplace = () => {
           <p>No listings found.</p>
         )}
       </div>
+
+      {/* Floating Action Button */}
+      <motion.div
+        style={fabStyle}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => (window.location.href = "/marketplace/createListing")}
+      >
+        Want to Sell an Item?
+      </motion.div>
     </div>
   );
 };
 
-/* Page Styles */
+/* Styles */
 const pageStyle = {
   fontFamily: "Arial, sans-serif",
-  backgroundColor: "#f8f8f8",
   minHeight: "100vh",
+  padding: "20px",
+  animation: "backgroundAnimation 10s infinite linear",
+  backgroundSize: "200% 200%",
 };
 
-/* Navbar Styles */
-const navbarStyle = {
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
-  backgroundColor: "#FB923C", // Same orange color as your navbar
-  padding: "15px 30px",
+const homeIconStyle = {
+  position: "absolute",
+  top: "20px",
+  left: "20px",
+  backgroundColor: "#FC7303",
   color: "#fff",
-  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-};
-
-const buttonContainerStyle = {
-  display: "flex",
-  gap: "15px",
-};
-
-const backButtonStyle = {
-  padding: "10px 20px",
-  backgroundColor: "#fff",
-  color: "#FB923C",
-  border: "none",
-  borderRadius: "5px",
+  borderRadius: "50%",
+  padding: "10px",
   cursor: "pointer",
-  transition: "all 0.3s ease",
-};
-
-const sellButtonStyle = {
-  padding: "10px 20px",
-  backgroundColor: "#fff",
-  color: "#FB923C",
-  border: "none",
-  borderRadius: "5px",
-  cursor: "pointer",
-  transition: "all 0.3s ease",
-};
-
-backButtonStyle["&:hover"] = sellButtonStyle["&:hover"] = {
-  backgroundColor: "#FFD1A9",
-  transform: "scale(1.05)",
-};
-
-/* Hero Section Styles */
-const heroStyle = {
-  textAlign: "center",
-  padding: "50px 20px",
-  background: "linear-gradient(to bottom, #FB923C, #FFD1A9)", // Darker orange to lighter gradient
-  color: "#fff",
-  marginBottom: "30px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
 };
 
 const heroTitleStyle = {
-  fontSize: "4rem", // Larger font size
-  marginBottom: "10px",
+  fontSize: "3rem",
+  textAlign: "center",
+  marginBottom: "30px",
+  color: "#FC7303",
 };
 
-const heroSubtitleStyle = {
-  fontSize: "1.5rem",
-  fontWeight: "300",
-};
-
-/* Listing Container Styles */
-const listingContainerStyle = {
+const searchContainerStyle = {
   display: "flex",
-  flexWrap: "wrap",
+  justifyContent: "center",
+  marginBottom: "20px",
+};
+
+const searchInputStyle = {
+  width: "50%",
+  padding: "10px",
+  fontSize: "16px",
+  borderRadius: "5px 0 0 5px",
+  border: "1px solid #ccc",
+};
+
+const searchButtonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#FC7303",
+  color: "#fff",
+  border: "none",
+  borderRadius: "0 5px 5px 0",
+  cursor: "pointer",
+};
+
+const sortContainerStyle = {
+  textAlign: "right",
+  marginBottom: "20px",
+  marginRight: "10px",
+};
+
+const sortDropdownStyle = {
+  padding: "10px",
+  fontSize: "16px",
+  borderRadius: "5px",
+  border: "1px solid #ccc",
+  backgroundColor: "#fff",
+  cursor: "pointer",
+};
+
+const listingContainerStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(5, 1fr)", // 5 items per row
   gap: "20px",
   padding: "20px",
-  justifyContent: "center",
 };
 
-/* Individual Listing Card Styles */
 const listingCardStyle = {
-  width: "250px",
   backgroundColor: "#fff",
   borderRadius: "10px",
   overflow: "hidden",
@@ -176,8 +220,6 @@ const listingCardStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  minHeight: "400px",
-  transition: "transform 0.3s ease, box-shadow 0.3s ease",
 };
 
 const imageContainerStyle = {
@@ -198,47 +240,67 @@ const titleOverlayStyle = {
   backgroundColor: "rgba(0, 0, 0, 0.6)",
   padding: "5px 10px",
   borderRadius: "5px",
-  fontSize: "1rem",
 };
 
-/* Description and Button Styles */
-const descriptionStyle = {
-  padding: "15px",
+const descriptionContainerStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
   height: "100%",
+  padding: "15px",
+};
+
+const descriptionStyle = {
+  marginBottom: "10px",
 };
 
 const priceStyle = {
   fontWeight: "bold",
-  color: "#FB923C",
-  marginTop: "10px",
-  fontSize: "1.2rem",
+  color: "#FC7303",
 };
 
 const askButtonStyle = {
-  marginTop: "10px",
   padding: "10px",
-  backgroundColor: "#FB923C",
+  backgroundColor: "#FC7303",
   color: "#fff",
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
   width: "100%",
-  transition: "all 0.3s ease",
 };
 
-askButtonStyle["&:hover"] = {
-  backgroundColor: "#FF8F62",
-  transform: "scale(1.05)",
-};
-
-/* Loading Text */
-const loadingStyle = {
-  fontSize: "1.5rem",
-  color: "#FB923C",
+const fabStyle = {
+  position: "fixed",
+  bottom: "20px",
+  right: "20px",
+  backgroundColor: "#FC7303",
+  color: "#fff",
+  padding: "15px 25px",
+  borderRadius: "50px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+  cursor: "pointer",
+  fontSize: "1rem",
   textAlign: "center",
 };
+
+const loadingStyle = {
+  textAlign: "center",
+  color: "#FC7303",
+  fontSize: "1.5rem",
+};
+
+const animationCSS = `
+  @keyframes backgroundAnimation {
+    0% { background-color: #FFF5E6; }
+    50% { background-color: #FFE4CC; }
+    100% { background-color: #FFF5E6; }
+  }
+`;
+
+if (typeof window !== "undefined") {
+  const style = document.createElement("style");
+  style.textContent = animationCSS;
+  document.head.appendChild(style);
+}
 
 export default Marketplace;

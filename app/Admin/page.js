@@ -1,9 +1,10 @@
 // Used perplexity AI for reference but I wrote the code myself
+// app/Admin/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
 import AdminNavbar from "../components/AdminNavbar";
-import { fetchAppointments, updateAppointmentStatus } from "@/actions/appointments";
+import { fetchAppointments, updateAppointmentStatus } from "@/actions/appointments"; // Import necessary actions
 import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
 import { useRouter } from "next/navigation"; // Import Next.js router
 import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
@@ -12,15 +13,16 @@ import { db } from "../Lib/firebase"; // Firestore instance
 const AdminDashboard = () => {
   const { user, authLoading } = useUserAuth(); // Access user and loading state from authentication context
   const router = useRouter(); // Initialize router for navigation
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState([]); // State to store appointments
   const [isAuthorized, setIsAuthorized] = useState(false); // State to track admin authorization
+  const [message, setMessage] = useState(""); // State to manage success/error messages
 
   // Check user role and authorization
   useEffect(() => {
     const checkAuthorization = async () => {
       if (!authLoading && user) {
         try {
-          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+          const userDocRef = doc(db, "users", user.uid); // Reference Firestore for the user's document
           const userDoc = await getDoc(userDocRef);
 
           if (userDoc.exists() && userDoc.data().role === "admin") {
@@ -56,6 +58,7 @@ const AdminDashboard = () => {
     }
   }, [isAuthorized]);
 
+  // Handle action (Approve/Deny)
   const handleAction = (appointment, action) => {
     setAppointments((prevAppointments) =>
       prevAppointments.map((app) =>
@@ -64,14 +67,37 @@ const AdminDashboard = () => {
     );
   };
 
+  // Handle Submit Changes
   const handleSubmit = async () => {
-    const updatePromises = appointments.map(async (appointment) => {
-      if (appointment.status === "Approved" || appointment.status === "Denied") {
-        await updateAppointmentStatus(appointment.id, appointment.status);
-      }
-    });
+    try {
+      const updatePromises = appointments.map(async (appointment) => {
+        if (appointment.status === "Approved" || appointment.status === "Denied") {
+          // Update appointment status in the database
+          await updateAppointmentStatus(appointment.id, appointment.status);
 
-    await Promise.all(updatePromises);
+          // Send email notification
+          await fetch("/api/SendAppointmentEmail", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: appointment.email,
+              reason: appointment.reason,
+              date: appointment.date,
+              time: appointment.time || "Not specified",
+              status: appointment.status,
+            }),
+          });
+        }
+      });
+
+      await Promise.all(updatePromises);
+      setMessage("Appointments updated successfully, and email notifications sent!");
+    } catch (error) {
+      console.error("Error during submission:", error);
+      setMessage("Failed to submit updates. Please try again.");
+    }
   };
 
   // Show loading message if authentication or authorization is being checked
@@ -95,9 +121,7 @@ const AdminDashboard = () => {
                   <th className="px-4 py-2 border border-gray-300">ID</th>
                   <th className="px-4 py-2 border border-gray-300">Email</th>
                   <th className="px-4 py-2 border border-gray-300">Date</th>
-                  <th className="px-4 py-2 border border-gray-300">
-                    Reason for Visit
-                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Reason for Visit</th>
                   <th className="px-4 py-2 border border-gray-300">Status</th>
                   <th className="px-4 py-2 border border-gray-300">Actions</th>
                 </tr>
@@ -105,21 +129,13 @@ const AdminDashboard = () => {
               <tbody>
                 {appointments.map((appointment) => (
                   <tr key={appointment.id}>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {appointment.id}
-                    </td>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {appointment.email}
-                    </td>
+                    <td className="px-4 py-2 border border-gray-300">{appointment.id}</td>
+                    <td className="px-4 py-2 border border-gray-300">{appointment.email}</td>
                     <td className="px-4 py-2 border border-gray-300">
                       {new Date(appointment.date).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {appointment.reason}
-                    </td>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {appointment.status}
-                    </td>
+                    <td className="px-4 py-2 border border-gray-300">{appointment.reason}</td>
+                    <td className="px-4 py-2 border border-gray-300">{appointment.status}</td>
                     <td className="px-4 py-2 border border-gray-300">
                       <button
                         className="bg-green-500 text-white px-4 py-2 rounded mr-2"
@@ -139,6 +155,15 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600"
+            >
+              Submit Changes
+            </button>
+          </div>
+          {message && <p className="mt-4 text-center text-green-500">{message}</p>}
         </div>
       </div>
     </div>

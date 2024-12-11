@@ -1,8 +1,8 @@
+// /app/positions/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useUserAuth } from "../Lib/auth-context"; // Import authentication context
-import { useRouter } from "next/navigation"; // Import Next.js router
+import { motion } from "framer-motion";
 
 const fetchJobPostings = async () => {
   const response = await fetch("/api/jobPostings");
@@ -11,19 +11,10 @@ const fetchJobPostings = async () => {
 };
 
 export default function PositionsPage() {
-  const { user, authLoading } = useUserAuth();
-  const router = useRouter();
-
+  const [jobPostings, setJobPostings] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [jobPostings, setJobPostings] = useState([]);
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/SignIn");
-    }
-  }, [user, authLoading, router]);
 
   useEffect(() => {
     const getJobPostings = async () => {
@@ -32,10 +23,6 @@ export default function PositionsPage() {
     };
     getJobPostings();
   }, []);
-
-  if (authLoading || !user) {
-    return <div>Loading...</div>;
-  }
 
   const handleLearnMore = (job) => {
     setSelectedJob(job);
@@ -67,15 +54,22 @@ export default function PositionsPage() {
 
   return (
     <div style={pageContainer}>
-      <div style={navbarStyle}>
-        <h1 style={navbarTitle}>Open Positions</h1>
-      </div>
+      <div style={navbarStyle}>Find your dream job</div>
 
-      <div style={contentContainer}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={contentContainer}
+      >
         <div style={jobListContainer}>
           {jobPostings && jobPostings.length > 0 ? (
             jobPostings.map((job) => (
-              <div key={job.id} style={jobItemStyle}>
+              <motion.div
+                key={job.id}
+                style={jobItemStyle}
+                whileHover={{ scale: 1.05 }}
+              >
                 <h2 style={jobTitleStyle}>{job.title}</h2>
                 <p style={jobLocationStyle}>
                   <strong>Location:</strong> {job.location}
@@ -87,15 +81,20 @@ export default function PositionsPage() {
                 >
                   Learn More
                 </button>
-              </div>
+              </motion.div>
             ))
           ) : (
-            <p>No jobs available at the moment.</p>
+            <p style={noJobsStyle}>No jobs available at the moment.</p>
           )}
         </div>
 
         {selectedJob && (
-          <div style={jobDetailsContainer}>
+          <motion.div
+            style={jobDetailsContainer}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <h2 style={jobTitleStyle}>{selectedJob.title}</h2>
             <p style={jobDetailHeadingStyle}>Location:</p>
             <p style={jobDetailStyle}>{selectedJob.location}</p>
@@ -139,11 +138,7 @@ export default function PositionsPage() {
                   </div>
                   <button
                     type="submit"
-                    style={{
-                      ...applyButtonStyle,
-                      backgroundColor: "#FB923C",
-                      marginTop: "10px",
-                    }}
+                    style={submitButtonStyle}
                   >
                     Submit Application
                   </button>
@@ -155,54 +150,55 @@ export default function PositionsPage() {
                 )}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
 
 // CSS-in-JS Styling
 const pageContainer = {
-  display: "flex",
-  flexDirection: "column",
+  background: "linear-gradient(to bottom, #FFD3A4, #FFF8E7)",
+  minHeight: "100vh",
   fontFamily: "Arial, sans-serif",
+  padding: "20px",
 };
 
 const navbarStyle = {
-  backgroundColor: "#FB923C",
+  backgroundColor: "#FC7303",
   padding: "20px",
   textAlign: "center",
-};
-
-const navbarTitle = {
   color: "#fff",
-  fontSize: "2rem",
-  margin: 0,
+  fontSize: "2.5rem",
+  fontWeight: "bold",
 };
 
 const contentContainer = {
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "flex-start",
+  gap: "20px",
   padding: "20px",
 };
 
 const jobListContainer = {
-  width: "45%",
+  flex: 1,
+  marginRight: "20px",
 };
 
 const jobItemStyle = {
-  padding: "15px",
+  backgroundColor: "#fff",
+  padding: "20px",
   marginBottom: "15px",
-  backgroundColor: "#f2f2f2",
-  borderRadius: "8px",
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  borderRadius: "10px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
 };
 
 const jobTitleStyle = {
   fontSize: "1.5rem",
-  color: "#333",
   fontWeight: "bold",
+  color: "#333",
 };
 
 const jobLocationStyle = {
@@ -217,20 +213,23 @@ const jobDescriptionStyle = {
 };
 
 const learnMoreButtonStyle = {
-  backgroundColor: "#FF8C00",
+  backgroundColor: "#FC7303",
   color: "#fff",
-  padding: "8px 15px",
+  padding: "10px 15px",
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
+  fontSize: "1rem",
 };
 
 const jobDetailsContainer = {
-  width: "50%",
+  flex: 1,
   padding: "20px",
   backgroundColor: "#fefefe",
-  borderRadius: "8px",
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  borderRadius: "10px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  overflowY: "auto",
+  maxHeight: "calc(100vh - 150px)",
 };
 
 const jobDetailHeadingStyle = {
@@ -260,6 +259,22 @@ const inputStyle = {
   padding: "8px",
   borderRadius: "4px",
   border: "1px solid #ccc",
+};
+
+const submitButtonStyle = {
+  backgroundColor: "#FC7303",
+  color: "#fff",
+  padding: "10px 20px",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+};
+
+const noJobsStyle = {
+  fontSize: "1rem",
+  color: "#555",
+  textAlign: "center",
+  marginTop: "20px",
 };
 
 const successMessageStyle = {
